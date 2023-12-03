@@ -1,7 +1,6 @@
 import 'package:brain_box/core/singeltons/storage/storage_repository.dart';
 import 'package:brain_box/core/singeltons/storage/store_keys.dart';
 import 'package:brain_box/feature/lang/presentation/language_screen.dart';
-import 'package:brain_box/feature/main/presentation/main_screen.dart';
 import 'package:brain_box/feature/navigation/presentation/bloc/navigation_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future route(BuildContext context)async{
     await Future.delayed(const Duration(milliseconds: 20),() {
       bool isAuth = StorageRepository.getBool(StoreKeys.isAuth) || StorageRepository.getBool(StoreKeys.isSkip);
-      if(isAuth){
+      if(!isAuth){
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LanguageScreen(),),(route) => false,);
       }else{
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:  (context) =>  BlocProvider<NavigationBloc>.value(value: navigationBloc,child: const LadingPage(),),),(route) => false,);

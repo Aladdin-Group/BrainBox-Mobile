@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.13.0"
+  ansicolor:
+    dependency: transitive
+    description:
+      name: ansicolor
+      sha256: "8bf17a8ff6ea17499e40a2d2542c2f481cd7615760c6d34065cb22bfd22e6880"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   archive:
     dependency: transitive
     description:
@@ -169,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.2"
+  dio:
+    dependency: "direct main"
+    description:
+      name: dio
+      sha256: "01870acd87986f768e0c09cc4d7a19a59d814af7b34cbeb0b437d2c33bdfea4c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.3.4"
   easy_localization:
     dependency: "direct main"
     description:
@@ -263,10 +279,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_native_splash
-      sha256: d93394f22f73e810bda59e11ebe83329c5511d6460b6b7509c4e1f3c92d6d625
+      sha256: c4d899312b36e7454bedfd0a4740275837b99e532d81c8477579d8183db1de6c
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.5"
+    version: "2.3.6"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -293,6 +309,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
+  formz:
+    dependency: "direct main"
+    description:
+      name: formz
+      sha256: df8301299601139de7e653e68a07c332fd2db7cec65745eca1a1ea73fb711e06
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.1"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      sha256: f79870884de16d689cf9a7d15eedf31ed61d750e813c538a6efb92660fea83c3
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.6.4"
   glob:
     dependency: transitive
     description:
@@ -337,10 +369,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_sign_in
-      sha256: f45038d27bcad37498f282295ae97eece23c9349fc16649154067b87b9f1fd03
+      sha256: "8f8b94880f2753ccb796744259da529674e49b9af2e372abf6978c590c0ebfef"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.5"
+    version: "6.1.6"
   google_sign_in_android:
     dependency: transitive
     description:

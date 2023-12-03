@@ -1,5 +1,3 @@
-import 'package:brain_box/assets/theme/color_schemes.g.dart';
-import 'package:brain_box/core/constants/icons.dart';
 import 'package:brain_box/feature/education/presentation/education_screen.dart';
 import 'package:brain_box/feature/main/presentation/main_screen.dart';
 import 'package:brain_box/feature/navigation/presentation/bloc/navigation_bloc.dart';
@@ -7,10 +5,8 @@ import 'package:brain_box/feature/navigation/presentation/bloc/navigation_event.
 import 'package:brain_box/feature/navigation/presentation/bloc/navigation_state.dart';
 import 'package:brain_box/feature/reminder/presentation/reminder_screen.dart';
 import 'package:brain_box/feature/settings/presentation/settings_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 List<NavigationDestination> bottomNavigationBars = <NavigationDestination>[
   const NavigationDestination(
