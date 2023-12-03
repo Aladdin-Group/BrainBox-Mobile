@@ -1,10 +1,10 @@
-import 'package:brain_box/core/singeltons/storage/storage_repository.dart';
-import 'package:brain_box/core/singeltons/storage/store_keys.dart';
 import 'package:brain_box/feature/lang/presentation/language_screen.dart';
 import 'package:brain_box/feature/navigation/presentation/bloc/navigation_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/singletons/storage/storage_repository.dart';
+import '../../../core/singletons/storage/store_keys.dart';
 import '../../navigation/presentation/pages/lading_page.dart';
 
 class SplashScreen extends StatefulWidget {

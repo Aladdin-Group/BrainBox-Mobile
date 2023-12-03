@@ -1,6 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:brain_box/core/singeltons/storage/storage_repository.dart';
-import 'package:brain_box/core/singeltons/storage/store_keys.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
 import 'package:brain_box/feature/main/presentation/main_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -11,6 +9,8 @@ import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../core/singletons/storage/storage_repository.dart';
+import '../../../core/singletons/storage/store_keys.dart';
 import '../../navigation/presentation/bloc/navigation_bloc.dart';
 import '../../navigation/presentation/pages/lading_page.dart';
 import 'manager/auth_state.dart';

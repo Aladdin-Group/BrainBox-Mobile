@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 
 import '../../assets/constants/app_constants.dart';
-import '../../singeltons/storage/storage_repository.dart';
-import '../../singeltons/storage/store_keys.dart';
+import '../../singletons/storage/storage_repository.dart';
+import '../../singletons/storage/store_keys.dart';
 
 class CustomInterceptor implements Interceptor {
   final Dio dio;

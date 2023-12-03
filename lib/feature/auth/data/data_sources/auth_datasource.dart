@@ -1,13 +1,12 @@
-import 'package:brain_box/core/singeltons/dio_settings.dart';
-import 'package:brain_box/core/singeltons/service_locator.dart';
 import 'package:brain_box/feature/auth/data/models/auth_model.dart';
-import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/exceptions/exception.dart';
 import '../../../../core/exceptions/failure.dart';
-import '../../../../core/singeltons/storage/storage_repository.dart';
-import '../../../../core/singeltons/storage/store_keys.dart';
+import '../../../../core/singletons/dio_settings.dart';
+import '../../../../core/singletons/service_locator.dart';
+import '../../../../core/singletons/storage/storage_repository.dart';
+import '../../../../core/singletons/storage/store_keys.dart';
 
 abstract class AuthDataSource {
 

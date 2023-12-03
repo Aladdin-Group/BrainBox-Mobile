@@ -1,4 +1,4 @@
-import 'package:brain_box/core/singeltons/storage/storage_repository.dart';
+import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:get_it/get_it.dart';
 
 import 'dio_settings.dart';

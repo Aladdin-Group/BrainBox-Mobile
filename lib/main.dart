@@ -1,4 +1,3 @@
-import 'package:brain_box/core/singeltons/service_locator.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
 import 'package:brain_box/feature/splash/presentation/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 import 'core/assets/theme/color_schemes.g.dart';
+import 'core/singletons/service_locator.dart';
+import 'feature/main/presentation/manager/main/main_bloc.dart';
 
 
 void main() async{
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => MainBloc()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

@@ -1,0 +1,46 @@
+import 'package:brain_box/core/utils/generic_pagination.dart';
+import 'package:brain_box/feature/main/data/models/Movie.dart';
+import 'package:dio/dio.dart';
+
+import '../../../../core/exceptions/exception.dart';
+import '../../../../core/exceptions/failure.dart';
+import '../../../../core/singletons/dio_settings.dart';
+import '../../../../core/singletons/service_locator.dart';
+import '../../../../core/singletons/storage/storage_repository.dart';
+import '../../../../core/singletons/storage/store_keys.dart';
+
+abstract class MainDatasource {
+  Future<GenericPagination<Content>> getAllMovies(int page);
+}
+
+class MainDatasourceImplementation extends MainDatasource{
+
+  final dio = serviceLocator<DioSettings>().dio;
+
+  @override
+  Future<GenericPagination<Content>> getAllMovies(int page) async{
+    final token = StorageRepository.getString(StoreKeys.token);
+
+    try {
+      final response = await dio.get(
+        '/api/v1/movie/getAllMoviePage',
+        queryParameters: {
+          "page": page,
+          "size": 5
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return GenericPagination.fromJson(response.data, (p0) {
+          return Content.fromJson(p0 as Map<String, dynamic>);
+        });
+      }
+      throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
+    } on ServerException {
+      rethrow;
+    } on Exception catch (e) {
+      throw ParsingException(errorMessage: e.toString());
+    }
+  }
+
+}

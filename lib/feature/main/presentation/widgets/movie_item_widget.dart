@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/episod/presentation/episode_screen.dart';
-import 'package:brain_box/feature/main/data/models/movie_item.dart';
+import 'package:brain_box/feature/main/data/models/Movie.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class MovieItemWidget extends StatelessWidget {
-  Movie movie;
+  Content movie;
   MovieItemWidget({super.key,required this.movie});
 
   @override
@@ -28,7 +29,7 @@ class MovieItemWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage(movie.imageUrl),
+                          image: CachedNetworkImageProvider(movie?.avatarUrl??''),
                       )
                     ),
                     child: Stack(
@@ -45,7 +46,7 @@ class MovieItemWidget extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(100)
                               ),
                               alignment: Alignment.center,
-                              child: Text(movie.plus),
+                              child: Text(movie?.belongAge.toString()??''),
                             ),
                           ),
                         )
@@ -58,7 +59,7 @@ class MovieItemWidget extends StatelessWidget {
                 child: SizedBox(
                   width: 170,
                   child: AutoSizeText(
-                      movie.title,
+                      movie?.name??'error name',
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -70,7 +71,7 @@ class MovieItemWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: AutoSizeText(
-                    movie.level,
+                    movie?.level??'level error',
                   style: const TextStyle(
                     fontSize: 13
                   ),

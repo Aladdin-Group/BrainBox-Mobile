@@ -1,5 +1,5 @@
-import 'package:brain_box/core/singeltons/storage/storage_repository.dart';
-import 'package:brain_box/core/singeltons/storage/store_keys.dart';
+import 'package:brain_box/core/singletons/storage/storage_repository.dart';
+import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:dio/dio.dart';
 
 import '../data/intersepter/custom_interceptor.dart';

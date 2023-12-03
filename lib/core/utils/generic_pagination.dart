@@ -8,9 +8,9 @@ class GenericPagination<T> {
   final String? next;
   @JsonKey(name: 'previous')
   final String? previous;
-  @JsonKey(name: 'result', defaultValue: [])
+  @JsonKey(name: 'content', defaultValue: [])
   final List<T> results;
-  @JsonKey(name: 'count', defaultValue: 0)
+  @JsonKey(name: 'totalPages', defaultValue: 0)
   final int count;
 
   GenericPagination(
