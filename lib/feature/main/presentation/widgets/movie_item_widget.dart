@@ -29,7 +29,9 @@ class MovieItemWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: CachedNetworkImageProvider(movie?.avatarUrl??''),
+                          image: CachedNetworkImageProvider(
+                              movie?.avatarUrl??'',
+                          ),
                       )
                     ),
                     child: Stack(

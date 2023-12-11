@@ -14,7 +14,8 @@ GenericPagination<T> _$GenericPaginationFromJson<T>(
       next: json['next'] as String?,
       previous: json['previous'] as String?,
       results: (json['content'] as List<dynamic>?)?.map(fromJsonT).toList() ?? [],
-      count: json['totalPages'] as int? ?? 0,
+      count: json['totalElements'] as int? ?? 0,
+      page: json['totalPages'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$GenericPaginationToJson<T>(
@@ -25,5 +26,6 @@ Map<String, dynamic> _$GenericPaginationToJson<T>(
       'next': instance.next,
       'previous': instance.previous,
       'content': instance.results.map(toJsonT).toList(),
-      'totalPages': instance.count,
+      'totalElements': instance.count,
+      'totalPages': instance.page,
     };

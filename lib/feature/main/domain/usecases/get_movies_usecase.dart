@@ -7,12 +7,12 @@ import 'package:brain_box/feature/main/domain/repository/main_repository.dart';
 
 import '../../data/repositories/main_repository_implementation.dart';
 
-class GetMoviesUseCase extends UseCase<GenericPagination<Content>,int>{
+class GetMoviesUseCase extends UseCase<GenericPagination<Content>,Map<String,int>>{
 
   final MainRepository repository = MoviesRepositoryImplementation();
 
   @override
-  Future<Either<Failure, GenericPagination<Content>>> call(int params) {
+  Future<Either<Failure, GenericPagination<Content>>> call(Map<String,int> params) {
     return repository.getMovies(params);
   }
 

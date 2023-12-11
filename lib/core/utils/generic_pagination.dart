@@ -10,13 +10,16 @@ class GenericPagination<T> {
   final String? previous;
   @JsonKey(name: 'content', defaultValue: [])
   final List<T> results;
-  @JsonKey(name: 'totalPages', defaultValue: 0)
+  @JsonKey(name: 'totalElements', defaultValue: 0)
   final int count;
+  @JsonKey(name: 'totalPages', defaultValue: 0)
+  final int page;
 
   GenericPagination(
       {required this.next,
         required this.previous,
         required this.results,
+        required this.page,
         required this.count});
   factory GenericPagination.fromJson(
       Map<String, dynamic> json, T Function(Object?) fetch) =>

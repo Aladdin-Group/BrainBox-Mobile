@@ -21,6 +21,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   SearchController searchController = SearchController();
+  var index = 0;
 
   @override
   void initState() {
@@ -102,6 +103,24 @@ class _MainScreenState extends State<MainScreen> {
                                         itemCount: movies.length,
                                         scrollDirection: Axis.horizontal,
                                         itemBuilder: (context, hor) {
+                                          var movieIndex = 0;
+                                          for(var i = 0; i < state.count.length; i++){
+                                            if(state.count[i].keys.first==key){
+                                              movieIndex=i;
+                                              break;
+                                            }
+                                          }
+                                          if (hor == movies.length - 1) {
+                                            print('hor->');
+                                            if (state.count[movieIndex][key]! > movies.length) {
+                                              print('wow');
+                                              context.read<MainBloc>().add(GetMoreMovieEvent(movieLevel: key, onSuccess: (onSuccess){
+                                                setState(() {
+                                                });
+                                              }));
+                                            }
+                                          }else{
+                                          }
                                           return  MovieItemWidget(movie: movies[hor]);
                                         }
                                     ),

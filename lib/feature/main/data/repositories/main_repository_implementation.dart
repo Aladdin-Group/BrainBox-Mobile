@@ -13,9 +13,9 @@ class MoviesRepositoryImplementation extends MainRepository{
   final MainDatasource datasource = MainDatasourceImplementation();
 
   @override
-  Future<Either<Failure, GenericPagination<Content>>> getMovies(int page) async{
+  Future<Either<Failure, GenericPagination<Content>>> getMovies(Map<String,int> map) async{
     try {
-      final result = await datasource.getAllMovies(page);
+      final result = await datasource.getAllMovies(map);
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(errorMessage: e.errorMessage, statusCode: e.statusCode));

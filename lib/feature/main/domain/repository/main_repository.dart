@@ -5,5 +5,5 @@ import '../../../../core/utils/generic_pagination.dart';
 import '../../data/models/Movie.dart';
 
 abstract class MainRepository{
-  Future<Either<Failure,GenericPagination<Content>>> getMovies(int page);
+  Future<Either<Failure,GenericPagination<Content>>> getMovies(Map<String,int> map);
 }

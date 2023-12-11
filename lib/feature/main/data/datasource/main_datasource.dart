@@ -10,7 +10,7 @@ import '../../../../core/singletons/storage/storage_repository.dart';
 import '../../../../core/singletons/storage/store_keys.dart';
 
 abstract class MainDatasource {
-  Future<GenericPagination<Content>> getAllMovies(int page);
+  Future<GenericPagination<Content>> getAllMovies(Map<String,int> map);
 }
 
 class MainDatasourceImplementation extends MainDatasource{
@@ -18,16 +18,17 @@ class MainDatasourceImplementation extends MainDatasource{
   final dio = serviceLocator<DioSettings>().dio;
 
   @override
-  Future<GenericPagination<Content>> getAllMovies(int page) async{
+  Future<GenericPagination<Content>> getAllMovies(Map<String,int> map) async{
     final token = StorageRepository.getString(StoreKeys.token);
-
     try {
+      var query = {
+        "page": map[map.keys.elementAt(0)],
+        "size": 5,
+        "level": map.keys.first
+      };
       final response = await dio.get(
         '/api/v1/movie/getAllMoviePage',
-        queryParameters: {
-          "page": page,
-          "size": 5
-        },
+         queryParameters: query,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

@@ -4,22 +4,20 @@ part of 'main_bloc.dart';
 class MainState extends Equatable {
   final Map<String,List<Content>> movies;
   final FormzSubmissionStatus status;
-  final int count;
-  final int page;
+  final List<Map<String,int>> count;
+  final List<Map<String,int>> page;
   const MainState({
     this.movies = const {},
-    this.count = 0,
-    this.page = 0,
+    this.count = const [],
+    this.page = const [],
     this.status = FormzSubmissionStatus.initial,
   });
 
   MainState copyWith({
     Map<String,List<Content>>? movies,
     FormzSubmissionStatus? status,
-    FormzSubmissionStatus? refreshStatus,
-    int? count,
-    int? page,
-    double? coins
+    List<Map<String,int>>? count,
+    List<Map<String,int>>? page,
   }) =>
       MainState(
           movies: movies ?? this.movies,
