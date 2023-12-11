@@ -111,9 +111,7 @@ class _MainScreenState extends State<MainScreen> {
                                             }
                                           }
                                           if (hor == movies.length - 1) {
-                                            print('hor->');
                                             if (state.count[movieIndex][key]! > movies.length) {
-                                              print('wow');
                                               context.read<MainBloc>().add(GetMoreMovieEvent(movieLevel: key, onSuccess: (onSuccess){
                                                 setState(() {
                                                 });
