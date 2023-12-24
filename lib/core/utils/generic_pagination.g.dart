@@ -7,21 +7,22 @@ part of 'generic_pagination.dart';
 // **************************************************************************
 
 GenericPagination<T> _$GenericPaginationFromJson<T>(
-    Map<String, dynamic> json,
-    T Function(Object? json) fromJsonT,
-    ) =>
+  Map<String, dynamic> json,
+  T Function(Object? json) fromJsonT,
+) =>
     GenericPagination<T>(
       next: json['next'] as String?,
       previous: json['previous'] as String?,
-      results: (json['content'] as List<dynamic>?)?.map(fromJsonT).toList() ?? [],
-      count: json['totalElements'] as int? ?? 0,
+      results:
+          (json['content'] as List<dynamic>?)?.map(fromJsonT).toList() ?? [],
       page: json['totalPages'] as int? ?? 0,
+      count: json['totalElements'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$GenericPaginationToJson<T>(
-    GenericPagination<T> instance,
-    Object? Function(T value) toJsonT,
-    ) =>
+  GenericPagination<T> instance,
+  Object? Function(T value) toJsonT,
+) =>
     <String, dynamic>{
       'next': instance.next,
       'previous': instance.previous,

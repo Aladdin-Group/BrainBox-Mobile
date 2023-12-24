@@ -27,11 +27,11 @@ class AuthDatasourceImplementation extends AuthDataSource{
       final response = await dio.post(
         '/api/v1/auth/regLog',
         data: {
-          "name": "Azizbek",
-          "surname": "Xoliqov",
-          "uniqueId": "string",
-          "email": "xoliqovazizbek23@gmail.com",
-          "imageUrl": "https://i.pinimg.com/564x/59/19/69/591969d90243c1a2d04ff01c8ac0ac0a.jpg"
+          "name": googleUser?.displayName,
+          "surname": "some",
+          "uniqueId": googleUser?.id,
+          "email": googleUser?.email,
+          "imageUrl": googleUser?.photoUrl
         },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

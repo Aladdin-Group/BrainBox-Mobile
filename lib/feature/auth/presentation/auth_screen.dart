@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
-import 'package:brain_box/feature/main/presentation/main_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,17 +59,17 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(onPressed: (){
-                            StorageRepository.putBool(key: StoreKeys.isSkip, value: true);
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BlocProvider<NavigationBloc>.value(value: navigationBloc,child: const LadingPage(),),), (route) => false);
-                          }, icon: const Icon(Icons.close,color: Colors.white,)),
-                          const SizedBox(width: 20),
-                        ],
-                      ),
+                      // Row(
+                      //   crossAxisAlignment: CrossAxisAlignment.end,
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   children: [
+                      //     IconButton(onPressed: (){
+                      //       StorageRepository.putBool(key: StoreKeys.isSkip, value: true);
+                      //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BlocProvider<NavigationBloc>.value(value: navigationBloc,child: const LadingPage(),),), (route) => false);
+                      //     }, icon: const Icon(Icons.close,color: Colors.white,)),
+                      //     const SizedBox(width: 20),
+                      //   ],
+                      // ),
                       const SizedBox(height: 100,),
                       AutoSizeText(
                         'welcome_back'.tr(),
@@ -91,16 +90,15 @@ class _AuthScreenState extends State<AuthScreen> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: ()async{
-                              context.read<AuthBloc>().add(GoogleAuthEvent());
-                              // await GoogleSignIn().signIn().then((value) => {
-                              //   if(value!=null){
-                              //     showDialog(context: context, builder: (BuildContext context){ return AlertDialog(title: Text(value.displayName??'no'),);}),
-                              //     StorageRepository.putBool(key: StoreKeys.isAuth, value: true),
-                              //     context.read<AuthBloc>().add(GoogleAuthEvent(googleSignInAccount: value))
-                              //   }else{
-                              //   },
-                              //
-                              // });
+                              // context.read<AuthBloc>().add(GoogleAuthEvent());
+                              await GoogleSignIn().signIn().then((value) => {
+                                if(value!=null){
+                                  showDialog(context: context, builder: (BuildContext context){ return AlertDialog(title: Text(value.displayName??'no'),);}),
+                                  StorageRepository.putBool(key: StoreKeys.isAuth, value: true),
+                                  context.read<AuthBloc>().add(GoogleAuthEvent(googleSignInAccount: value))
+                                }else{
+                                },
+                              });
 
                             },
                             style: ButtonStyle(

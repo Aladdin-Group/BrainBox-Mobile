@@ -14,7 +14,15 @@ class StoreKeys{
 
   static const String appTheme = 'appTheme';
 
+  static const String isDark = 'isDark';
+
   static const String appSound = 'appSound';
 
   static const String rating = 'rating';
+
+  static const String reminderDate = 'reminderDate';
+
+  static const String customReminderDate = 'customReminderDate';
+
+  static const String localWordsList = 'localWordsList';
 }

@@ -5,12 +5,16 @@ import 'package:delayed_widget/delayed_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../search/presentation/search_delegate.dart';
 import '../data/models/Movie.dart';
 import 'manager/main/main_bloc.dart';
+
+import 'package:timezone/timezone.dart' as tz;
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,12 +26,24 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   SearchController searchController = SearchController();
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   var index = 0;
 
   @override
   void initState() {
     super.initState();
+    initializeLocalNotifications();
   }
+
+  Future<void> initializeLocalNotifications() async {
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('app_icon');
+    final InitializationSettings initializationSettings =
+    InitializationSettings(android: initializationSettingsAndroid);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +68,20 @@ class _MainScreenState extends State<MainScreen> {
               Row(
                 children: [
                   IconButton(
-                      onPressed: () {
+                      onPressed: () async{
+                        await flutterLocalNotificationsPlugin.zonedSchedule(
+                            1,
+                            'scheduled title',
+                            'scheduled body',
+                            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+                            const NotificationDetails(
+                                android: AndroidNotificationDetails(
+                                    '1', '1',
+                                    channelDescription: 'your channel description')),
+                            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+                            uiLocalNotificationDateInterpretation:
+                            UILocalNotificationDateInterpretation.absoluteTime);
+
                         showSearch(
                             context: context,
                             delegate: Search(["v1", "v2", "v3"]));
