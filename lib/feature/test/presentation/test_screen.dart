@@ -5,6 +5,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/test/presentation/pages/test_result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../words/data/models/words_response.dart';
 import 'manager/test_bloc.dart';
@@ -30,11 +32,19 @@ class _TestScreenState extends State<TestScreen> {
   ValueNotifier<List<String>> options = ValueNotifier(['varA', 'varB', 'varC', 'varD']);
   ValueNotifier<int?> selectedOptionIndex = ValueNotifier(null);
   ValueNotifier<int?> correctOptionIndex = ValueNotifier(null);
+  Timer? _timer;
 
   @override
   void initState() {
     bloc = TestBloc();
+    startTimer();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer if it's active
+    super.dispose();
   }
 
   void onVariantSelected(String selectedVariant) {
@@ -185,13 +195,6 @@ class _TestScreenState extends State<TestScreen> {
       incorrectAnswers.add(current.value); // Add the index of the current question
     }
 
-    // Optionally show a snackbar with feedback
-    final snackBar = SnackBar(
-      content: Text(isCorrect ? 'Correct!' : 'Incorrect!'),
-      backgroundColor: isCorrect ? Colors.green : Colors.red,
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
     // Load the next question after a short delay
     Future.delayed(const Duration(seconds: 1), () {
       loadNextQuestion();
@@ -235,6 +238,24 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer?.cancel(); // Cancel any existing timer
+    _timer = Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        if (timerCount.value == 0) {
+          timer.cancel(); // Stop the timer as it has reached zero
+          // Here you can handle what happens when the timer runs out
+          // For example, automatically move to the next question
+          loadNextQuestion();
+        } else {
+          timerCount.value--;
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -260,90 +281,188 @@ class _TestScreenState extends State<TestScreen> {
         body: BlocConsumer<TestBloc, TestState>(
           listener: (context, state) {},
           builder: (context, state) {
-            return ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Book test 1'),
-                      ValueListenableBuilder(
-                          valueListenable: timerCount,
-                          builder: (context, value, _) => Text('$value s')
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Card(
-                    elevation: 0,
-                    shape: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                        )
-                    ),
-                    child: SizedBox(
-                      width: double.maxFinite,
-                      height: 150,
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            right: 10,
-                            top: 10,
-                            child: ValueListenableBuilder(
-                              valueListenable: testIndex,
-                              builder: (context, indexValue, _) => ValueListenableBuilder(
-                                  valueListenable: size,
-                                  builder: (context, sizeValue, _) => Text('$indexValue/$sizeValue')
-                              ),
-                            ),
-                          ),
-                          Center(
-                            child: ValueListenableBuilder(
-                              valueListenable: current,
-                              builder: (context, Content value, _) => AutoSizeText(
-                                value.value ?? 'null',
-                                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const Text('Choose one of the answers:', textAlign: TextAlign.center),
-                ...List.generate(options.value.length, (index) {
-                  return GestureDetector(
-                    onTap: () => selectOption(index),
-                    child: optionWidget(index),
-                  );
-                }),
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10, bottom: 10),
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))
-                            )
+            if(state.status.isSuccess){
+              return ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Book test 1'),
+                        ValueListenableBuilder(
+                            valueListenable: timerCount,
+                            builder: (context, value, _) => Text('$value s')
                         ),
-                        onPressed: () {
-                          // Logic to leave the test
-                        },
-                        child: const Text('Leave test')
+                      ],
                     ),
                   ),
-                ),
-              ],
-            );
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Card(
+                      elevation: 0,
+                      shape: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          )
+                      ),
+                      child: SizedBox(
+                        width: double.maxFinite,
+                        height: 150,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: ValueListenableBuilder(
+                                valueListenable: testIndex,
+                                builder: (context, indexValue, _) => ValueListenableBuilder(
+                                    valueListenable: size,
+                                    builder: (context, sizeValue, _) => Text('$indexValue/$sizeValue')
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: ValueListenableBuilder(
+                                valueListenable: current,
+                                builder: (context, Content value, _) => AutoSizeText(
+                                  value.value ?? 'null',
+                                  style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Text('Choose one of the answers:', textAlign: TextAlign.center),
+                  ...List.generate(options.value.length, (index) {
+                    return GestureDetector(
+                      onTap: () => selectOption(index),
+                      child: optionWidget(index),
+                    );
+                  }),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10, bottom: 10),
+                    child: SizedBox(
+                      height: 50,
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))
+                              )
+                          ),
+                          onPressed: () {
+                            // Logic to leave the test
+                          },
+                          child: const Text('Leave test')
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return buildShimmerEffect(context);
           },
         ),
       ),
     );
   }
+
+  Widget buildShimmerEffect(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!, // Base color of the shimmer
+      highlightColor: Colors.grey[100]!, // Highlight color of the shimmer
+      child: ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 100,
+                  height: 20,
+                  color: Colors.white,
+                ),
+                Container(
+                  width: 50,
+                  height: 20,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Card(
+              elevation: 0,
+              shape: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                  )
+              ),
+              child: SizedBox(
+                width: double.maxFinite,
+                height: 150,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 20,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      height: 20,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          ...List.generate(4, (index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+              ),
+            );
+          }),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
