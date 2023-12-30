@@ -355,7 +355,7 @@ class _TestScreenState extends State<TestScreen> {
                               )
                           ),
                           onPressed: () {
-                            // Logic to leave the test
+                            Navigator.pop(context);
                           },
                           child: const Text('Leave test')
                       ),
