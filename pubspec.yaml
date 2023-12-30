@@ -70,6 +70,8 @@ dependencies:
   easy_rich_text: ^2.1.0
   in_app_update: ^4.2.2
   package_info: ^2.0.2
+  in_app_review: ^2.0.8
+  url_launcher: ^6.2.2
 
 dev_dependencies:
   flutter_test:

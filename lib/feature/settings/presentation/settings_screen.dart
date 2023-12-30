@@ -19,11 +19,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/icons.dart';
 import '../../../core/utils/background_controller.dart';
 import '../data/models/user.dart';
 import 'manager/settings/settings_bloc.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 
 
@@ -51,6 +53,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     'English',
     'Uzbek',
   ];
+
+  final InAppReview inAppReview = InAppReview.instance;
+
+  void showRateDialog() async {
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
+    } else {
+      // The in-app review dialog is not available.
+      // Consider directing the user to the app's listing on Google Play
+      const url = 'https://play.google.com/store/apps/details?id=com.aladdin.brain_box';
+      // You can use the url_launcher package to launch the URL
+      if (await canLaunch(url)) {
+        await launch(url);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -313,6 +331,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: Colors.amber,
                           ),
                           onRatingUpdate: (rating) {
+                            showRateDialog();
                             StorageRepository.putDouble(StoreKeys.rating, rating);
                           },
                         ),
