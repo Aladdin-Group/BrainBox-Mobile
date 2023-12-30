@@ -25,4 +25,8 @@ class StoreKeys{
   static const String customReminderDate = 'customReminderDate';
 
   static const String localWordsList = 'localWordsList';
+
+  static const String userData = 'userData';
+
+  static const String user = 'user';
 }

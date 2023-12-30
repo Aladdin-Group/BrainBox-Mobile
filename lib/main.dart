@@ -19,6 +19,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/adapters/storage/user_adapter.dart';
 import 'core/assets/theme/color_schemes.g.dart';
 import 'core/singletons/service_locator.dart';
 import 'core/singletons/storage/hive_controller.dart';
@@ -26,6 +27,7 @@ import 'core/singletons/storage/storage_repository.dart';
 import 'feature/main/presentation/manager/main/main_bloc.dart';
 import 'feature/reminder/data/models/local_word.dart';
 import 'feature/settings/presentation/manager/theme/app_theme_bloc.dart';
+import 'feature/words/presentation/manager/words_bloc.dart';
 
 @pragma('vm:entry-point')
 Future<bool> onIosBackground(ServiceInstance service) async {
@@ -77,7 +79,7 @@ void onStart(ServiceInstance service) async {
   });
 
   // bring to foreground
-  Timer.periodic(Duration(seconds: reminderDate.everyTime), (timer) async {
+  Timer.periodic(Duration(minutes: reminderDate.everyTime), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         /// OPTIONAL for use custom notification
@@ -185,12 +187,12 @@ Future<void> initializeService() async {
       // this will be executed when app is in foreground or background in separated isolate
       onStart: onStart,
       // auto start service
-      autoStart: true,
+      autoStart: false,
       isForegroundMode: true,
     ),
     iosConfiguration: IosConfiguration(
       // auto start service
-      autoStart: true,
+      autoStart: false,
 
       // this will be executed when app is in foreground in separated isolate
       onForeground: onStart,
@@ -208,7 +210,9 @@ void main() async{
   await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(WordHiveAdapter());
+  Hive.registerAdapter(UserHiveAdapter());
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
+  await Hive.openBox(StoreKeys.userData);
   await initializeService();
   await MobileAds.instance.initialize();
   FlutterNativeSplash.remove();
@@ -228,6 +232,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider(create: (context) => MainBloc()),
         BlocProvider(create: (context) => AppThemeBloc()),
+        BlocProvider(create: (context) => WordsBloc()),
       ],
       child: BlocBuilder<AppThemeBloc, AppThemeState>(
         builder: (context, state) {

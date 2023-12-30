@@ -5,29 +5,30 @@ import 'package:brain_box/feature/navigation/presentation/bloc/navigation_event.
 import 'package:brain_box/feature/navigation/presentation/bloc/navigation_state.dart';
 import 'package:brain_box/feature/reminder/presentation/reminder_screen.dart';
 import 'package:brain_box/feature/settings/presentation/settings_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 List<NavigationDestination> bottomNavigationBars = <NavigationDestination>[
-  const NavigationDestination(
-      tooltip: 'Home',
+  NavigationDestination(
+      tooltip: 'Home'.tr(),
       icon: Icon(Icons.home_filled),
-      label: 'Home',
+      label: 'Home'.tr(),
   ),
-  const NavigationDestination(
-      tooltip: 'Education',
+  NavigationDestination(
+      tooltip: 'Education'.tr(),
       icon: Icon(Icons.school),
-      label: 'Education',
+      label: 'Education'.tr(),
   ),
-  const NavigationDestination(
-      tooltip: 'Reminder',
+  NavigationDestination(
+      tooltip: 'Reminder'.tr(),
       icon: Icon(Icons.notifications),
-      label: 'Reminder',
+      label: 'Reminder'.tr(),
   ),
-  const NavigationDestination(
-      tooltip: 'Settings',
+  NavigationDestination(
+      tooltip: 'Settings'.tr(),
       icon: Icon(Icons.settings),
-      label: 'Settings',
+      label: 'Settings'.tr(),
   ),
 ];
 

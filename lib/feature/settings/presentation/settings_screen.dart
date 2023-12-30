@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/core/singletons/storage/storage_repository.dart';
@@ -9,27 +7,25 @@ import 'package:brain_box/feature/settings/presentation/manager/theme/app_theme_
 import 'package:brain_box/feature/settings/presentation/pages/about_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/help_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/saved_words_page.dart';
+import 'package:brain_box/feature/settings/presentation/pages/shop_page.dart';
 import 'package:brain_box/feature/settings/presentation/widgets/settings_item.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../core/constants/icons.dart';
+import '../../../core/utils/background_controller.dart';
 import '../data/models/user.dart';
 import 'manager/settings/settings_bloc.dart';
 
 
-InAppPurchase _inAppPurchase = InAppPurchase.instance;
-late StreamSubscription<dynamic> _streamSubscription;
-List<ProductDetails> _products = [];
-List<ProductDetails> appleProducts = [];
-const _variant = {'get_coin_30'};
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -40,28 +36,30 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
 
-  late User user;
+  User? user;
   ValueNotifier<bool> themeMode = ValueNotifier(false);
   ValueNotifier<bool> appSound = ValueNotifier(false);
   ValueNotifier<bool> isInit = ValueNotifier(false);
   ValueNotifier<String> appLanguage = ValueNotifier('En');
+  bool isPremium = false;
   ValueNotifier<PermissionStatus> statusNotification = ValueNotifier(PermissionStatus.denied);
-
+  late SettingsBloc bloc;
+  int _selectedFruit = 0;
+  final double _kItemExtent = 32.0;
+  final List<String> _fruitNames = <String>[
+    'Русский',
+    'English',
+    'Uzbek',
+  ];
 
   @override
   void initState() {
     appLanguage.value = StorageRepository.getString(StoreKeys.appLang);
     themeMode.value = StorageRepository.getBool(StoreKeys.appTheme);
     appSound.value = StorageRepository.getBool(StoreKeys.appSound);
-    Stream purchaseUpdated = InAppPurchase.instance.purchaseStream;
-    _streamSubscription = purchaseUpdated.listen((purchaseList) {
-      _listenToPurchase(purchaseList, context);
-    }, onDone: (){
-      _streamSubscription.cancel();
-    }, onError: (error){
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error')));
-    });
-    initStore();
+    bloc = SettingsBloc();
+
+
     checkPermissions();
     super.initState();
   }
@@ -75,9 +73,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SettingsBloc()..add(GetUserDataEvent(onSuccess: (userData){
+      create: (context) => bloc..add(GetUserDataEvent(onSuccess: (userData){
         isInit.value = true;
         user = userData;
+        Locale currentLocale = context.locale;
+
+        // Access the language code (e.g., 'en', 'ru', 'fr')
+        String languageCode = currentLocale.languageCode;
+
+        if(languageCode=='uz'){
+          _selectedFruit = 2;
+        }else if(languageCode=='en'){
+          _selectedFruit = 1;
+        }else{
+          _selectedFruit = 0;
+        }
+
+        setState(() {
+          isPremium = user!.isPremium??false;
+        });
       })),
       child: Scaffold(
         appBar: AppBar(
@@ -88,23 +102,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(
                 width: 10,
               ),
-              AutoSizeText(
+              isPremium ? FittedBox(
+                child: Row(
+                  children: [
+                    AutoSizeText(
+                      'Brainbox',
+                      style: GoogleFonts.kronaOne(),
+                    ),
+                    AutoSizeText(
+                      'Premium'.tr(),
+                      style: GoogleFonts.kronaOne(),
+                    ),
+                  ],
+                ),
+              ) :  AutoSizeText(
                 'Brainbox',
                 style: GoogleFonts.kronaOne(),
               )
             ],
           ),
-          actions: [
+          actions: isPremium ? [] : [
             ValueListenableBuilder(
-              valueListenable: isInit,
-              builder: (p1,p2,p3) {
-                return p2 ? Text(user.coins.toString(),style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold
-                ),) : const SizedBox();
-              }
+                valueListenable: isInit,
+                builder: (p1,p2,p3) {
+                  return p2 ? Text(user!.coins.toString(),style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                  ),) : const SizedBox();
+                }
             ),
-            IconButton(icon: const Icon(Icons.add_circle),onPressed: (){_buy();},),
+            IconButton(icon: const Icon(Icons.add_circle),onPressed: () async{
+              if(user!=null){
+                bool isPaymentAvailable = await Navigator.push(context, MaterialPageRoute(builder: (builder)=>ShopPage(bloc: bloc,user: user!,)));
+                if(isPaymentAvailable){
+                  bloc.add(GetUserDataEvent(onSuccess: (userData){
+                    isInit.value = true;
+                    user = userData;
+                    setState(() {
+                      isPremium = user!.isPremium??false;
+                    });
+                  }));
+                }
+              }
+            },),
             const SizedBox(width: 12,),
           ],
         ),
@@ -119,16 +159,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: SizedBox(
                         width: 130,
                         height: 130,
-                        child: CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(
-                              user.imageUrl??'',
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: CircleAvatar(
+                            foregroundImage: CachedNetworkImageProvider(
+                              user!.imageUrl??'',
+
+                            ),
                           ),
-                        ),
+                        )
                       ),
                     ),
                     SliverToBoxAdapter(
                       child: Text(
-                        user.name??'Abullajon',
+                        user!.name??'Abullajon',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 30,
@@ -138,7 +182,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     SliverToBoxAdapter(
                       child: Text(
-                        user.email??'adbullajon@gmail.com',
+                        user!.email??'adbullajon@gmail.com',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -149,60 +193,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     SliverList.list(
                       children: [
-                        GestureDetector(
-                          onTap: (){
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      ListTile(
-                                        leading: new Icon(Icons.photo),
-                                        title: new Text('Photo'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: new Icon(Icons.music_note),
-                                        title: new Text('Music'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: new Icon(Icons.videocam),
-                                        title: new Text('Video'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: new Icon(Icons.share),
-                                        title: new Text('Share'),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                });
-                          },
-                          child: SettingsItem(
-                            title: 'Language',
-                            action: ValueListenableBuilder(
-                              valueListenable: appLanguage,
-                              builder: (p1,p2,p3) {
-                                return Text(p2,style: const TextStyle(fontWeight: FontWeight.bold),);
+                        SettingsItem(
+                          click: (){
+                            showCupertinoModalPopup<void>(
+                              context: context,
+                              builder: (BuildContext context) => Container(
+                                height: 216,
+                                padding: const EdgeInsets.only(top: 6.0),
+                                // The Bottom margin is provided to align the popup above the system navigation bar.
+                                margin: EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                // Provide a background color for the popup.
+                                color: CupertinoColors.systemBackground.resolveFrom(context),
+                                // Use a SafeArea widget to avoid system overlaps.
+                                child: SafeArea(
+                                  top: false,
+                                  child: CupertinoPicker(
+                                    magnification: 1.22,
+                                    squeeze: 1.2,
+                                    useMagnifier: true,
+                                    itemExtent: _kItemExtent,
+                                    scrollController: FixedExtentScrollController(
+                                      initialItem: _selectedFruit,
+                                    ),
+                                    onSelectedItemChanged: (int selectedItem) {
+                                      setState(() {
+                                        _selectedFruit = selectedItem;
+                                      });
+                                    },
+                                    children: List<Widget>.generate(_fruitNames.length, (int index) {
+                                      return Center(child: Text(_fruitNames[index]));
+                                    }),
+                                  ),
+                                ),
+                              ),
+                            ).then((value) => {
+                              if(_selectedFruit==0){
+                                context.setLocale(const Locale('ru','RU')),
+                              }else if(_selectedFruit==1){
+                                context.setLocale(const Locale('en','US')),
+                              }else{
+                                context.setLocale(const Locale('uz','UZ')),
                               }
-                            ),
+                            });
+                          },
+                          title: 'Language'.tr(),
+                          action: ValueListenableBuilder(
+                            valueListenable: appLanguage,
+                            builder: (p1,p2,p3) {
+                              return Text(p2,style: const TextStyle(fontWeight: FontWeight.bold),);
+                            }
                           ),
                         ),
                         BlocBuilder<AppThemeBloc, AppThemeState>(
                           builder: (context, state) {
                             return SettingsItem(
-                              title: 'Night mode',
+                              title: 'Night mode'.tr(),
                               action: ValueListenableBuilder(
                               valueListenable: themeMode,
                               builder: (p1,p2,p3){
@@ -220,25 +267,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           valueListenable: statusNotification,
                           builder: (p1,p2,p3) {
                             return p2 == PermissionStatus.granted ? SettingsItem(
-                                title: 'App sound',
+                                title: 'App sound'.tr(),
                                 action: ValueListenableBuilder(
                                   valueListenable: appSound,
                                   builder: (p1,p2,p3){
-                                    return Switch(value: p2, onChanged: (value){StorageRepository.putBool(key: StoreKeys.appSound, value: value);appSound.value=value;});
+                                    return Switch(value: p2, onChanged: (value){ if(value){
+                                      BackgroundController.startService();
+                                    }else{
+                                      BackgroundController.stopService();
+                                    } StorageRepository.putBool(key: StoreKeys.appSound, value: value);appSound.value=value;});
                                   },
                                 )
                             ) : p2 == PermissionStatus.permanentlyDenied || p2 == PermissionStatus.denied ? SettingsItem(
-                                title: 'Permission is denied',
+                                title: 'Permission is denied'.tr(),
                               action: ElevatedButton(
                                 onPressed: () {openAppSettings();},
-                                child: const Text('Go settings'),
+                                child: Text('Go settings'.tr()),
                               ),
-                            ) : SettingsItem(title: 'Something went wrong !');
+                            ) : SettingsItem(title: 'Something went wrong !'.tr());
                           }
                         ),
-                        SettingsItem(title: 'Saved words',screen: const SavedWordsPage(),),
-                        SettingsItem(title: 'Help',screen: const HelpPage(),),
-                        SettingsItem(title: 'About',screen: const AboutPage(),),
+                        SettingsItem(title: 'Saved words'.tr(),screen: const SavedWordsPage(),),
+                        SettingsItem(title: 'Help'.tr(),screen: const HelpPage(),),
+                        SettingsItem(title: 'About'.tr(),screen: const AboutPage(),),
                       ],
                     ),
                     const SliverToBoxAdapter(
@@ -272,48 +323,115 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               );
             }
-            return const Center(
-              child: CupertinoActivityIndicator(),
+            return CustomScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    width: 130,
+                    height: 130,
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 65, // Half of width and height of SizedBox
+                      ),
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 30,)),
+                SliverToBoxAdapter(
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 70,
+                      height: 50,
+                      color: Colors.white,
+                    ),
+                  ), // For user name
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: 30,),
+                ),
+                SliverToBoxAdapter(
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 10,
+                      height: 50,
+                      color: Colors.white,
+                    ),
+                  ), // For user email
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: 20,),
+                ),
+                SliverToBoxAdapter(
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 10,
+                      height: 50,
+                      color: Colors.white,
+                    ),
+                  ), // For user email
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: 20,),
+                ),
+                SliverToBoxAdapter(
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 10,
+                      height: 50,
+                      color: Colors.white,
+                    ),
+                  ), // For user email
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: 20,),
+                ),
+                SliverToBoxAdapter(
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 10,
+                      height: 50,
+                      color: Colors.white,
+                    ),
+                  ), // For user email
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: 20,),
+                ),
+                SliverToBoxAdapter(
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[300]!,
+                    highlightColor: Colors.grey[100]!,
+                    child: Container(
+                      width: 10,
+                      height: 50,
+                      color: Colors.white,
+                    ),
+                  ), // For user email
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 20),
+                ),
+                // Repeat for other items like SettingsItem, RatingBar, etc.
+              ],
             );
           },
         ),
       ),
     );
   }
-  initStore() async{
-    ProductDetailsResponse productDetailsResponse =
-    await _inAppPurchase.queryProductDetails(_variant);
 
-    if(productDetailsResponse.error==null){
-      setState(() {
-        _products = productDetailsResponse.productDetails;
-      });
-    }
-
-  }
-  _listenToPurchase(List<PurchaseDetails> purchaseDetailsList, BuildContext context) {
-
-    purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-        showCupertinoDialog(context: context, builder: (context) => CupertinoAlertDialog(title: Text('Pending !'),),);
-      } else if (purchaseDetails.status == PurchaseStatus.error) {
-        showCupertinoDialog(context: context, builder: (context) => CupertinoAlertDialog(title: Text('Paying error'),),);
-      } else if (purchaseDetails.status == PurchaseStatus.purchased) {
-        var json = jsonDecode(purchaseDetails.verificationData.localVerificationData);
-        showDialog(context: context, builder: (context)=> AlertDialog(title: Text(json['quantity']),));
-
-      }
-    });
-
-  }
-}
-
-_buy(){
-  if(Platform.isAndroid){
-    final PurchaseParam param = PurchaseParam(productDetails: _products[0]);
-    _inAppPurchase.buyConsumable(purchaseParam: param);
-  }else{
-    final PurchaseParam param = PurchaseParam(productDetails: appleProducts[0]);
-    _inAppPurchase.buyConsumable(purchaseParam: param);
-  }
 }

@@ -5,7 +5,13 @@ import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../settings/data/models/user.dart';
+import '../../../../settings/domain/use_cases/userDataUsecase.dart';
+import '../../../data/models/search_model.dart';
+import '../../../domain/usecases/buy_movie_usecase.dart';
 import '../../../domain/usecases/get_movies_usecase.dart';
+import '../../../domain/usecases/search_movie_usecase.dart';
+import '../../../domain/usecases/submit_movie_usecase.dart';
 
 part 'main_event.dart';
 part 'main_state.dart';
@@ -14,6 +20,10 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   List<String> levels = [MovieLevel.ELEMENTARY,MovieLevel.INTERMEDIATE,MovieLevel.UPPER_INTERMEDIATE,MovieLevel.BEGINNER];
   final GetMoviesUseCase getMoviesUseCase = GetMoviesUseCase();
+  final BuyMovieUseCase buyMovieUseCase = BuyMovieUseCase();
+  final UserdataUseCase getUserInfoEvent = UserdataUseCase();
+  final SearchMovieUseCase searchMovieUseCase = SearchMovieUseCase();
+  final SubmitMovieUseCase submitMovieUseCase = SubmitMovieUseCase();
 
   MainBloc() : super(const MainState()) {
     on<GetAllMoviesEvent>((event, emit) async{
@@ -32,10 +42,10 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         page.add(paging);
         index++;
         final result = await getMoviesUseCase.call(req);
-        movie[level] = result.right.results;
-        countLevel[level] = result.right.count;
-        counts.add(countLevel);
         if(result.isRight){
+          movie[level] = result.right.results;
+          countLevel[level] = result.right.count;
+          counts.add(countLevel);
           levels.length == index ? emit(state.copyWith(
             status:FormzSubmissionStatus.success,
             movies: movie,
@@ -78,6 +88,45 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       }else{
         emit(state.copyWith(status: FormzSubmissionStatus.failure));
       }
+    });
+    on<BuyMovieEvent>((event,emit)async{
+
+      event.progress();
+
+      final result = await buyMovieUseCase.call(event.movieId);
+
+      if(result.isRight){
+        event.success(result.right);
+      }else{
+        event.failure();
+      }
+
+    });
+    on<GetUserInfoEvent>((event,emit)async{
+
+      event.progress();
+
+      final result = await getUserInfoEvent.call(-1);
+
+      if(result.isRight){
+        event.success(result.right);
+      }else{
+        event.failure();
+      }
+
+    });
+    on<SearchMovieEvent>((event,emit)async{
+      final result = await searchMovieUseCase.call(event.keyWord);
+      if(result.isRight){
+        event.success(result.right);
+      }else{
+        event.failure();
+      }
+    });
+    on<SubmitMovieEvent>((event,emit)async{
+
+      await submitMovieUseCase.call(event.movieName);
+
     });
   }
 }

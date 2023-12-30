@@ -8,7 +8,7 @@ typedef ConverterFunctionType<T> = T Function(dynamic response);
 
 class DioSettings {
   BaseOptions _dioBaseOptions = BaseOptions(
-    baseUrl: 'http://10.0.2.2:8080/',
+    baseUrl: 'http://137.184.14.168:8080/',
     connectTimeout: const Duration(milliseconds: 35000),
     receiveTimeout: const Duration(milliseconds: 35000),
     followRedirects: false,
@@ -19,7 +19,7 @@ class DioSettings {
   void setBaseOptions({String? lang, String? baseUrl}) {
     if (baseUrl != null && Uri.parse(baseUrl).isAbsolute) {
       _dioBaseOptions = BaseOptions(
-        baseUrl: baseUrl ?? 'http://10.0.2.2:8080/',
+        baseUrl: baseUrl ?? 'http://137.184.14.168:8080/',
         connectTimeout: const Duration(milliseconds: 35000),
         receiveTimeout: const Duration(milliseconds: 35000),
         headers: <String, dynamic>{'Accept-Language': lang},
@@ -31,7 +31,7 @@ class DioSettings {
       // You can throw an exception, provide a default URL, or take appropriate action.
       print('Invalid baseUrl: $baseUrl');
       _dioBaseOptions = BaseOptions(
-        baseUrl: 'http://10.0.2.2:8080/',
+        baseUrl: 'http://137.184.14.168:8080/',
         connectTimeout: const Duration(milliseconds: 35000),
         receiveTimeout: const Duration(milliseconds: 35000),
         headers: <String, dynamic>{'Accept-Language': lang},

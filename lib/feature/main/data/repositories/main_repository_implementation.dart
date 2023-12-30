@@ -7,6 +7,7 @@ import 'package:brain_box/feature/main/data/models/Movie.dart';
 
 import '../../../../core/exceptions/exception.dart';
 import '../../domain/repository/main_repository.dart';
+import '../models/search_model.dart';
 
 class MoviesRepositoryImplementation extends MainRepository{
 
@@ -22,6 +23,48 @@ class MoviesRepositoryImplementation extends MainRepository{
     } on DioException {
       return Left(DioFailure());
     }on ParsingException catch (e) {
+      return Left(ParsingFailure(errorMessage: e.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, dynamic>> buyMovie(int movieId) async{
+    try{
+      final result = await datasource.buyMovie(movieId);
+      return Right(result);
+    } on ServerException catch (e){
+      return Left(ServerFailure(statusCode: e.statusCode,errorMessage: e.errorMessage));
+    } on DioException catch (e) {
+      return Left(DioFailure());
+    } on ParsingException catch (e){
+      return Left(ParsingFailure(errorMessage: e.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<SearchModel>>> searchMovie(String keyWord) async{
+    try{
+      final result = await datasource.searchMovie(keyWord);
+      return Right(result);
+    } on ServerException catch (e){
+      return Left(ServerFailure(statusCode: e.statusCode,errorMessage: e.errorMessage));
+    } on DioException catch (e) {
+      return Left(DioFailure());
+    } on ParsingException catch (e){
+      return Left(ParsingFailure(errorMessage: e.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, dynamic>> submitMovie(String movieName) async{
+    try{
+      final result = await datasource.submitMovie(movieName);
+      return Right(result);
+    } on ServerException catch (e){
+      return Left(ServerFailure(statusCode: e.statusCode,errorMessage: e.errorMessage));
+    } on DioException catch (e) {
+      return Left(DioFailure());
+    } on ParsingException catch (e){
       return Left(ParsingFailure(errorMessage: e.errorMessage));
     }
   }

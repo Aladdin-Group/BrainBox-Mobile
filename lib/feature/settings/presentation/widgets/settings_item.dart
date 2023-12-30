@@ -4,7 +4,8 @@ class SettingsItem extends StatelessWidget {
   String title;
   Widget? screen;
   Widget? action;
-  SettingsItem({super.key,required this.title,this.screen,this.action});
+  VoidCallback? click;
+  SettingsItem({super.key,required this.title,this.screen,this.action,this.click});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,7 @@ class SettingsItem extends StatelessWidget {
         height: 60,
         child: GestureDetector(
           onTap: (){
+            click!();
             if(screen!=null){
               Navigator.push(context, MaterialPageRoute(builder: (param)=> screen!));
             }

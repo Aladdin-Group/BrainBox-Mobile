@@ -10,7 +10,7 @@ class MovieGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(allowSnapshotting: false, builder: (context) => const WordsScreen(),));
+        Navigator.push(context, MaterialPageRoute(allowSnapshotting: false, builder: (context) => WordsScreen(),));
       },
       child: Card(
         elevation: 0,

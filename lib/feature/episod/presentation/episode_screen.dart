@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/core/constants/icons.dart';
 import 'package:brain_box/feature/episod/presentation/widgets/movie_grid_item.dart';
 import 'package:brain_box/feature/main/data/models/movie_category.dart';
