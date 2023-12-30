@@ -35,7 +35,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
   @override
   void initState() {
     reminderDate = ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
-    getReminderSaved.value = StorageRepository.getBool(StoreKeys.appSound);
+    getReminderSaved.value = StorageRepository.getBool(StoreKeys.service);
     customDateController.text = 10.toString();
     initWords();
     setState(() {});
@@ -62,7 +62,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       padding: EdgeInsets.all(8.0),
                       child: AutoSizeText(
                         'Notification time'.tr(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
                         ),
@@ -188,7 +188,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                             }else{
                                               BackgroundController.stopService();
                                             }
-                                            StorageRepository.putBool(key: StoreKeys.appSound, value: value);
+                                            StorageRepository.putBool(key: StoreKeys.service, value: value);
                                             getReminderSaved.value = value;
                                           }
                                       );

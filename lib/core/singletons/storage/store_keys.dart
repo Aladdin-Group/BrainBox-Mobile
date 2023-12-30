@@ -16,6 +16,8 @@ class StoreKeys{
 
   static const String isDark = 'isDark';
 
+  static const String service = 'service';
+
   static const String appSound = 'appSound';
 
   static const String rating = 'rating';

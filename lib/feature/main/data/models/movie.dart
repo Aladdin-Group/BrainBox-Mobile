@@ -122,7 +122,7 @@ class Content{
   bool? isBought;
   String? level;
   int? belongAge;
-  Null? serial;
+  dynamic? serial;
 
   Content(
       {this.id,

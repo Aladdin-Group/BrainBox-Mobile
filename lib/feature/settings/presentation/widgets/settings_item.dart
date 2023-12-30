@@ -15,10 +15,10 @@ class SettingsItem extends StatelessWidget {
         height: 60,
         child: GestureDetector(
           onTap: (){
-            click!();
             if(screen!=null){
               Navigator.push(context, MaterialPageRoute(builder: (param)=> screen!));
             }
+            click!();
           },
           child: Card(
             child: Row(

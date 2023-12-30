@@ -37,7 +37,7 @@ class MainDatasourceImplementation extends MainDatasource{
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return GenericPagination.fromJson(response.data, (p0) {
-          return Content.fromJson(p0 as Map<String, dynamic>);
+          return  Content.fromJson(p0 as Map<String, dynamic>);
         });
       }
       throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
