@@ -334,11 +334,14 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AutoSizeText(
-                      'Notification is not allowed !'.tr(),
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0,right: 10.0),
+                      child: AutoSizeText(
+                        'Notification is not allowed !'.tr(),
+                        style: TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold
+                        ),
                       ),
                     ),
                     Padding(

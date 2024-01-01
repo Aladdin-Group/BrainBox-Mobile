@@ -7,5 +7,5 @@ import '../models/movie_model.dart';
 
 abstract class WordsRepository{
   Future<Either<Failure,MovieModel>> getMovieInfo(int id);
-  Future<Either<Failure,GenericPagination<Content>>> getWordsByCount(int page);
+  Future<Either<Failure,GenericPagination<Content>>> getWordsByCount(int page,int movieId);
 }

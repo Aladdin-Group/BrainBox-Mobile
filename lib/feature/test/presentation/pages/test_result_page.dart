@@ -1,5 +1,6 @@
 import 'package:brain_box/core/constants/icons.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class TestResultPage extends StatefulWidget {
@@ -12,8 +13,13 @@ class TestResultPage extends StatefulWidget {
 
 class _TestResultPageState extends State<TestResultPage> {
 
+  String languageCode = '';
+
   @override
   Widget build(BuildContext context) {
+
+    Locale currentLocale = context.locale;
+    languageCode = currentLocale.languageCode;
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -44,7 +50,7 @@ class _TestResultPageState extends State<TestResultPage> {
           SliverList(
               delegate: SliverChildBuilderDelegate(
                   childCount: widget.inCorrectAnswer.length,(context, index) => ListTile(
-                      title: Text('${widget.inCorrectAnswer[index].value} - ${widget.inCorrectAnswer[index].secondLanguageValue}'),
+                      title: Text('${widget.inCorrectAnswer[index].value} - ${languageCode == 'ru' ? widget.inCorrectAnswer[index].translationRu : widget.inCorrectAnswer[index].translationEn}'),
               ))
           )
         ],

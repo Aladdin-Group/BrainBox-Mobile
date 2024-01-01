@@ -8,9 +8,13 @@ class GetMovieInfoEvent extends WordsEvent{
   GetMovieInfoEvent({required this.id});
 }
 
-class GetWordsEvent extends WordsEvent{}
+class GetWordsEvent extends WordsEvent{
+  final int movieId;
+  GetWordsEvent({required this.movieId});
+}
 
 class GetMoreWordsEvent extends WordsEvent{
   Function(int list) success;
-  GetMoreWordsEvent({required this.success});
+  final int movieId;
+  GetMoreWordsEvent({required this.success,required this.movieId});
 }

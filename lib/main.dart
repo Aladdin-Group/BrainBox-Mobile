@@ -12,6 +12,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:freerasp/freerasp.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -205,6 +206,23 @@ Future<void> initializeService() async {
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  // Setting up callbacks
+  final callback = ThreatCallback(
+      onAppIntegrity: () => exit(0),
+      onObfuscationIssues: () => exit(0),
+      onDebug: () => exit(0),
+      onDeviceBinding: () => exit(0),
+      onHooks: () => exit(0),
+      onPrivilegedAccess: () => exit(0),
+      onSecureHardwareNotAvailable: () => exit(0),
+      onSimulator: () => exit(0),
+      onUnofficialStore: () => exit(0),
+
+  );
+
+  // Attaching listener
+  Talsec.instance.attachListener(callback);
+
   await EasyLocalization.ensureInitialized();
   final appDocumentDirectory =
   await getApplicationDocumentsDirectory();

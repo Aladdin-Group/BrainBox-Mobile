@@ -26,9 +26,9 @@ class WordsRepositoryImplementation extends WordsRepository{
   }
 
   @override
-  Future<Either<Failure, GenericPagination<Content>>> getWordsByCount(int page) async{
+  Future<Either<Failure, GenericPagination<Content>>> getWordsByCount(int page,int movieId) async{
     try{
-      final result = await datasource.getWordsByCount(page);
+      final result = await datasource.getWordsByCount(page,movieId);
       return Right(result);
     } on ServerException catch (e){
       return Left(ServerFailure(statusCode: e.statusCode,errorMessage: e.errorMessage));

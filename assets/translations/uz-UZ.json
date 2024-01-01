@@ -69,5 +69,7 @@
   "How do I start learning a new language?": "Yangi tilni o'rganishni qanday boshlashim kerak?",
   "To start learning a new language, first select the language you are interested in from our language list, then choose a movie to watch with dual subtitles.": "Yangi tilni oʻrganishni boshlash uchun avval tillar roʻyxatidan oʻzingizni qiziqtirgan tilni tanlang, soʻngra ikki tomonlama subtitrli tomosha qilish uchun filmni tanlang.",
   "Can I track my learning progress?": "O'qishdagi muvaffaqiyatimni kuzata olamanmi?",
-  "Yes, your progress is tracked automatically as you watch movies and complete interactive exercises.": "Ha, filmlarni tomosha qilganingizda va interaktiv mashqlarni bajarganingizda muvaffaqiyatingiz avtomatik ravishda kuzatiladi."
+  "Yes, your progress is tracked automatically as you watch movies and complete interactive exercises.": "Ha, filmlarni tomosha qilganingizda va interaktiv mashqlarni bajarganingizda muvaffaqiyatingiz avtomatik ravishda kuzatiladi.",
+  "Sign with Google": "Google bilan tizimga kiring",
+  "Pay with telegram bot" : "Telegram bot bilan to'lash"
 }

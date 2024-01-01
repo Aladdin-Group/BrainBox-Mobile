@@ -29,7 +29,7 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
       if(result.isRight){
         emit(state.copyWith(result: result.right));
-        add(GetWordsEvent());
+        add(GetWordsEvent(movieId: result.right.id!.toInt()));
       }else{
         emit(state.copyWith(status: FormzSubmissionStatus.failure,fail: result.left));
       }
@@ -37,7 +37,7 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
     on<GetWordsEvent>((event,emit)async{
 
-      final result = await getWordsByCountUseCase.call(0);
+      final result = await getWordsByCountUseCase.call([0,event.movieId]);
 
       if(result.isRight){
         emit(state.copyWith(
@@ -56,7 +56,7 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
     on<GetMoreWordsEvent>((event,emit)async{
       
-      final result = await getWordsByCountUseCase.call(state.wordsPage);
+      final result = await getWordsByCountUseCase.call([state.wordsPage,event.movieId]);
 
       if(result.isRight){
         event.success(result.right.results.length);

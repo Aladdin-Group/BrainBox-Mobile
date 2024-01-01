@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/test/presentation/pages/test_result_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -12,7 +13,8 @@ import '../../words/data/models/words_response.dart';
 import 'manager/test_bloc.dart';
 
 class TestScreen extends StatefulWidget {
-  const TestScreen({super.key});
+  final int movieId;
+  TestScreen({super.key,required this.movieId});
 
   @override
   State<TestScreen> createState() => _TestScreenState();
@@ -33,6 +35,7 @@ class _TestScreenState extends State<TestScreen> {
   ValueNotifier<int?> selectedOptionIndex = ValueNotifier(null);
   ValueNotifier<int?> correctOptionIndex = ValueNotifier(null);
   Timer? _timer;
+  String languageCode = '';
 
   @override
   void initState() {
@@ -49,7 +52,7 @@ class _TestScreenState extends State<TestScreen> {
 
   void onVariantSelected(String selectedVariant) {
     // Check if the selected variant is correct
-    bool isCorrect = selectedVariant == current.value.secondLanguageValue;
+    bool isCorrect = selectedVariant == (languageCode == 'ru' ? current.value.translationRu : current.value.translationEn) ;
 
     // Provide visual feedback
     // You might need to store the selected index and use setState to trigger a rebuild for visual feedback
@@ -61,7 +64,7 @@ class _TestScreenState extends State<TestScreen> {
     // Show correct/incorrect feedback here if you want, perhaps using a dialog or a SnackBar
 
     // Load the next question after a delay
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       // Move to the next question
       loadNextQuestion();
     });
@@ -90,7 +93,7 @@ class _TestScreenState extends State<TestScreen> {
 
   void generateVariantsForQuestion(Content question) {
     // Extract the correct answer
-    String correctAnswer = question.secondLanguageValue!;
+    String correctAnswer = (languageCode == 'ru' ? question.translationRu : question.translationEn)!;
 
     // Create a set to hold unique options and add the correct answer
     Set<String> newOptions = { correctAnswer };
@@ -98,7 +101,7 @@ class _TestScreenState extends State<TestScreen> {
     // Add random options until we have the desired number
     while (newOptions.length < 4) {
       Content randomContent = bloc.state.list[Random().nextInt(bloc.state.list.length)];
-      newOptions.add(randomContent.secondLanguageValue!);
+      newOptions.add((languageCode == 'ru' ? randomContent.translationRu : randomContent.translationEn) !);
     }
 
     // Convert the set to a list and shuffle it to randomize the options
@@ -116,14 +119,14 @@ class _TestScreenState extends State<TestScreen> {
 
   void setupQuestion(Content question) {
     // Identify the correct answer
-    String correctAnswer = question.secondLanguageValue!;
+    String correctAnswer = (languageCode == 'ru' ? question.translationRu : question.translationEn)!;
 
     // Shuffle the list of content to get random options
     List<Content> randomOptions = List.of(bloc.state.list)..shuffle();
     // Remove the correct answer if it exists in the list to avoid duplication
-    randomOptions.removeWhere((content) => content.secondLanguageValue == correctAnswer);
+    randomOptions.removeWhere((content) => (languageCode == 'ru' ? content.translationRu : content.translationEn) == correctAnswer);
     // Take the first three items as wrong answers
-    List<String> wrongAnswers = randomOptions.take(3).map((content) => content.secondLanguageValue!).toList();
+    List<String> wrongAnswers = randomOptions.take(3).map((content) => (languageCode == 'ru' ? content.translationRu : content.translationEn)!).toList();
 
     // Now, add the correct answer and shuffle the options
     List<String> allOptions = [...wrongAnswers, correctAnswer]..shuffle();
@@ -261,6 +264,8 @@ class _TestScreenState extends State<TestScreen> {
     return BlocProvider(
       create: (context) => bloc..add(NextTestEvent(
           success: (content) {
+            Locale currentLocale = context.locale;
+            languageCode = currentLocale.languageCode;
             isDisable.value = false;
             timerCount.value = 60;
             size.value = bloc.state.list.length;
@@ -269,7 +274,8 @@ class _TestScreenState extends State<TestScreen> {
           },
           failure: (error) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-          }
+          },
+        movieId: widget.movieId
       )),
       child: Scaffold(
         appBar: AppBar(

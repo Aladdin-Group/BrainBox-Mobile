@@ -3,6 +3,7 @@ import 'package:brain_box/core/utils/app_functions.dart';
 import 'package:brain_box/feature/test/presentation/test_screen.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:brain_box/feature/words/presentation/manager/words_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +30,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   ValueNotifier<bool> isSuccess = ValueNotifier(false);
   ValueNotifier<String> nameOfMovie = ValueNotifier('NON');
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
+  String languageCode = '';
 
   void loadAd() {
     BannerAd(
@@ -115,6 +117,8 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
           }
           if(state.status.isSuccess){
             List<Content> wordsList = state.listWords;
+            Locale currentLocale = context.locale;
+            languageCode = currentLocale.languageCode;
             return NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -125,14 +129,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                       return Text(value);
                     }
                   ),
-                  actions: [
-                    const Text('300',style: TextStyle(fontSize: 17),),
-                    // Image.asset(AppIcons.coin),
-                    const Icon(CupertinoIcons.bitcoin_circle_fill),
-                    IconButton(onPressed: (){
-                      AppFunctions.showSettingsDialog(context, switcher, slider);
-                    },icon: const Icon(Icons.settings)),
-                  ],
                   pinned: true,
                   floating: true,
                 )
@@ -147,6 +143,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                         success: (p0) {
                           listKey.currentState?.insertAllItems(index, p0);
                         },
+                        movieId: widget.movieId??-1
                       ));
                     }
                   }
@@ -155,23 +152,30 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                       return const ListTile(title: CupertinoActivityIndicator());
                     }
                   }
-                  return ListTile(
-                    title: Row(
-                      children: [
-                        Text(
-                          '${wordsList[index].value.toString().toUpperCase()} - ${wordsList[index].secondLanguageValue}',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold
-                          ),
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 10.0,right: 10,bottom: 5),
+                    child: Card(
+                      child: ListTile(
+                        title: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${wordsList[index].value.toString().toUpperCase()} - ${languageCode == 'ru' ? wordsList[index].translationRu : wordsList[index].translationEn}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
+                            // Container(width: wordsList[index].secondLanguageValue!.length.toDouble()+30, height: 20,color: Colors.black,)
+                          ],
                         ),
-                        // Container(width: wordsList[index].secondLanguageValue!.length.toDouble()+30, height: 20,color: Colors.black,)
-                      ],
+                        trailing: Text(
+                          wordsList[index].count.toString(),
+                        ),
+                        subtitle: Text(wordsList[index].pronunciation.toString()),
+                        leading: CircleAvatar(radius: 25, child: FittedBox(child: Text('${index+1}',style: const TextStyle(fontSize: 20),))),
+                      ),
                     ),
-                    trailing: Text(
-                      wordsList[index].count.toString(),
-                    ),
-                    subtitle: Text(wordsList[index].definition.toString()),
-                    leading: Text('${index+1}.',style: const TextStyle(fontSize: 20),),
                   );
                 },
               ),
@@ -203,7 +207,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ElevatedButton(onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const TestScreen(),));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => TestScreen(movieId: widget.movieId??-1,),));
                   }, child: const Text('Start Test')),
                   const SizedBox(height: 10,),
                   _bannerAd != null ? SizedBox(

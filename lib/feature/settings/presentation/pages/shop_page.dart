@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/models/user.dart';
 
@@ -94,6 +95,9 @@ class _ShopPageState extends State<ShopPage> {
             _buildOptionCard('getCoinsForWatching'.tr(), 'Watch video',
                 'assets/images/img_2.png', 100,widget.bloc,widget.user,context,
                 isVideoOption: true, isVertical: false, isSub: true),
+            _buildOptionCard(''.tr(), 'Pay with telegram bot'.tr(),
+                'assets/images/telegram.png', 100,widget.bloc,widget.user,context,
+                isVideoOption: false, isVertical: false, isSub: false,isTelegram: true),
           ],
         ),
       ),
@@ -190,6 +194,7 @@ Widget _buildOptionCard(
     BuildContext context,
     {bool isVideoOption = false,
     bool isVertical = true,
+      bool isTelegram = false,
     int posPay = 0,
     bool isSub = false}) {
   return Container(
@@ -258,44 +263,53 @@ Widget _buildOptionCard(
                       Text(title),
                       const SizedBox(height: 8),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async{
+                          var botUrl = 'https://t.me/brainboxxbot';
                           print(_products.length);
-                          if (isSub) {
-                            if (_rewardedAd != null) {
-                              _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-                                onAdShowedFullScreenContent: (RewardedAd ad) => {},
-                                onAdDismissedFullScreenContent: (RewardedAd ad) {
-                                  ad.dispose();
-                                  _createRewardedAd(); // Load a new ad for the next button click
-                                },
-                                onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('onAdFailedToShowFullScreenContent: $error')));
-                                  ad.dispose();
-                                  _createRewardedAd(); // Load a new ad for the next button click
-                                },
-                              );
-
-                              _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('youEarned'.tr(args: ['${reward.amount}']))));
-                                  bloc.add(UpdateUseDataEven(user: UpdateUser(addCoin: reward.amount.toInt(), userId: user.id??-1), success: () {
-                                  Navigator.pop(context,true);
-                                  Navigator.pop(context,true);
-                                }, failure: () {
-                                  Navigator.pop(context);
-                                  showDialog(context: context, builder: (builder)=> const AlertDialog(title: Text('Failure'),));
-                                }, progress: () {
-                                  showDialog(context: context, builder: (context)=>const AlertDialog(content: CupertinoActivityIndicator(),),barrierDismissible: false);
-                                },));
-                                // Handle the reward
-                              });
+                          if(isTelegram){
+                            if (await canLaunchUrl(Uri.parse(botUrl))) {
+                              await launchUrl(Uri.parse(botUrl));
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('rewardedAdNotLoaded'.tr())));
+                              throw 'Could not launch $botUrl';
                             }
-                          } else {
-                            BackgroundController.stopService()
-                                .then((value) => {
-                                      _buy(posPay, isSub: true),
-                                    });
+                          }else{
+                            if (isSub) {
+                              if (_rewardedAd != null) {
+                                _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+                                  onAdShowedFullScreenContent: (RewardedAd ad) => {},
+                                  onAdDismissedFullScreenContent: (RewardedAd ad) {
+                                    ad.dispose();
+                                    _createRewardedAd(); // Load a new ad for the next button click
+                                  },
+                                  onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('onAdFailedToShowFullScreenContent: $error')));
+                                    ad.dispose();
+                                    _createRewardedAd(); // Load a new ad for the next button click
+                                  },
+                                );
+
+                                _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('youEarned'.tr(args: ['${reward.amount}']))));
+                                  bloc.add(UpdateUseDataEven(user: UpdateUser(addCoin: reward.amount.toInt(), userId: user.id??-1), success: () {
+                                    Navigator.pop(context,true);
+                                    Navigator.pop(context,true);
+                                  }, failure: () {
+                                    Navigator.pop(context);
+                                    showDialog(context: context, builder: (builder)=> const AlertDialog(title: Text('Failure'),));
+                                  }, progress: () {
+                                    showDialog(context: context, builder: (context)=>const AlertDialog(content: CupertinoActivityIndicator(),),barrierDismissible: false);
+                                  },));
+                                  // Handle the reward
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('rewardedAdNotLoaded'.tr())));
+                              }
+                            } else {
+                              BackgroundController.stopService()
+                                  .then((value) => {
+                                _buy(posPay, isSub: true),
+                              });
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(

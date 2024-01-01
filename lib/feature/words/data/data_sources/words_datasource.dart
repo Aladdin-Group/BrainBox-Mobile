@@ -12,7 +12,7 @@ import '../models/words_response.dart';
 
 abstract class WordsDatasource{
   Future<MovieModel> getMovieInfo(int id);
-  Future<GenericPagination<Content>> getWordsByCount(int page);
+  Future<GenericPagination<Content>> getWordsByCount(int page,int movieId);
 }
 
 class WordsDatasourceImplementation extends WordsDatasource{
@@ -42,12 +42,12 @@ class WordsDatasourceImplementation extends WordsDatasource{
   }
 
   @override
-  Future<GenericPagination<Content>> getWordsByCount(int page) async{
+  Future<GenericPagination<Content>> getWordsByCount(int page,int movieId) async{
     final token = StorageRepository.getString(StoreKeys.token);
 
     try {
       final response = await dio.get(
-        '/api/v1/subtitleWords/getWordsByCount?language=1&movieId=1&page=$page&size=50',
+        '/api/v1/subtitleWords/getWordsByCount?language=1&movieId=$movieId&page=$page&size=50',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

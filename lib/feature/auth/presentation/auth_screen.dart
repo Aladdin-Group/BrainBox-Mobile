@@ -12,6 +12,7 @@ import '../../../core/singletons/storage/storage_repository.dart';
 import '../../../core/singletons/storage/store_keys.dart';
 import '../../navigation/presentation/bloc/navigation_bloc.dart';
 import '../../navigation/presentation/pages/lading_page.dart';
+import '../data/models/dev_test_model.dart';
 import 'manager/auth_state.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -90,16 +91,24 @@ class _AuthScreenState extends State<AuthScreen> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: ()async{
-                              // context.read<AuthBloc>().add(GoogleAuthEvent());
-                              await GoogleSignIn().signIn().then((value) => {
-                                if(value!=null){
-                                  showDialog(context: context, builder: (BuildContext context){ return AlertDialog(title: Text(value.displayName??'no'),);}),
-                                  StorageRepository.putBool(key: StoreKeys.isAuth, value: true),
-                                  context.read<AuthBloc>().add(GoogleAuthEvent(googleSignInAccount: value))
-                                }else{
-                                },
-                              });
-
+                              context.read<AuthBloc>().add(IsDevModeEvent(
+                                  success: (DevTestModel model) {
+                                    StorageRepository.putBool(key: StoreKeys.isAuth, value: true);
+                                    StorageRepository.putString(StoreKeys.token, model.object.toString());
+                                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BlocProvider<NavigationBloc>.value(value: navigationBloc,child: const LadingPage(),),), (route) => false);
+                                  },
+                                  failure: () async{
+                                    await GoogleSignIn().signIn().then((value) => {
+                                      if(value!=null){
+                                        showDialog(context: context, builder: (BuildContext context){ return AlertDialog(title: Text(value.displayName??'no'),);}),
+                                        StorageRepository.putBool(key: StoreKeys.isAuth, value: true),
+                                        context.read<AuthBloc>().add(GoogleAuthEvent(googleSignInAccount: value))
+                                      }else{
+                                      },
+                                    });
+                                  }, progress: () {
+                                    showDialog(context: context, builder: (builder)=>const AlertDialog(content: CupertinoActivityIndicator(),));
+                              }));
                             },
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -108,8 +117,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                     )
                                 )
                             ),
-                            child: const Text(
-                              'Google',
+                            child: Text(
+                              'Sign with Google'.tr(),
                               style: TextStyle(
                                 fontSize: 20,
                               ),

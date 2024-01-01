@@ -231,43 +231,37 @@ Sort copyWith({  bool? empty,
 
 class Content {
   String? id;
-  String? createdAt;
   String? value;
   int? count;
   String? pronunciation;
-  String? definition;
-  String? secondLanguageValue;
-  ValueNotifier<bool>? isSaved;
+  String? translationEn;
+  String? translationRu;
 
   Content(
       {this.id,
-        this.createdAt,
         this.value,
         this.count,
         this.pronunciation,
-        this.definition,
-        this.isSaved,
-        this.secondLanguageValue});
+        this.translationEn,
+        this.translationRu});
 
   Content.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    createdAt = json['createdAt'];
     value = json['value'];
     count = json['count'];
     pronunciation = json['pronunciation'];
-    definition = json['definition'];
-    secondLanguageValue = json['secondLanguageValue'];
+    translationEn = json['translation_en'];
+    translationRu = json['translation_ru'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['createdAt'] = this.createdAt;
     data['value'] = this.value;
     data['count'] = this.count;
     data['pronunciation'] = this.pronunciation;
-    data['definition'] = this.definition;
-    data['secondLanguageValue'] = this.secondLanguageValue;
+    data['translation_en'] = this.translationEn;
+    data['translation_ru'] = this.translationRu;
     return data;
   }
 }

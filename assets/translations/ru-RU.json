@@ -91,5 +91,7 @@
   "onAdFailedToShowFullScreenContent": "Ошибка при отображении рекламы",
   "youEarned": "Вы заработали {}",
   "rewardAmount": "{{amount}}",
-  "rewardedAdNotLoaded": "Реклама еще не загружена"
+  "rewardedAdNotLoaded": "Реклама еще не загружена",
+  "Sign with Google": "Войти через Google",
+  "Pay with telegram bot" : "Оплата с Telegram-бота"
 }

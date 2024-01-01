@@ -18,7 +18,7 @@ class TestBloc extends Bloc<TestEvent, TestState> {
 
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
-      final result = await getWordsByCountUseCase.call(state.page);
+      final result = await getWordsByCountUseCase.call([state.page,event.movieId]);
 
       if(result.isRight){
 
