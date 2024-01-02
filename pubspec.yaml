@@ -51,6 +51,7 @@ dependencies:
   in_app_review: ^2.0.8
   url_launcher: ^6.2.2
   freerasp: ^6.3.0
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   flutter_test:

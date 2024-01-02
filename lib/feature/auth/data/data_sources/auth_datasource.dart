@@ -61,7 +61,11 @@ class AuthDatasourceImplementation extends AuthDataSource{
         '/api/v1/auth/isDebug',
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return DevTestModel.fromJson(response.data);
+        try{
+          return DevTestModel.fromJson(response.data);
+        }catch(e){
+          throw ParsingException(errorMessage: e.toString());
+        }
       }
       throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
     } on ServerException {
