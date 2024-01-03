@@ -9,9 +9,9 @@ import '../../../words/presentation/words_screen.dart';
 import '../manager/main/main_bloc.dart';
 
 class MovieItemWidget extends StatefulWidget {
-  Content movie;
-  MainBloc bloc;
-  MovieItemWidget({super.key,required this.bloc,required this.movie});
+  final Content movie;
+  final MainBloc bloc;
+  const MovieItemWidget({super.key,required this.bloc,required this.movie});
 
   @override
   State<MovieItemWidget> createState() => _MovieItemWidgetState();
@@ -36,7 +36,6 @@ class _MovieItemWidgetState extends State<MovieItemWidget> {
                     Navigator.pop(context);
                     showModalBottomSheet(
                         context: context, builder: (builder)=>Container(
-                      height: 300,
                       width: double.maxFinite,
                       decoration: const BoxDecoration(
                           color: Colors.white,
@@ -72,25 +71,35 @@ class _MovieItemWidgetState extends State<MovieItemWidget> {
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text('Forcoins'.tr(args: ['${widget.movie.price}',])),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Text('Forcoins'.tr(args: ['${widget.movie.price}',])),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      widget.movie.name??'NULL',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30
+                                    child: SizedBox(
+                                      width: 200,
+                                      child: FittedBox(
+                                        child: AutoSizeText(
+                                          widget.movie.name??'NULL',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20
+                                          ),
+                                          maxLines: 2,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     width: 210,
+                                    height: 170,
                                     child: Padding(
                                       padding: EdgeInsets.only(left: 10.0),
-                                      child: Text(
-                                        'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text.',
+                                      child: AutoSizeText(
+                                        widget.movie.description??'NULL',
                                         maxLines: 10,
-                                        overflow: TextOverflow.clip,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   )

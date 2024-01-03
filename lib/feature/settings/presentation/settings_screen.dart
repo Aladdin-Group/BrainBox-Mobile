@@ -289,11 +289,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 action: ValueListenableBuilder(
                                   valueListenable: appSound,
                                   builder: (p1,p2,p3){
-                                    return Switch(value: p2, onChanged: (value){ if(value){
-                                      BackgroundController.startService();
-                                    }else{
-                                      BackgroundController.stopService();
-                                    } StorageRepository.putBool(key: StoreKeys.appSound, value: value);appSound.value=value;});
+                                    return Switch(value: p2, onChanged: (value){ StorageRepository.putBool(key: StoreKeys.appSound, value: value);appSound.value=value; });
                                   },
                                 )
                             ) : p2 == PermissionStatus.permanentlyDenied || p2 == PermissionStatus.denied ? SettingsItem(

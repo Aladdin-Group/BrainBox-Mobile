@@ -47,7 +47,7 @@ class WordsDatasourceImplementation extends WordsDatasource{
 
     try {
       final response = await dio.get(
-        '/api/v1/subtitleWords/getWordsByCount?language=1&movieId=$movieId&page=$page&size=50',
+        '/api/v1/subtitleWords/getWordsByCount?language=1&movieId=$movieId&page=$page&size=20',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

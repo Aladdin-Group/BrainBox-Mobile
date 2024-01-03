@@ -8,6 +8,7 @@ import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
 import 'package:brain_box/feature/splash/presentation/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -29,6 +30,9 @@ import 'feature/main/presentation/manager/main/main_bloc.dart';
 import 'feature/reminder/data/models/local_word.dart';
 import 'feature/settings/presentation/manager/theme/app_theme_bloc.dart';
 import 'feature/words/presentation/manager/words_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 
 @pragma('vm:entry-point')
 Future<bool> onIosBackground(ServiceInstance service) async {
@@ -206,7 +210,15 @@ Future<void> initializeService() async {
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  // Setting up callbacks
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+// ...
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final callback = ThreatCallback(
       onAppIntegrity: () => exit(0),
       onObfuscationIssues: () => exit(0),

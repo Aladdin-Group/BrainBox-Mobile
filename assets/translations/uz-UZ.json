@@ -71,5 +71,17 @@
   "Can I track my learning progress?": "O'qishdagi muvaffaqiyatimni kuzata olamanmi?",
   "Yes, your progress is tracked automatically as you watch movies and complete interactive exercises.": "Ha, filmlarni tomosha qilganingizda va interaktiv mashqlarni bajarganingizda muvaffaqiyatingiz avtomatik ravishda kuzatiladi.",
   "Sign with Google": "Google bilan tizimga kiring",
-  "Pay with telegram bot" : "Telegram bot bilan to'lash"
+  "Pay with telegram bot" : "Telegram bot bilan to'lash",
+  "failure": "Xato",
+  "appTitle": "Brain Box",
+  "coins500": "500 Tangalar",
+  "coins5000": "5000 Tangalar",
+  "premiumYear": "Bir Yilga Premium",
+  "getCoinsForWatching": "Reklamalarni Ko'rib Tangalar Ol",
+  "watchVideo": "Videoni Ko'ring",
+  "payWithTelegramBot": "Telegram Bot Orqali To'lov",
+  "pending": "Kutilmoqda",
+  "payingError": "To'lovda Xatolik",
+  "youEarned": "Siz {reward} Tanga Topdingiz",
+  "rewardedAdNotLoaded": "Mukofotli Reklama Yuklanmadi"
 }

@@ -11,6 +11,7 @@
     <application
         tools:replace="android:label"
         android:label="Brain Box"
+        android:screenOrientation="portrait"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />

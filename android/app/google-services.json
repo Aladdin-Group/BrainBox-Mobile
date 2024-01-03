@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "519103600258",
+    "project_id": "brain-box-434f7",
+    "storage_bucket": "brain-box-434f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519103600258:android:36643015179e2dc0e7469b",
+        "android_client_info": {
+          "package_name": "com.aladdin.brain_box"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAJvoQ1IBhtV6ixYHHfh6rRCfnAAvf08k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/main/data/models/movie_availbility.dart';
 import 'package:brain_box/feature/main/data/models/search_model.dart';
 import 'package:brain_box/feature/main/presentation/manager/main/main_bloc.dart';
@@ -5,6 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../../words/presentation/words_screen.dart';
 
 class SearchPage extends StatefulWidget {
   MainBloc bloc;
@@ -74,6 +77,137 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       }
                       return ListTile(
+                        onTap: (){
+                          if(listSearch[index].isBought??false){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => WordsScreen(movieId: listSearch[index].id!.toInt(),),));
+                          }else{
+                            widget.bloc.add(GetUserInfoEvent(
+                                success: (user){
+                                  if(user.isPremium??false){
+                                    Navigator.pop(context);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => WordsScreen(movieId: listSearch[index].id!.toInt(),),));
+                                  }else{
+                                    if((user.coins??0)>(listSearch[index].price??0)){
+                                      Navigator.pop(context);
+                                      showModalBottomSheet(
+                                          context: context, builder: (builder)=>Container(
+                                        width: double.maxFinite,
+                                        decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10)
+                                            )
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: SizedBox(
+                                                    height: 200,
+                                                    width: 170,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(15),
+                                                          image: DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: CachedNetworkImageProvider(
+                                                              listSearch[index].avatarUrl??'',
+                                                            ),
+                                                          )
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(top: 10.0),
+                                                      child: Text('Forcoins'.tr(args: ['${listSearch[index].price}',])),
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: SizedBox(
+                                                        width: 200,
+                                                        child: FittedBox(
+                                                          child: AutoSizeText(
+                                                            listSearch[index].name??'NULL',
+                                                            style: const TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 20
+                                                            ),
+                                                            maxLines: 2,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 210,
+                                                      height: 170,
+                                                      child: Padding(
+                                                        padding: EdgeInsets.only(left: 10.0),
+                                                        child: AutoSizeText(
+                                                          listSearch[index].description??'NULL',
+                                                          maxLines: 10,
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Expanded(child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: ElevatedButton(onPressed: (){ Navigator.pop(context); }, child: Text('Cancel')),
+                                                )),
+                                                Expanded(child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: ElevatedButton(onPressed: (){
+
+                                                    widget.bloc.add(BuyMovieEvent(success: (success){
+                                                      Navigator.pop(context);
+                                                      // listSearch[index].isBought = true;
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context) => WordsScreen(movieId: listSearch[index].id!.toInt(),),));
+                                                    }, failure: (){
+                                                      Navigator.pop(context);
+                                                      showDialog(context: context, builder: (builder)=>AlertDialog(title: Text('Something went wrong'.tr()),));
+                                                    }, progress: (){
+                                                      Navigator.pop(context);
+                                                      showDialog(context: context, builder: (builder)=>const AlertDialog(title: CupertinoActivityIndicator(),));
+                                                    }, movieId: listSearch[index].id!.toInt()??-1));
+
+                                                  }, child: Text('Purchase'.tr())),
+                                                )),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                      );
+                                    }else{
+                                      Navigator.pop(context);
+                                      showDialog(context: context, builder: (context)=>AlertDialog(title: Text('Wrong'.tr()),content: Text('You dont have enough coins for this movie!'.tr()),));
+                                    }
+                                  }
+                                },
+                                failure: (){
+                                  Navigator.pop(context);
+                                  showDialog(context: context, builder: (builder)=> AlertDialog(title: Text('Something went wrong'.tr()),));
+                                },
+                                progress: (){
+                                  showDialog(context: context, builder: (builder)=>const AlertDialog(title: CupertinoActivityIndicator(),));
+                                }
+                            ));
+                          }
+                        },
                         title: Text(listSearch[index].name??'NULL'), // Replace with your data
                         subtitle: Text(listSearch[index].level??''), // Replace with your data
                         leading: Container(

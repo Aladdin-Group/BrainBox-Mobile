@@ -3,6 +3,6 @@
 class MovieLevel{
   static const INTERMEDIATE = "INTERMEDIATE";
   static const BEGINNER = "BEGINNER";
-  static const ELEMENTARY = "ELEMENTRY";
+  static const ELEMENTARY = "ELEMENTARY";
   static const UPPER_INTERMEDIATE = "UPPER_INTERMEDIATE";
 }

@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:brain_box/core/singletons/storage/storage_repository.dart';
+import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/feature/test/presentation/pages/test_result_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +33,7 @@ class _TestScreenState extends State<TestScreen> {
   ValueNotifier<int> testIndex = ValueNotifier(1);
   ValueNotifier<int> timerCount = ValueNotifier(60);
   ValueNotifier<bool> isDisable = ValueNotifier(false);
+  AudioPlayer audioPlayer = AudioPlayer();
 
   ValueNotifier<List<String>> options = ValueNotifier(['varA', 'varB', 'varC', 'varD']);
   ValueNotifier<int?> selectedOptionIndex = ValueNotifier(null);
@@ -208,6 +212,13 @@ class _TestScreenState extends State<TestScreen> {
     if (selectedOptionIndex.value == null) return Colors.grey;
 
     if (index == selectedOptionIndex.value) {
+      if(StorageRepository.getBool(StoreKeys.appSound)){
+        if(index == correctOptionIndex.value){
+          audioPlayer.play(AssetSource('correct.mp3'));
+        }else{
+          audioPlayer.play(AssetSource('not_correct.mp3'));
+        }
+      }
       return index == correctOptionIndex.value ? Colors.green : Colors.red;
     } else if (index == correctOptionIndex.value) {
       return Colors.green;

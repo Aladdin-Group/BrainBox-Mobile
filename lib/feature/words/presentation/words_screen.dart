@@ -1,5 +1,4 @@
 import 'package:brain_box/core/exceptions/failure.dart';
-import 'package:brain_box/core/utils/app_functions.dart';
 import 'package:brain_box/feature/test/presentation/test_screen.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:brain_box/feature/words/presentation/manager/words_bloc.dart';
@@ -12,8 +11,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
 
 class WordsScreen extends StatefulWidget {
-  int? movieId;
-  WordsScreen({super.key,this.movieId});
+  final int? movieId;
+  const WordsScreen({super.key,this.movieId});
 
   @override
   State<WordsScreen> createState() => _WordsScreenState();
@@ -214,9 +213,9 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                     width: _bannerAd!.size.width.toDouble(),
                     height: _bannerAd!.size.height.toDouble(),
                     child: AdWidget(ad: _bannerAd!,),
-                  ) : const SizedBox(
+                  ) : SizedBox(
                     height: 50,
-                    child: Center(child: Text('Loading Ad...')),
+                    child: Shimmer.fromColors(baseColor: Colors.black26, highlightColor: Colors.grey, child: const SizedBox(width: 300,height: 50,)),
                   ),
                 ],
               ),
