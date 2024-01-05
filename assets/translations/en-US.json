@@ -83,5 +83,6 @@
   "pending": "Pending",
   "payingError": "Error in Payment",
   "youEarned": "You Earned {reward}",
-  "rewardedAdNotLoaded": "Rewarded Ad Not Loaded"
+  "rewardedAdNotLoaded": "Rewarded Ad Not Loaded",
+  "Logout": "Logout"
 }

@@ -1,4 +1,7 @@
 import 'package:brain_box/core/exceptions/failure.dart';
+import 'package:brain_box/core/singletons/storage/hive_controller.dart';
+import 'package:brain_box/core/singletons/storage/saved_controller.dart';
+import 'package:brain_box/feature/reminder/data/models/local_word.dart';
 import 'package:brain_box/feature/test/presentation/test_screen.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:brain_box/feature/words/presentation/manager/words_bloc.dart';
@@ -12,7 +15,8 @@ import 'package:shimmer/shimmer.dart';
 
 class WordsScreen extends StatefulWidget {
   final int? movieId;
-  const WordsScreen({super.key,this.movieId});
+  final String? title;
+  const WordsScreen({super.key,this.movieId,this.title});
 
   @override
   State<WordsScreen> createState() => _WordsScreenState();
@@ -72,11 +76,14 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
     return BlocProvider<WordsBloc>(
     create: (context) => WordsBloc()..add(GetMovieInfoEvent(id: widget.movieId??-1)),
     child: Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title??'NAME_OF_MOVIE'),
+      ),
       body: BlocConsumer<WordsBloc, WordsState>(
         builder: (context, state) {
           if(state.status.isInProgress || state.status.isInitial) {
             return ListView.builder(
-              itemCount: 10, // arbitrary number for placeholder items
+              itemCount: 10,
               itemBuilder: (context, index) {
                 return Shimmer.fromColors(
                   baseColor: Colors.grey[300]!,
@@ -121,16 +128,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
             return NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverAppBar(
-                  title: ValueListenableBuilder(
-                    valueListenable: nameOfMovie,
-                    builder: (context,value,param) {
-                      return Text(value);
-                    }
-                  ),
-                  pinned: true,
-                  floating: true,
-                )
+
               ],
               body: AnimatedList(
                 key: listKey,
@@ -168,8 +166,31 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                             // Container(width: wordsList[index].secondLanguageValue!.length.toDouble()+30, height: 20,color: Colors.black,)
                           ],
                         ),
-                        trailing: Text(
-                          wordsList[index].count.toString(),
+                        trailing: IconButton(
+                            onPressed: (){
+                              if(wordsList[index].isSaved!=null){
+                                if(!wordsList[index].isSaved!){
+                                  SavedController.saveObject(wordsList[index]);
+                                  setState(() {
+                                    wordsList[index].isSaved = true;
+                                  });
+                                  HiveController.saveObject(LocalWord(notificationId: HiveController.genericId(),id: wordsList[index].id??'-1', translate: languageCode == 'ru' ? wordsList[index].translationRu : wordsList[index].translationEn, word: wordsList[index].value));
+                                }else{
+                                  SavedController.removeObjectFromHive(wordsList[index].value??'NULL_VALUE');
+                                  setState(() {
+                                    wordsList[index].isSaved = false;
+                                  });
+                                  HiveController.removeObjectFromHive(wordsList[index].id??'-1');
+                                }
+                              }else{
+                                SavedController.saveObject(wordsList[index]);
+                                setState(() {
+                                  wordsList[index].isSaved = true;
+                                });
+                                HiveController.saveObject(LocalWord(notificationId: HiveController.genericId(),id: wordsList[index].id??'-1', translate: languageCode == 'ru' ? wordsList[index].translationRu : wordsList[index].translationEn, word: wordsList[index].value));
+                              }
+                            },
+                            icon: wordsList[index].isSaved != null ? ( wordsList[index].isSaved! ? Icon(CupertinoIcons.bookmark_fill) : Icon(CupertinoIcons.bookmark)) : Icon(CupertinoIcons.bookmark)
                         ),
                         subtitle: Text(wordsList[index].pronunciation.toString()),
                         leading: CircleAvatar(radius: 25, child: FittedBox(child: Text('${index+1}',style: const TextStyle(fontSize: 20),))),

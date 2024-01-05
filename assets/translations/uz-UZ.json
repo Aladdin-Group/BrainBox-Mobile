@@ -83,5 +83,6 @@
   "pending": "Kutilmoqda",
   "payingError": "To'lovda Xatolik",
   "youEarned": "Siz {reward} Tanga Topdingiz",
-  "rewardedAdNotLoaded": "Mukofotli Reklama Yuklanmadi"
+  "rewardedAdNotLoaded": "Mukofotli Reklama Yuklanmadi",
+  "Logout": "Chiqish"
 }

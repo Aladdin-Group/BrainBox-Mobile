@@ -7,6 +7,8 @@ import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
 import 'package:brain_box/feature/splash/presentation/splash_screen.dart';
+import 'package:brain_box/feature/words/data/models/words_response.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -21,6 +23,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/adapters/storage/content_adpater.dart';
 import 'core/adapters/storage/user_adapter.dart';
 import 'core/assets/theme/color_schemes.g.dart';
 import 'core/singletons/service_locator.dart';
@@ -93,7 +96,7 @@ void onStart(ServiceInstance service) async {
           if(localWords.length>position){
             try{
               flutterLocalNotificationsPlugin.show(
-                localWords[position]!.id??0,
+                localWords[position]!.notificationId??0,
                 '${localWords[position]!.word} => ${localWords[position]!.translate}',
                 (localWords.length-1 == position) ? 'This last word, Do you want repeat ?' : 'Need for your feature !',
                 (localWords.length-1 == position) ? const NotificationDetails(
@@ -214,11 +217,18 @@ void main() async{
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
-// ...
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+  // 1:519103600258:android:36643015179e2dc0e7469b
   final callback = ThreatCallback(
       onAppIntegrity: () => exit(0),
       onObfuscationIssues: () => exit(0),
@@ -241,6 +251,8 @@ void main() async{
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(WordHiveAdapter());
   Hive.registerAdapter(UserHiveAdapter());
+  Hive.registerAdapter(ContentHiveAdapter());
+  await Hive.openBox<Content>(StoreKeys.savedWordsList);
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
   await Hive.openBox(StoreKeys.userData);
   await initializeService();

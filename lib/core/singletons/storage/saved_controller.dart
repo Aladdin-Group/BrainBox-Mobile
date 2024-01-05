@@ -1,23 +1,23 @@
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
+import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../../feature/reminder/data/models/local_word.dart';
-import '../../adapters/storage/word_adapter.dart';
+import '../../../../feature/reminder/data/models/local_word.dart';
+import '../../adapters/storage/content_adpater.dart';
 
-class HiveController{
-  HiveController._();
-  static final Box<LocalWord> box = Hive.box<LocalWord>(key);
+class SavedController{
+  SavedController._();
+  static const key = StoreKeys.savedWordsList;
+  static final Box<Content> box = Hive.box<Content>(key);
 
   static Future<void> init()async{
     final appDocumentDirectory =
     await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDirectory.path);
-    Hive.registerAdapter(WordHiveAdapter());
-    await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
+    Hive.registerAdapter(ContentHiveAdapter());
+    await Hive.openBox<LocalWord>(StoreKeys.savedWordsList);
   }
-
-  static const key = StoreKeys.localWordsList;
 
   static Future<void> closeHiveBox() async {
     if (box.isOpen) {
@@ -25,19 +25,31 @@ class HiveController{
     }
   }
 
-  static Future<void> saveListToHive(List<LocalWord> localWords) async {
+  static Future<bool> isAvailableWord(Content word)async{
+
+    var availability = false;
+
+    box.values.toList().forEach((element) {
+
+      if(element.id==word.id){
+
+        availability = true;
+        return;
+      }
+
+    });
+
+    return availability;
+  }
+
+  static Future<void> saveListToHive(List<Content> localWords) async {
     // await box.clear(); // Optional: Clear existing data
 
     for (final word in localWords) {
       await box.add(word);
     }
   }
-
-  static int genericId(){
-    return box.values.toList().length +1;
-  }
-
-  static Future<void> saveObject(LocalWord object) async {
+  static Future<void> saveObject(Content object) async {
     try {
       print(object.toString());
       await box.add(object);
@@ -58,7 +70,7 @@ class HiveController{
     }
   }
 
-  static Future<List<LocalWord>> getListFromHive() async {
+  static List<Content> getListFromHive() {
     // Convert HiveList to List
     return box.values.toList();
   }

@@ -9,9 +9,10 @@ class WordHiveAdapter extends TypeAdapter<LocalWord> {
       for (var i = 0; i < fieldsCount; i++) reader.readByte(): reader.read(),
     };
     return LocalWord(
-      id: fields[0] as int?,
+      id: fields[0] as String?,
       word: fields[1] as String?,
-      translate: fields[2] as String?
+      translate: fields[2] as String?,
+      notificationId: fields[3] as int?
     );
   }
 
@@ -20,7 +21,7 @@ class WordHiveAdapter extends TypeAdapter<LocalWord> {
 
   @override
   void write(BinaryWriter writer, LocalWord obj) {
-    writer.writeByte(3); // Number of fields in the User class
+    writer.writeByte(4); // Number of fields in the User class
 
     writer.writeByte(0);
     writer.write(obj.id);
@@ -33,5 +34,7 @@ class WordHiveAdapter extends TypeAdapter<LocalWord> {
     writer.writeByte(2);
     writer.write(obj.translate);
 
+    writer.writeByte(3);
+    writer.write(obj.notificationId);
   }
 }

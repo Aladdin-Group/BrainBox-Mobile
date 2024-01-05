@@ -45,19 +45,15 @@ class _EducationScreenState extends State<EducationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          WebViewWidget(controller: controller!),
-          Positioned(
-            bottom: 0,
-              right: 0,
-              left: 0,
-              child: LinearProgressIndicator(
-                value: progressValue.toDouble(),
-              )
+      body: Center(
+        child: Text(
+            'Comming soon',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold
           ),
-        ],
-      ),
+        ),
+      )
     );
   }
 }

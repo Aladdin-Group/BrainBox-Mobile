@@ -3,8 +3,8 @@ import 'package:brain_box/feature/words/presentation/words_screen.dart';
 import 'package:flutter/material.dart';
 
 class MovieGridItem extends StatelessWidget {
-  Movie movie;
-  MovieGridItem({super.key,required this.movie});
+  final Movie movie;
+  const MovieGridItem({super.key,required this.movie});
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
+import 'package:brain_box/feature/auth/presentation/auth_screen.dart';
 import 'package:brain_box/feature/settings/presentation/manager/theme/app_theme_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/pages/about_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/help_page.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shimmer/shimmer.dart';
@@ -304,6 +306,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         SettingsItem(title: 'Saved words'.tr(),screen: const SavedWordsPage(),),
                         SettingsItem(title: 'Help'.tr(),screen: const HelpPage(),),
                         SettingsItem(title: 'About'.tr(),screen: const AboutPage(),),
+                        SettingsItem(title: 'Logout'.tr(),click: (){
+                          StorageRepository.deleteBool(StoreKeys.isAuth);
+                          StorageRepository.deleteString(StoreKeys.token);
+                          GoogleSignIn().signOut();
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
+
+                        },),
                       ],
                     ),
                     const SliverToBoxAdapter(

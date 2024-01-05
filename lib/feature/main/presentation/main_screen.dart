@@ -243,7 +243,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   );
                 }
-              }else if(state.status.isInProgress){
+              }
                 return ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: 10, // Number of shimmer category items
@@ -284,10 +284,6 @@ class _MainScreenState extends State<MainScreen> {
                     );
                   },
                 );
-              }
-              return const Center(
-                child: CupertinoActivityIndicator(),
-              );
             },
           )),
     );

@@ -28,6 +28,8 @@ class StoreKeys{
 
   static const String localWordsList = 'localWordsList';
 
+  static const String savedWordsList = 'savedWordsList';
+
   static const String userData = 'userData';
 
   static const String user = 'user';

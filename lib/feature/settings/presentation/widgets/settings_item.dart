@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class SettingsItem extends StatelessWidget {
-  String title;
-  Widget? screen;
-  Widget? action;
-  VoidCallback? click;
-  SettingsItem({super.key,required this.title,this.screen,this.action,this.click});
+  final String title;
+  final Widget? screen;
+  final Widget? action;
+  final VoidCallback? click;
+  const SettingsItem({super.key,required this.title,this.screen,this.action,this.click});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,9 @@ class SettingsItem extends StatelessWidget {
             if(screen!=null){
               Navigator.push(context, MaterialPageRoute(builder: (param)=> screen!));
             }
-            click!();
+            if(click!=null){
+              click!();
+            }
           },
           child: Card(
             child: Row(

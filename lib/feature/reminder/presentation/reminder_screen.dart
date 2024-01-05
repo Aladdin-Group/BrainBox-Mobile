@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
@@ -30,6 +32,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
   GlobalKey<FormState> dropDownKey = GlobalKey();
   List<LocalWord> localWords = [];
   List<String> localWordsString = [];
+  Random random = Random();
   ValueNotifier<PermissionStatus> notificationPermissionStatus = ValueNotifier(PermissionStatus.limited);
 
   @override
@@ -247,7 +250,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                   ElevatedButton(
                                     onPressed: () async{
                                       // Add your save functionality here
-                                      final localWord = LocalWord(id: (localWords.length+1),word: word.text.trim(),translate: wordTranslate.text.trim());
+                                      final localWord = LocalWord(notificationId: HiveController.genericId(),id: random.nextInt(100).toString(),word: word.text.trim(),translate: wordTranslate.text.trim());
                                       await HiveController.saveObject(localWord);
                                       if (!mounted) return;
                                       setState(() {

@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meta/meta.dart';
 
 class WordsResponse {
   WordsResponse({
@@ -229,13 +230,16 @@ Sort copyWith({  bool? empty,
 
 }
 
-class Content {
+
+class Content extends Equatable{
+
   String? id;
   String? value;
   int? count;
   String? pronunciation;
   String? translationEn;
   String? translationRu;
+  bool? isSaved;
 
   Content(
       {this.id,
@@ -243,7 +247,7 @@ class Content {
         this.count,
         this.pronunciation,
         this.translationEn,
-        this.translationRu});
+        this.translationRu,this.isSaved});
 
   Content.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -264,4 +268,7 @@ class Content {
     data['translation_ru'] = this.translationRu;
     return data;
   }
+
+  @override
+  List<Object?> get props => [id,value,count,pronunciation,translationEn,translationRu,isSaved];
 }

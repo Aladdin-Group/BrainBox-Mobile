@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:brain_box/core/exceptions/failure.dart';
+import 'package:brain_box/core/singletons/storage/saved_controller.dart';
 import 'package:brain_box/feature/words/data/models/movie_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
@@ -37,14 +38,33 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
     on<GetWordsEvent>((event,emit)async{
 
+      var hiveList = await SavedController.getListFromHive();
+      List<Content> listWords = [];
+      var index = 0;
+
       final result = await getWordsByCountUseCase.call([0,event.movieId]);
+
+      result.right.results.forEach((element) {
+        if(hiveList.isNotEmpty){
+          if(element.id==hiveList[index].id){
+            element.isSaved = true;
+            listWords.add(element);
+          }else{
+            listWords.add(element);
+          }
+        }else{
+          listWords.addAll(result.right.results);
+          return;
+        }
+        if(hiveList.length<=index) index++;
+      });
 
       if(result.isRight){
         emit(state.copyWith(
           status: FormzSubmissionStatus.success,
           wordsPage: 1,
           wordsCount: result.right.count,
-          listWords: result.right.results
+          listWords: listWords
         ));
       }else{
         emit(state.copyWith(
@@ -55,13 +75,32 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
     });
 
     on<GetMoreWordsEvent>((event,emit)async{
-      
+
+      var hiveList = SavedController.getListFromHive();
+      List<Content> listWords = [];
+      var index = 0;
+
       final result = await getWordsByCountUseCase.call([state.wordsPage,event.movieId]);
+
+      result.right.results.forEach((element) {
+        if(hiveList.isNotEmpty){
+          if(element.id==hiveList[index].id){
+            element.isSaved = true;
+            listWords.add(element);
+          }else{
+            listWords.add(element);
+          }
+        }else{
+          listWords.addAll(result.right.results);
+          return;
+        }
+        if(hiveList.length<=index) index++;
+      });
 
       if(result.isRight){
         event.success(result.right.results.length);
         emit(state.copyWith(
-          listWords: [...state.listWords, ...result.right.results],
+          listWords: [...state.listWords, ...listWords],
           wordsCount: result.right.count,
           wordsPage: result.right.count > (state.listWords.length + result.right.results.length) ? state.wordsPage + 1 : state.wordsPage,
         ));
