@@ -51,7 +51,6 @@ class SavedController{
   }
   static Future<void> saveObject(Content object) async {
     try {
-      print(object.toString());
       await box.add(object);
     } catch (e) {
       print('Error saving object to Hive: $e');

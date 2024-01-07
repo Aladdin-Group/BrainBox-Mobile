@@ -10,8 +10,8 @@ import 'package:flutter/material.dart';
 import '../../../words/presentation/words_screen.dart';
 
 class SearchPage extends StatefulWidget {
-  MainBloc bloc;
-  SearchPage({super.key,required this.bloc});
+  final MainBloc bloc;
+  const SearchPage({super.key,required this.bloc});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -31,7 +31,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: TextField(
                 autofocus: true,
                 controller: searchController,
@@ -48,8 +48,8 @@ class _SearchPageState extends State<SearchPage> {
                 },
                 decoration: InputDecoration(
                   hintText: 'Search'.tr(),
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
+                  prefixIcon: const Icon(Icons.search),
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25.0)),
                   ),
                 ),
@@ -62,14 +62,12 @@ class _SearchPageState extends State<SearchPage> {
                   return value == MovieAvailability.initial ? const Center(child: Text('Search any movie 📽️🍿'),) : value == MovieAvailability.have ? ListView.builder(
                     itemCount: listSearch.length, // Replace with your data length
                     itemBuilder: (context, index) {
-                      print(listSearch.length-2==index);
-                      print(listSearch.length);
-                      print(index-1);
                       if(listSearch.length==index){
                         return SizedBox(
                           height: 90,
                           child: CupertinoButton(
                               onPressed: (){
+                                print('click');
                                 widget.bloc.add(SubmitMovieEvent(movieName: searchController.text));
                               },
                               child: Text('Request movie'.tr())
@@ -166,7 +164,7 @@ class _SearchPageState extends State<SearchPage> {
                                               children: [
                                                 Expanded(child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
-                                                  child: ElevatedButton(onPressed: (){ Navigator.pop(context); }, child: Text('Cancel')),
+                                                  child: ElevatedButton(onPressed: (){ Navigator.pop(context); }, child: const Text('Cancel')),
                                                 )),
                                                 Expanded(child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
@@ -229,6 +227,7 @@ class _SearchPageState extends State<SearchPage> {
                         Text('Not find,but you can order the movie'.tr()),
                         CupertinoButton(child: const Text('Request'), onPressed: (){
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sent your order')));
+                          widget.bloc.add(SubmitMovieEvent(movieName: searchController.text));
                         }),
                       ],
                     ),

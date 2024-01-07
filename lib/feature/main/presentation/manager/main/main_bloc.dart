@@ -61,24 +61,33 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     });
     on<GetMoreMovieEvent>((event,emit) async{
       Map<String,int> page = {};
+      Map<String,int> myPage = {};
       var movie = {};
       var moviesCount = 0;
       var levelPage = 0;
+      var movieIndex = 0;
       for(var pagingItem in state.page){
+        movieIndex++;
         if(pagingItem.containsKey(event.movieLevel)){
           page = pagingItem;
           levelPage = pagingItem[event.movieLevel]!;
           break;
         }
       }
+
+      // result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage
       final result = await getMoviesUseCase.call(page);
+      var statePage = state.page;
+      // myPage[event.movieLevel] = result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage;
+      // statePage[movieIndex] =  myPage;
       if(result.isRight){
         movie[event.movieLevel] = result.right.results;
         var map = state.movies;
         map[event.movieLevel]!.addAll(movie[event.movieLevel] ?? []);
         emit(state.copyWith(
           movies: map,
-          status: FormzSubmissionStatus.success
+          status: FormzSubmissionStatus.success,
+          // page: statePage,
         ));
         event.onSuccess(result.right.results);
         for(var movie in state.movies[event.movieLevel]!){
@@ -124,8 +133,8 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       }
     });
     on<SubmitMovieEvent>((event,emit)async{
-
-      await submitMovieUseCase.call(event.movieName);
+      print('SubmitMovieEvent');
+      submitMovieUseCase.call(event.movieName);
 
     });
   }

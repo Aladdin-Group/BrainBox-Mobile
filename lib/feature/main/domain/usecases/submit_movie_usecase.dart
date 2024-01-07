@@ -11,6 +11,7 @@ class SubmitMovieUseCase extends UseCase<void,String>{
 
   @override
   Future<Either<Failure, void>> call(String params) {
+    print('SubmitMovieUseCase');
     return repository.submitMovie(params);
   }
 

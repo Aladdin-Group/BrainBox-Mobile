@@ -6,8 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 
-import '../../../settings/data/models/user.dart';
-import '../../../settings/domain/use_cases/userDataUsecase.dart';
+
 import '../../data/models/words_response.dart';
 import '../../domain/use_cases/get_movie_info_usecase.dart';
 import '../../domain/use_cases/get_words_by_coun_usecase.dart';
@@ -38,7 +37,7 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
     on<GetWordsEvent>((event,emit)async{
 
-      var hiveList = await SavedController.getListFromHive();
+      var hiveList = SavedController.getListFromHive();
       List<Content> listWords = [];
       var index = 0;
 

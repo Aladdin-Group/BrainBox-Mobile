@@ -91,9 +91,10 @@ class MainDatasourceImplementation extends MainDatasource{
     final token = StorageRepository.getString(StoreKeys.token);
     try {
       final response = await dio.post(
-        '/api/v1/movie/addRequestMovie',
+        '/api/v1/movie/addRequestMovie?request=$movieName',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
+      print('object');
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return response.data;
       }

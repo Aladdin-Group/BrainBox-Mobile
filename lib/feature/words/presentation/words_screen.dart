@@ -9,9 +9,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:formz/formz.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class WordsScreen extends StatefulWidget {
   final int? movieId;
@@ -22,8 +25,21 @@ class WordsScreen extends StatefulWidget {
   State<WordsScreen> createState() => _WordsScreenState();
 }
 
-class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin {
+enum TtsState { playing, stopped, paused, continued }
 
+class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin {
+  late FlutterTts flutterTts;
+  String? language;
+  String? engine;
+  double volume = 1.0;
+  double pitch = 1.0;
+  double rate = 0.5;
+  bool isCurrentLanguageInstalled = false;
+
+  String? _newVoiceText;
+  int? _inputLength;
+
+  TtsState ttsState = TtsState.stopped;
   ValueNotifier<bool> switcher = ValueNotifier(false);
   ValueNotifier<int> slider = ValueNotifier(0);
   static const String _adUnitId = 'ca-app-pub-3129231972481781/1815921222';
@@ -34,6 +50,17 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   ValueNotifier<String> nameOfMovie = ValueNotifier('NON');
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   String languageCode = '';
+
+  get isPlaying => ttsState == TtsState.playing;
+  get isStopped => ttsState == TtsState.stopped;
+  get isPaused => ttsState == TtsState.paused;
+  get isContinued => ttsState == TtsState.continued;
+
+  bool get isIOS => !kIsWeb && Platform.isIOS;
+  bool get isAndroid => !kIsWeb && Platform.isAndroid;
+  bool get isWindows => !kIsWeb && Platform.isWindows;
+  bool get isWeb => kIsWeb;
+
 
   void loadAd() {
     BannerAd(
@@ -56,19 +83,126 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
     ).load();
   }
 
+  initTts() {
+    flutterTts = FlutterTts();
+
+    _setAwaitOptions();
+
+    if (isAndroid) {
+      _getDefaultEngine();
+      _getDefaultVoice();
+    }
+
+    flutterTts.setStartHandler(() {
+      setState(() {
+        print("Playing");
+        ttsState = TtsState.playing;
+      });
+    });
+
+    if (isAndroid) {
+      flutterTts.setInitHandler(() {
+        setState(() {
+          print("TTS Initialized");
+        });
+      });
+    }
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        print("Complete");
+        ttsState = TtsState.stopped;
+      });
+    });
+
+    flutterTts.setCancelHandler(() {
+      setState(() {
+        print("Cancel");
+        ttsState = TtsState.stopped;
+      });
+    });
+
+    flutterTts.setPauseHandler(() {
+      setState(() {
+        print("Paused");
+        ttsState = TtsState.paused;
+      });
+    });
+
+    flutterTts.setContinueHandler(() {
+      setState(() {
+        print("Continued");
+        ttsState = TtsState.continued;
+      });
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        print("error: $msg");
+        ttsState = TtsState.stopped;
+      });
+    });
+  }
+
+  Future<dynamic> _getLanguages() async => await flutterTts.getLanguages;
+
+  Future<dynamic> _getEngines() async => await flutterTts.getEngines;
+
+  Future _getDefaultEngine() async {
+    var engine = await flutterTts.getDefaultEngine;
+    if (engine != null) {
+      print(engine);
+    }
+  }
+
+  Future _getDefaultVoice() async {
+    var voice = await flutterTts.getDefaultVoice;
+    if (voice != null) {
+      print(voice);
+    }
+  }
+
+  Future _speak(String text) async {
+    print('object');
+    await flutterTts.setVolume(volume);
+    await flutterTts.setSpeechRate(rate);
+    await flutterTts.setPitch(pitch);
+
+      if (text.isNotEmpty) {
+        await flutterTts.speak(text);
+      }
+  }
+
+  Future _setAwaitOptions() async {
+    await flutterTts.awaitSpeakCompletion(true);
+  }
+
+  Future _stop() async {
+    var result = await flutterTts.stop();
+    if (result == 1) setState(() => ttsState = TtsState.stopped);
+  }
+
+  Future _pause() async {
+    var result = await flutterTts.pause();
+    if (result == 1) setState(() => ttsState = TtsState.paused);
+  }
+
   @override
   void initState() {
+    _getLanguages();
+    _getEngines();
     // AppFunctions.safeScreen();
     tabController = TabController(length: 4, vsync: this);
     pageController = PageController();
     loadAd();
+    initTts();
     super.initState();
   }
 
   @override
-  void dispose()async{
+  void dispose() {
     super.dispose();
-    // AppFunctions.unSafeScreen();
+    flutterTts.stop();
   }
 
   @override
@@ -184,16 +318,16 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                                 }
                               }else{
                                 SavedController.saveObject(wordsList[index]);
+                                HiveController.saveObject(LocalWord(notificationId: HiveController.genericId(),id: wordsList[index].id??'-1', translate: languageCode == 'ru' ? wordsList[index].translationRu : wordsList[index].translationEn, word: wordsList[index].value));
                                 setState(() {
                                   wordsList[index].isSaved = true;
                                 });
-                                HiveController.saveObject(LocalWord(notificationId: HiveController.genericId(),id: wordsList[index].id??'-1', translate: languageCode == 'ru' ? wordsList[index].translationRu : wordsList[index].translationEn, word: wordsList[index].value));
                               }
                             },
                             icon: wordsList[index].isSaved != null ? ( wordsList[index].isSaved! ? Icon(CupertinoIcons.bookmark_fill) : Icon(CupertinoIcons.bookmark)) : Icon(CupertinoIcons.bookmark)
                         ),
                         subtitle: Text(wordsList[index].pronunciation.toString()),
-                        leading: CircleAvatar(radius: 25, child: FittedBox(child: Text('${index+1}',style: const TextStyle(fontSize: 20),))),
+                        leading: GestureDetector(child: CircleAvatar(radius: 25, child: FittedBox(child: Text('${index+1}',style: const TextStyle(fontSize: 20),)))),
                       ),
                     ),
                   );
