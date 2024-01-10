@@ -10,11 +10,9 @@ import '../../../../core/singletons/storage/store_keys.dart';
 import '../models/dev_test_model.dart';
 
 abstract class AuthDataSource {
-
   Future<GoogleSignInAccount?> authWithGoogle();
   Future auth(GoogleSignInAccount? googleUser);
   Future<DevTestModel> isDevTesting();
-
 }
 
 class AuthDatasourceImplementation extends AuthDataSource{

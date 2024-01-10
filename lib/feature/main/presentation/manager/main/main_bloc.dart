@@ -1,10 +1,17 @@
 import 'package:bloc/bloc.dart';
+import 'package:brain_box/core/exceptions/failure.dart';
+import 'package:brain_box/feature/auth/presentation/auth_screen.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
 import 'package:brain_box/feature/main/data/models/movie_level.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../../core/exceptions/exception.dart';
+import '../../../../../core/singletons/storage/storage_repository.dart';
+import '../../../../../core/singletons/storage/store_keys.dart';
 import '../../../../settings/data/models/user.dart';
 import '../../../../settings/domain/use_cases/userDataUsecase.dart';
 import '../../../data/models/search_model.dart';
@@ -27,6 +34,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   MainBloc() : super(const MainState()) {
     on<GetAllMoviesEvent>((event, emit) async{
+      print('event');
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
       var movie = <String, List<Content>>{};
       var counts = <Map<String,int>>[];
@@ -55,6 +63,12 @@ class MainBloc extends Bloc<MainEvent, MainState> {
             page: page
           ));
         }else{
+          if(result.left is UserTokenExpire){
+              StorageRepository.deleteBool(StoreKeys.isAuth);
+              StorageRepository.deleteString(StoreKeys.token);
+              GoogleSignIn().signOut();
+              Navigator.pushAndRemoveUntil(event.context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
+          }
           emit(state.copyWith(status: FormzSubmissionStatus.failure));
         }
       }
@@ -95,6 +109,12 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         }
         page[event.movieLevel] = result.right.count > (moviesCount + result.right.results.length) ? levelPage + 1 : levelPage;
       }else{
+        if(result.left is ServerException){
+          StorageRepository.deleteBool(StoreKeys.isAuth);
+          StorageRepository.deleteString(StoreKeys.token);
+          GoogleSignIn().signOut();
+          Navigator.pushAndRemoveUntil(event.context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
+        }
         emit(state.copyWith(status: FormzSubmissionStatus.failure));
       }
     });
@@ -120,7 +140,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       if(result.isRight){
         event.success(result.right);
       }else{
-        event.failure();
+        event.failure(result.left);
       }
 
     });

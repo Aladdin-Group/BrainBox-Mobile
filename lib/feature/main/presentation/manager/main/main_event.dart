@@ -3,12 +3,16 @@ part of 'main_bloc.dart';
 
 abstract class MainEvent {}
 
-class GetAllMoviesEvent extends MainEvent{}
+class GetAllMoviesEvent extends MainEvent{
+  final context;
+  GetAllMoviesEvent({required this.context});
+}
 
 class GetMoreMovieEvent extends MainEvent{
   String movieLevel;
+  final context;
   Function(List<Content> p0) onSuccess;
-  GetMoreMovieEvent({required this.movieLevel,required this.onSuccess});
+  GetMoreMovieEvent({required this.movieLevel,required this.onSuccess,required this.context});
 }
 
 class BuyMovieEvent extends MainEvent{
@@ -22,7 +26,7 @@ class BuyMovieEvent extends MainEvent{
 class GetUserInfoEvent extends MainEvent{
   Function(User user) success;
   Function() progress;
-  Function() failure;
+  Function(Failure) failure;
 
   GetUserInfoEvent({required this.success,required this.failure,required this.progress});
 }

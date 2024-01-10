@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/core/constants/icons.dart';
+import 'package:brain_box/core/exceptions/exception.dart';
 import 'package:brain_box/feature/main/presentation/pages/search_page.dart';
 import 'package:brain_box/feature/main/presentation/widgets/movie_item_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -9,11 +10,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/singletons/storage/storage_repository.dart';
 import '../../../core/singletons/storage/store_keys.dart';
+import '../../auth/presentation/auth_screen.dart';
 import '../../settings/data/models/user.dart';
 import '../data/models/Movie.dart';
 import 'manager/main/main_bloc.dart';
@@ -129,9 +133,14 @@ class _MainScreenState extends State<MainScreen> {
         user = success;
         checkForUpdates(context);
         hive.put(StoreKeys.user, success);
-      }, failure: (){
-
-      }, progress: (){}))..add(GetAllMoviesEvent()),
+      }, failure: (failure){
+        if(failure is UserTokenExpire){
+          StorageRepository.deleteBool(StoreKeys.isAuth);
+          StorageRepository.deleteString(StoreKeys.token);
+          GoogleSignIn().signOut();
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
+        }
+      }, progress: (){}))..add(GetAllMoviesEvent(context: context)),
       child: Scaffold(
           appBar: AppBar(
             title: Row(
@@ -225,8 +234,8 @@ class _MainScreenState extends State<MainScreen> {
                                             if (state.count[movieIndex][key]! > movies.length) {
                                               context.read<MainBloc>().add(GetMoreMovieEvent(movieLevel: key, onSuccess: (onSuccess){
                                                 setState(() {
-                                                });
-                                              }));
+                                                },);
+                                              },context: context));
                                             }
                                           }else{
                                           }

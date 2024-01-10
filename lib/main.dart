@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:brain_box/core/adapters/storage/word_adapter.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
+import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
 import 'package:brain_box/feature/splash/presentation/splash_screen.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
@@ -275,6 +276,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => MainBloc()),
         BlocProvider(create: (context) => AppThemeBloc()),
         BlocProvider(create: (context) => WordsBloc()),
+        BlocProvider(create: (context) => EducationBloc()),
       ],
       child: BlocBuilder<AppThemeBloc, AppThemeState>(
         builder: (context, state) {

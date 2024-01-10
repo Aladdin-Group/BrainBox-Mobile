@@ -39,6 +39,8 @@ class MainDatasourceImplementation extends MainDatasource{
         return GenericPagination.fromJson(response.data, (p0) {
           return  Content.fromJson(p0 as Map<String, dynamic>);
         });
+      }else if(response.statusCode == 401){
+        throw UserTokenExpire();
       }
       throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
     } on ServerException {

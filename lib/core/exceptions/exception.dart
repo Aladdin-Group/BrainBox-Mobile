@@ -10,3 +10,5 @@ class ServerException implements Exception {
 }
 
 class DioException implements Exception {}
+
+class UserTokenExpire implements Exception{}

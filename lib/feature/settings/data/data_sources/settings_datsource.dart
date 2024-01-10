@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/exceptions/exception.dart';
 import '../../../../core/exceptions/failure.dart';
@@ -31,6 +32,8 @@ class SettingsDatasourceImplementation extends SettingsDatasource{
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return User.fromJson(response.data);
+      }else if(response.statusCode==401){
+        throw UserTokenExpire();
       }
       throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
     } on ServerException {

@@ -196,7 +196,7 @@ class _SearchPageState extends State<SearchPage> {
                                     }
                                   }
                                 },
-                                failure: (){
+                                failure: (failure){
                                   Navigator.pop(context);
                                   showDialog(context: context, builder: (builder)=> AlertDialog(title: Text('Something went wrong'.tr()),));
                                 },
