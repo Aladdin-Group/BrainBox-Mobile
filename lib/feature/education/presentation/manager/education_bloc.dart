@@ -1,12 +1,17 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:brain_box/core/exceptions/failure.dart';
+import 'package:brain_box/feature/education/data/models/book_model.dart';
+import 'package:brain_box/feature/education/data/models/essential_model.dart';
+import 'package:brain_box/feature/education/data/models/params.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:meta/meta.dart';
 
 import '../../data/models/edu_model.dart';
 import '../../domain/use_cases/get_edu_items_use_case.dart';
+import '../../domain/use_cases/get_words_use_case.dart';
 
 part 'education_event.dart';
 part 'education_state.dart';
@@ -14,6 +19,7 @@ part 'education_state.dart';
 class EducationBloc extends Bloc<EducationEvent, EducationState> {
 
   final GetEduItemsUseCase getEduItemsUseCase = GetEduItemsUseCase();
+  final GetEssentialWordsUseCase getEssentialWordsUseCase = GetEssentialWordsUseCase();
 
   EducationBloc() : super(const EducationState()) {
     on<GetEduItemsEvent>((event, emit) async{
@@ -51,6 +57,31 @@ class EducationBloc extends Bloc<EducationEvent, EducationState> {
         ));
 
       }
+    });
+    on<GetWordsEvent>((event,emit)async{
+
+
+      if(event.onProgress!=null) event.onProgress!();
+
+      final result = await getEssentialWordsUseCase.call(Two(t: event.essential, b: event.unit));
+
+      if(result.isRight){
+        event.onSuccess(result.right);
+      }else{
+        event.onFail(result.left);
+      }
+
+    });
+    on<GetWordsByUnitsEvent>((event,emit)async{
+      List<EssentialModel> list = [];
+
+      for (var element in event.unit) {
+        final result = await getEssentialWordsUseCase.call(Two(t: event.essential, b: element));
+        if(result.isRight) list.addAll(result.right);
+      }
+
+      event.onSuccess(list);
+
     });
   }
 }

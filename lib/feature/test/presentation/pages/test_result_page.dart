@@ -1,7 +1,9 @@
-import 'package:brain_box/core/constants/icons.dart';
+
 import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../core/assets/constants/icons.dart';
 
 class TestResultPage extends StatefulWidget {
   List<Content> inCorrectAnswer;

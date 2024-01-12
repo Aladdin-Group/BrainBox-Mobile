@@ -23,7 +23,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/constants/icons.dart';
+import '../../../core/assets/constants/icons.dart';
 import '../../../core/utils/background_controller.dart';
 import '../data/models/user.dart';
 import 'manager/settings/settings_bloc.dart';

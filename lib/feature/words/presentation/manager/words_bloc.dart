@@ -43,27 +43,12 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
       final result = await getWordsByCountUseCase.call([0,event.movieId]);
 
-      result.right.results.forEach((element) {
-        if(hiveList.isNotEmpty){
-          if(element.id==hiveList[index].id){
-            element.isSaved = true;
-            listWords.add(element);
-          }else{
-            listWords.add(element);
-          }
-        }else{
-          listWords.addAll(result.right.results);
-          return;
-        }
-        if(hiveList.length<=index) index++;
-      });
-
       if(result.isRight){
         emit(state.copyWith(
           status: FormzSubmissionStatus.success,
           wordsPage: 1,
           wordsCount: result.right.count,
-          listWords: listWords
+          listWords: result.right.results
         ));
       }else{
         emit(state.copyWith(
@@ -81,25 +66,11 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
       final result = await getWordsByCountUseCase.call([state.wordsPage,event.movieId]);
 
-      result.right.results.forEach((element) {
-        if(hiveList.isNotEmpty){
-          if(element.id==hiveList[index].id){
-            element.isSaved = true;
-            listWords.add(element);
-          }else{
-            listWords.add(element);
-          }
-        }else{
-          listWords.addAll(result.right.results);
-          return;
-        }
-        if(hiveList.length<=index) index++;
-      });
 
       if(result.isRight){
         event.success(result.right.results.length);
         emit(state.copyWith(
-          listWords: [...state.listWords, ...listWords],
+          listWords: [...state.listWords, ...result.right.results],
           wordsCount: result.right.count,
           wordsPage: result.right.count > (state.listWords.length + result.right.results.length) ? state.wordsPage + 1 : state.wordsPage,
         ));

@@ -3,48 +3,47 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:brain_box/core/singletons/storage/storage_repository.dart';
-import 'package:brain_box/core/singletons/storage/store_keys.dart';
-import 'package:brain_box/feature/test/presentation/pages/test_result_page.dart';
+import 'package:brain_box/feature/education/data/models/essential_model.dart';
+import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
-import 'package:shimmer/shimmer.dart';
 
-import '../../words/data/models/words_response.dart';
-import 'manager/test_bloc.dart';
+import '../../../../core/singletons/storage/storage_repository.dart';
+import '../../../../core/singletons/storage/store_keys.dart';
+import 'incorrect_words_page.dart';
 
-class TestScreen extends StatefulWidget {
-  final int movieId;
-  TestScreen({super.key,required this.movieId});
+class ByWordTestPage extends StatefulWidget {
+  final EducationBloc bloc;
+  final List<EssentialModel> list;
+  final String languageCode;
+  const ByWordTestPage({super.key,required this.bloc,required this.list,required this.languageCode});
 
   @override
-  State<TestScreen> createState() => _TestScreenState();
+  State<ByWordTestPage> createState() => _ByWordTestPageState();
 }
 
-class _TestScreenState extends State<TestScreen> {
+class _ByWordTestPageState extends State<ByWordTestPage> {
 
-  late TestBloc bloc;
-  List<String> vars = ['Large', 'Fresh', 'Small', 'Orange'];
-  List<Content> incorrectAnswers = [];
-  ValueNotifier<Content> current = ValueNotifier(Content());
+  List<EssentialModel> incorrectAnswers = [];
+  ValueNotifier<EssentialModel> current = ValueNotifier(EssentialModel());
   ValueNotifier<int> size = ValueNotifier(0);
   ValueNotifier<int> testIndex = ValueNotifier(1);
   ValueNotifier<int> timerCount = ValueNotifier(60);
   ValueNotifier<bool> isDisable = ValueNotifier(false);
   AudioPlayer audioPlayer = AudioPlayer();
-
   ValueNotifier<List<String>> options = ValueNotifier(['varA', 'varB', 'varC', 'varD']);
   ValueNotifier<int?> selectedOptionIndex = ValueNotifier(null);
   ValueNotifier<int?> correctOptionIndex = ValueNotifier(null);
   Timer? _timer;
-  String languageCode = '';
+  String languageCode = 'uz';
+  List<EssentialModel> testList = [];
 
   @override
   void initState() {
-    bloc = TestBloc();
+    languageCode = widget.languageCode;
+    testList.addAll(widget.list);
     startTimer();
+    setupQuestion(testList[0]);
     super.initState();
   }
 
@@ -79,10 +78,10 @@ class _TestScreenState extends State<TestScreen> {
     int nextIndex = testIndex.value + 1;
 
     // If there are more questions
-    if (nextIndex < bloc.state.list.length) {
+    if (nextIndex < testList.length) {
       setState(() {
         testIndex.value = nextIndex; // Update the test index
-        current.value = bloc.state.list[nextIndex]; // Set the new current question
+        current.value = testList[nextIndex]; // Set the new current question
         isDisable.value = false; // Re-enable the selection
         selectedOptionIndex.value = null; // Reset the selected option
       });
@@ -91,11 +90,11 @@ class _TestScreenState extends State<TestScreen> {
       generateVariantsForQuestion(current.value);
     } else {
       // No more questions, navigate to the results page or handle the test end
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TestResultPage(inCorrectAnswer: incorrectAnswers,)));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => IncorrectWordsPage(list: incorrectAnswers,)));
     }
   }
 
-  void generateVariantsForQuestion(Content question) {
+  void generateVariantsForQuestion(EssentialModel question) {
     // Extract the correct answer
     String correctAnswer = (languageCode == 'ru' ? question.translationRu : question.translationEn)!;
 
@@ -104,7 +103,7 @@ class _TestScreenState extends State<TestScreen> {
 
     // Add random options until we have the desired number
     while (newOptions.length < 4) {
-      Content randomContent = bloc.state.list[Random().nextInt(bloc.state.list.length)];
+      EssentialModel randomContent = testList[Random().nextInt(testList.length)];
       newOptions.add((languageCode == 'ru' ? randomContent.translationRu : randomContent.translationEn) !);
     }
 
@@ -121,12 +120,12 @@ class _TestScreenState extends State<TestScreen> {
     timerCount.value = 60;
   }
 
-  void setupQuestion(Content question) {
+  void setupQuestion(EssentialModel question) {
     // Identify the correct answer
     String correctAnswer = (languageCode == 'ru' ? question.translationRu : question.translationEn)!;
 
     // Shuffle the list of content to get random options
-    List<Content> randomOptions = List.of(bloc.state.list)..shuffle();
+    List<EssentialModel> randomOptions = List.of(testList)..shuffle();
     // Remove the correct answer if it exists in the list to avoid duplication
     randomOptions.removeWhere((content) => (languageCode == 'ru' ? content.translationRu : content.translationEn) == correctAnswer);
     // Take the first three items as wrong answers
@@ -140,7 +139,7 @@ class _TestScreenState extends State<TestScreen> {
     options.value = allOptions; // Set the options
     correctOptionIndex.value = allOptions.indexOf(correctAnswer); // Set the index of the correct answer
     // Size and other initializations...
-    size.value = bloc.state.list.length;
+    size.value = testList.length;
     // Reset the selected option index
     selectedOptionIndex.value = null;
     // Other relevant state like timer
@@ -171,7 +170,7 @@ class _TestScreenState extends State<TestScreen> {
     if (testIndex.value < size.value - 1) {
       // Move to the next test if there are more tests available.
       testIndex.value += 1;
-      current.value = bloc.state.list[testIndex.value];
+      current.value = testList[testIndex.value];
 
       // Reset the test state for the new question.
       selectedOptionIndex.value = null;
@@ -182,7 +181,7 @@ class _TestScreenState extends State<TestScreen> {
       timerCount.value = 60;
     } else {
       // If there are no more tests, navigate to the results page or finish the test.
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TestResultPage(inCorrectAnswer: incorrectAnswers,)));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => IncorrectWordsPage(list: incorrectAnswers,)));
     }
   }
 
@@ -270,147 +269,21 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    Locale currentLocale = context.locale;
-    languageCode = currentLocale.languageCode;
-    return BlocProvider(
-      create: (context) => bloc..add(NextTestEvent(
-          success: (content) {
-            Locale currentLocale = context.locale;
-            languageCode = currentLocale.languageCode;
-            isDisable.value = false;
-            timerCount.value = 60;
-            size.value = bloc.state.list.length;
-            current.value = bloc.state.list[testIndex.value];
-            setupQuestion(content[0]);
-          },
-          failure: (error) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-          },
-        movieId: widget.movieId
-      )),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Tests'),
-          actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.settings)),
-          ],
-        ),
-        body: BlocConsumer<TestBloc, TestState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            if(state.status.isSuccess){
-              return ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Book test 1'),
-                        ValueListenableBuilder(
-                            valueListenable: timerCount,
-                            builder: (context, value, _) => Text('$value s')
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Card(
-                      elevation: 0,
-                      shape: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
-                          )
-                      ),
-                      child: SizedBox(
-                        width: double.maxFinite,
-                        height: 150,
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              right: 10,
-                              top: 10,
-                              child: ValueListenableBuilder(
-                                valueListenable: testIndex,
-                                builder: (context, indexValue, _) => ValueListenableBuilder(
-                                    valueListenable: size,
-                                    builder: (context, sizeValue, _) => Text('$indexValue/$sizeValue')
-                                ),
-                              ),
-                            ),
-                            Center(
-                              child: ValueListenableBuilder(
-                                valueListenable: current,
-                                builder: (context, Content value, _) => AutoSizeText(
-                                  value.value ?? 'null',
-                                  style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Text('Choose one of the answers:', textAlign: TextAlign.center),
-                  ...List.generate(options.value.length, (index) {
-                    return GestureDetector(
-                      onTap: () => selectOption(index),
-                      child: optionWidget(index),
-                    );
-                  }),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10, bottom: 10),
-                    child: SizedBox(
-                      height: 50,
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))
-                              )
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Leave test')
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            }
-            return buildShimmerEffect(context);
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget buildShimmerEffect(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!, // Base color of the shimmer
-      highlightColor: Colors.grey[100]!, // Highlight color of the shimmer
-      child: ListView(
-        physics: const NeverScrollableScrollPhysics(),
+    return Scaffold(
+      body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10, right: 20, left: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 100,
-                  height: 20,
-                  color: Colors.white,
-                ),
-                Container(
-                  width: 50,
-                  height: 20,
-                  color: Colors.white,
+                const Text('Book test 1'),
+                ValueListenableBuilder(
+                    valueListenable: timerCount,
+                    builder: (context, value, _) => Text('$value s')
                 ),
               ],
             ),
@@ -422,60 +295,60 @@ class _TestScreenState extends State<TestScreen> {
               shape: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                   borderSide: BorderSide(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.primary,
                   )
               ),
               child: SizedBox(
                 width: double.maxFinite,
                 height: 150,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Stack(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 20,
-                      color: Colors.white,
+                    Positioned(
+                      right: 10,
+                      top: 10,
+                      child: ValueListenableBuilder(
+                        valueListenable: testIndex,
+                        builder: (context, indexValue, _) => ValueListenableBuilder(
+                            valueListenable: size,
+                            builder: (context, sizeValue, _) => Text('$indexValue/$sizeValue')
+                        ),
+                      ),
                     ),
-                    SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      height: 20,
-                      color: Colors.white,
+                    Center(
+                      child: ValueListenableBuilder(
+                        valueListenable: current,
+                        builder: (context, EssentialModel value, _) => AutoSizeText(
+                          value.word ?? 'null',
+                          style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          ...List.generate(4, (index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-              ),
+          const Text('Choose one of the answers:', textAlign: TextAlign.center),
+          ...List.generate(options.value.length, (index) {
+            return GestureDetector(
+              onTap: () => selectOption(index),
+              child: optionWidget(index),
             );
           }),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-            child: Container(
+            padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10, bottom: 10),
+            child: SizedBox(
               height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
+              child: ElevatedButton(
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))
+                      )
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Leave test')
               ),
             ),
           ),
@@ -483,5 +356,4 @@ class _TestScreenState extends State<TestScreen> {
       ),
     );
   }
-
 }

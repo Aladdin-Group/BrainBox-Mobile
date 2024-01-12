@@ -324,7 +324,9 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                                 });
                               }
                             },
-                            icon: wordsList[index].isSaved != null ? ( wordsList[index].isSaved! ? Icon(CupertinoIcons.bookmark_fill) : Icon(CupertinoIcons.bookmark)) : Icon(CupertinoIcons.bookmark)
+                            icon: IconButton(onPressed: (){
+                              _speak(wordsList[index].value??'SORRY I cna\'t speak this');
+                            }, icon: const Icon(Icons.volume_up))
                         ),
                         subtitle: Text(wordsList[index].pronunciation.toString()),
                         leading: GestureDetector(child: CircleAvatar(radius: 25, child: FittedBox(child: Text('${index+1}',style: const TextStyle(fontSize: 20),)))),

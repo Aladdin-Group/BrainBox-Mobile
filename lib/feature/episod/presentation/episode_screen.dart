@@ -1,8 +1,10 @@
-import 'package:brain_box/core/constants/icons.dart';
+
 import 'package:brain_box/feature/episod/presentation/widgets/movie_grid_item.dart';
 import 'package:brain_box/feature/main/data/models/movie_category.dart';
 import 'package:brain_box/feature/main/data/models/movie_item.dart';
 import 'package:flutter/material.dart';
+
+import '../../../core/assets/constants/icons.dart';
 
 class EpisodeScreen extends StatefulWidget {
   const EpisodeScreen({super.key});

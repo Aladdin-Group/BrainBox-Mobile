@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:brain_box/core/constants/icons.dart';
 import 'package:brain_box/core/exceptions/exception.dart';
 import 'package:brain_box/feature/main/presentation/pages/search_page.dart';
 import 'package:brain_box/feature/main/presentation/widgets/movie_item_widget.dart';
@@ -15,6 +14,7 @@ import 'package:hive/hive.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../core/assets/constants/icons.dart';
 import '../../../core/singletons/storage/storage_repository.dart';
 import '../../../core/singletons/storage/store_keys.dart';
 import '../../auth/presentation/auth_screen.dart';
