@@ -8,6 +8,7 @@
 /// level : "BEGINNER"
 /// belongAge : 0
 /// serial : {"id":0,"name":"string"}
+library;
 
 class MovieModel {
   MovieModel({

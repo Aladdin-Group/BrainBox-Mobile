@@ -122,7 +122,7 @@ class Content{
   bool? isBought;
   String? level;
   int? belongAge;
-  dynamic? serial;
+  dynamic serial;
 
   Content(
       {this.id,
@@ -179,10 +179,10 @@ class Sort {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['empty'] = this.empty;
-    data['sorted'] = this.sorted;
-    data['unsorted'] = this.unsorted;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['empty'] = empty;
+    data['sorted'] = sorted;
+    data['unsorted'] = unsorted;
     return data;
   }
 }
@@ -199,7 +199,7 @@ class Pageable {
 
   Pageable.fromJson(Map<String, dynamic> json) {
     offset = json['offset'];
-    sort = json['sort'] != null ? new Sort.fromJson(json['sort']) : null;
+    sort = json['sort'] != null ? Sort.fromJson(json['sort']) : null;
     pageNumber = json['pageNumber'];
     pageSize = json['pageSize'];
     paged = json['paged'];
@@ -207,15 +207,15 @@ class Pageable {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['offset'] = this.offset;
-    if (this.sort != null) {
-      data['sort'] = this.sort!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['offset'] = offset;
+    if (sort != null) {
+      data['sort'] = sort!.toJson();
     }
-    data['pageNumber'] = this.pageNumber;
-    data['pageSize'] = this.pageSize;
-    data['paged'] = this.paged;
-    data['unpaged'] = this.unpaged;
+    data['pageNumber'] = pageNumber;
+    data['pageSize'] = pageSize;
+    data['paged'] = paged;
+    data['unpaged'] = unpaged;
     return data;
   }
 }

@@ -1,6 +1,5 @@
 part of 'words_bloc.dart';
 
-@immutable
 class WordsState  extends Equatable{
   final FormzSubmissionStatus status;
   final Failure? fail;

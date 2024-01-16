@@ -25,5 +25,5 @@ class CacheFailure extends Failure {}
 class ParsingException implements Exception {
   final String errorMessage;
 
-  const ParsingException({required this.errorMessage});
+  const   ParsingException({required this.errorMessage});
 }

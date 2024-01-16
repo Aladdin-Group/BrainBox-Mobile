@@ -5,38 +5,39 @@ import 'package:brain_box/feature/navigation/presentation/bloc/navigation_event.
 import 'package:brain_box/feature/navigation/presentation/bloc/navigation_state.dart';
 import 'package:brain_box/feature/reminder/presentation/reminder_screen.dart';
 import 'package:brain_box/feature/settings/presentation/settings_screen.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 List<NavigationDestination> bottomNavigationBars = <NavigationDestination>[
   NavigationDestination(
-      tooltip: 'Home'.tr(),
-      icon: Icon(Icons.home_filled),
-      label: 'Home'.tr(),
+    tooltip: LocaleKeys.home.tr(),
+    icon: const Icon(Icons.home_filled),
+    label: LocaleKeys.home.tr(),
   ),
   NavigationDestination(
-      tooltip: 'Education'.tr(),
-      icon: Icon(Icons.school),
-      label: 'Education'.tr(),
+    tooltip: LocaleKeys.education.tr(),
+    icon: const Icon(Icons.school),
+    label: LocaleKeys.education.tr(),
   ),
   NavigationDestination(
-      tooltip: 'Reminder'.tr(),
-      icon: Icon(Icons.notifications),
-      label: 'Reminder'.tr(),
+    tooltip: LocaleKeys.reminder.tr(),
+    icon: const Icon(Icons.notifications),
+    label: LocaleKeys.reminder.tr(),
   ),
   NavigationDestination(
-      tooltip: 'Settings'.tr(),
-      icon: Icon(Icons.settings),
-      label: 'Settings'.tr(),
+    tooltip: LocaleKeys.settings.tr(),
+    icon: const Icon(Icons.settings),
+    label: LocaleKeys.settings.tr(),
   ),
 ];
 
 List<Widget> pages = [
-  MainScreen(),
-  EducationScreen(),
-  ReminderScreen(),
-  SettingsScreen(),
+  const MainScreen(),
+  const EducationScreen(),
+  const ReminderScreen(),
+  const SettingsScreen(),
 ];
 
 class LadingPage extends StatelessWidget {
@@ -44,21 +45,21 @@ class LadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NavigationBloc,NavigationState>(
-        builder: (context, state) {
-          return Scaffold(
-              body: pages[state.navigationIndex],
-              bottomNavigationBar: NavigationBar(
-                selectedIndex: state.navigationIndex,
-                onDestinationSelected: (index){
-                  BlocProvider.of<NavigationBloc>(context).add(NavigationRouteEvent(index: index));
-                }, destinations: bottomNavigationBars,
-              ),
-          );
-        },
-        listener: (context, state) {
-
-        },
+    return BlocConsumer<NavigationBloc, NavigationState>(
+      builder: (context, state) {
+        return Scaffold(
+          // body: pages[state.navigationIndex],
+          body: IndexedStack(index: state.navigationIndex, children: pages),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: state.navigationIndex,
+            onDestinationSelected: (index) {
+              BlocProvider.of<NavigationBloc>(context).add(NavigationRouteEvent(index: index));
+            },
+            destinations: bottomNavigationBars,
+          ),
+        );
+      },
+      listener: (context, state) {},
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:brain_box/feature/auth/data/models/auth_model.dart';
+ import 'package:brain_box/feature/auth/data/models/auth_model.dart';
 import 'package:brain_box/feature/auth/data/repositories/auth_repository_implementation.dart';
 import 'package:brain_box/feature/auth/domain/repositories/auth_repository.dart';
 import 'package:google_sign_in/google_sign_in.dart';

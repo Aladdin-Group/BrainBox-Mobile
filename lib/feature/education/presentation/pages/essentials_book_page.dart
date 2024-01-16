@@ -38,10 +38,12 @@ class _EssentialsBookPageState extends State<EssentialsBookPage> {
         title: const Text('Books'),
       ),
       body: GridView.builder(
+        padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2, // Number of columns
           crossAxisSpacing: 8.0, // Spacing between columns
           mainAxisSpacing: 8.0, // Spacing between rows
+          mainAxisExtent: 200
         ),
         itemCount: list.length,
         itemBuilder: (context, index) {

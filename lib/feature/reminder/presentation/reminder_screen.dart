@@ -5,10 +5,12 @@ import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/core/utils/background_controller.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/singletons/storage/hive_controller.dart';
@@ -62,9 +64,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: AutoSizeText(
-                        'Notification time'.tr(),
+                        LocaleKeys.notificationTime.tr(),
                         style: const TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -79,7 +81,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                         key: dropDownKey,
                         initialSelection: reminderDate??ReminderDate.every5Minutes,
                         enableSearch: false,
-                        label: Text('Select per minute'.tr()),
+                        label: Text(LocaleKeys.selectPerMinute.tr()),
                         onSelected: (ReminderDate? date) async{
                           BackgroundController.stopService().then((value) => {
                             BackgroundController.startService()
@@ -90,7 +92,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                 barrierDismissible: false,
                                 context: context, builder: (context) {
                               return AlertDialog(
-                                title: Text('Please enter every minute !'.tr()),
+                                title: Text(LocaleKeys.pleaseEnterEveryMinute.tr()),
                                 content: TextField(
                                   autofocus: true,
                                   controller: customDateController,
@@ -108,13 +110,13 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                   ElevatedButton(
                                     onPressed: () => Navigator.pop(context, null),
                                     // passing false
-                                    child: Text('Cancel'.tr()),
+                                    child: Text(LocaleKeys.cancel.tr()),
                                   ),
                                   ElevatedButton(
                                     onPressed: () =>
                                         Navigator.pop(context, customDateController.text),
                                     // passing true
-                                    child: Text('Yes'.tr()),
+                                    child: Text(LocaleKeys.yes.tr()),
                                   ),
                                 ],
                               );
@@ -125,7 +127,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                 setState(() {
                                   reminderDate = ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
                                 }),
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please try again !'.tr(args: ['${StorageRepository.getDouble(StoreKeys.reminderDate).toInt().toString()}']))))
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please try again !'.tr(args: [(StorageRepository.getDouble(StoreKeys.reminderDate).toInt().toString())]))))
                               } else {
                                 if(customDateController.text.trim().isNotEmpty){
                                   StorageRepository.putDouble(StoreKeys.customReminderDate, double.parse(customDateController.text)),
@@ -134,10 +136,10 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                   setState(() {
                                     reminderDate = date;
                                   }),
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Success !'.tr())))
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocaleKeys.success.tr())))
                                 }else{
                                   dropDownKey.currentState?.reset(),
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Field is empty !'.tr())))
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocaleKeys.fieldIsEmpty.tr())))
                                 }
                               }
                             });
@@ -174,8 +176,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                               children: [
                                 Expanded(
                                   child: AutoSizeText(
-                                    'Get reminder from saved words'.tr(),
-                                    style: TextStyle(
+                                    LocaleKeys.getReminderFromSavedWords.tr(),
+                                    style: const TextStyle(
                                         fontSize: 17
                                     ),
                                   ),
@@ -213,28 +215,26 @@ class _ReminderScreenState extends State<ReminderScreen> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Write some word'.tr()),
-                                content: Container(
+                                title: Text(LocaleKeys.writeSomeWord.tr()),
+                                content: SizedBox(
                                   height: 150.0, // Adjust the height as needed
                                   child: Column(
                                     children: [
                                       Container(
-                                        margin: EdgeInsets.only(bottom: 10.0),
+                                        margin: const EdgeInsets.only(bottom: 10.0),
                                         child: TextField(
                                           controller: word,
                                           decoration: InputDecoration(
-                                            labelText: 'Word'.tr(),
-                                            border: OutlineInputBorder(),
+                                            labelText: LocaleKeys.word.tr(),
+                                            border: const OutlineInputBorder(),
                                           ),
                                         ),
                                       ),
-                                      Container(
-                                        child: TextField(
-                                          controller: wordTranslate,
-                                          decoration: InputDecoration(
-                                            labelText: 'Translate'.tr(),
-                                            border: OutlineInputBorder(),
-                                          ),
+                                      TextField(
+                                        controller: wordTranslate,
+                                        decoration: InputDecoration(
+                                          labelText: LocaleKeys.translate.tr(),
+                                          border: const OutlineInputBorder(),
                                         ),
                                       ),
                                     ],
@@ -245,7 +245,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                     onPressed: () {
                                       Navigator.of(context).pop(); // Close the dialog
                                     },
-                                    child: Text('Cancel'.tr()),
+                                    child: Text(LocaleKeys.cancel.tr()),
                                   ),
                                   ElevatedButton(
                                     onPressed: () async{
@@ -262,7 +262,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                       if(!mounted) return;
                                       Navigator.pop(context);
                                     },
-                                    child: Text('Save'.tr()),
+                                    child: Text(LocaleKeys.save.tr()),
                                   ),
                                 ],
                               );
@@ -281,7 +281,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                         child: Card(
                           child: Row(
                             children: [
-                              const SizedBox(width: 10,),
+                              const Gap(10),
                               Text('${localWords[index].word} - ${localWords[index].translate}'),
                               const Expanded(child: SizedBox.shrink()),
                               IconButton(onPressed: ()async{
@@ -298,7 +298,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                   FlutterBackgroundService().startService();
                                 });
                               }, icon: const Icon(Icons.close)),
-                              const SizedBox(width: 10,),
+                              const Gap(10),
                             ],
                           ),
                         ),
@@ -306,21 +306,20 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   ) :
                   SliverFillRemaining(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AutoSizeText(
-                          'Add some words for memorize!'.tr(),
-                          style: TextStyle(
+                         LocaleKeys.addSomeWordsForMemorize.tr(),
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(left: 10.0,right: 10),
+                          padding: const EdgeInsets.only(left: 10.0,right: 10),
                           child: AutoSizeText(
-                            'When you add some word, app will send reminder you!'.tr(),
-                            style: TextStyle(
+                            LocaleKeys.whenYouAddSomeWordAppWillSendReminderYou.tr(),
+                            style: const TextStyle(
                                 color: Colors.grey
                             ),
                             textAlign: TextAlign.center,
@@ -334,14 +333,13 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   : SizedBox(
                 width: double.maxFinite,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                       child: AutoSizeText(
-                        'Notification is not allowed !'.tr(),
-                        style: TextStyle(
+                        LocaleKeys.notificationIsNotAllowed.tr(),
+                        style: const TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold
                         ),
@@ -350,14 +348,14 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0,left: 10,bottom: 15,),
                       child: AutoSizeText(
-                        'Press Allow notification button and select Notifications and swtich allow.'.tr(),
-                        style: TextStyle(
+                        LocaleKeys.pressAllowNotificationButtonAndSelectNotificationsAndSwtichAllow.tr(),
+                        style: const TextStyle(
                             color: Colors.grey
                         ),
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    ElevatedButton(onPressed: (){openAppSettings();}, child: Text('Allow notification'.tr()))
+                    ElevatedButton(onPressed: (){openAppSettings();}, child: Text(LocaleKeys.allowNotification.tr()))
                   ],
                 ),
               );

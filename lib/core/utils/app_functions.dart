@@ -102,7 +102,7 @@ class AppFunctions{
                             builder: (context,p0,p1) {
                               return Slider(value: slider.value.toDouble(),divisions: 8, onChanged: (value){
                                 slider.value = value.toInt();
-                              },max: 80,min: 0,);
+                              },max: 80,);
                             }
                         ),
                       ),

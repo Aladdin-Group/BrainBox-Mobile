@@ -10,6 +10,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:gap/gap.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../words/data/models/words_response.dart';
@@ -17,7 +18,7 @@ import 'manager/test_bloc.dart';
 
 class TestScreen extends StatefulWidget {
   final int movieId;
-  TestScreen({super.key,required this.movieId});
+  const TestScreen({super.key,required this.movieId});
 
   @override
   State<TestScreen> createState() => _TestScreenState();
@@ -28,7 +29,7 @@ class _TestScreenState extends State<TestScreen> {
   late TestBloc bloc;
   List<String> vars = ['Large', 'Fresh', 'Small', 'Orange'];
   List<Content> incorrectAnswers = [];
-  ValueNotifier<Content> current = ValueNotifier(Content());
+  ValueNotifier<Content> current = ValueNotifier(Content.empty());
   ValueNotifier<int> size = ValueNotifier(0);
   ValueNotifier<int> testIndex = ValueNotifier(1);
   ValueNotifier<int> timerCount = ValueNotifier(60);
@@ -240,7 +241,7 @@ class _TestScreenState extends State<TestScreen> {
       child: Row(
         children: [
           Text('${String.fromCharCode('A'.codeUnitAt(0) + index)})'),
-          const SizedBox(width: 10,),
+          const Gap(10),
           ValueListenableBuilder(
             valueListenable: options,
             builder: (context, List<String> values, _) {
@@ -421,7 +422,7 @@ class _TestScreenState extends State<TestScreen> {
               elevation: 0,
               shape: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.white,
                   )
               ),
@@ -436,7 +437,7 @@ class _TestScreenState extends State<TestScreen> {
                       height: 20,
                       color: Colors.white,
                     ),
-                    SizedBox(height: 8),
+                    const Gap(8),
                     Container(
                       width: double.infinity,
                       height: 20,

@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/auth/presentation/auth_screen.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,7 +42,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
           ),
           const SizedBox(height: 75,),
           AutoSizeText(
-              'choose_app_lang'.tr(),
+              LocaleKeys.chooseAppLang.tr(),
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 18

@@ -1,10 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -71,9 +73,9 @@ class _AuthScreenState extends State<AuthScreen> {
                       //     const SizedBox(width: 20),
                       //   ],
                       // ),
-                      const SizedBox(height: 100,),
+                      const Gap(100),
                       AutoSizeText(
-                        'welcome_back'.tr(),
+                        LocaleKeys.welcomeBack.tr(),
                         style: GoogleFonts.kronaOne(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -103,7 +105,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                         showDialog(context: context, builder: (BuildContext context){ return AlertDialog(title: Text(value.displayName??'no'),);}),
                                         StorageRepository.putBool(key: StoreKeys.isAuth, value: true),
                                         context.read<AuthBloc>().add(GoogleAuthEvent(googleSignInAccount: value))
-                                      }else{
+                                      }else{ 
                                       },
                                     });
                                   }, progress: () {
@@ -118,8 +120,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 )
                             ),
                             child: Text(
-                              'Sign with Google'.tr(),
-                              style: TextStyle(
+                              LocaleKeys.signWithGoogle.tr(),
+                              style: const TextStyle(
                                 fontSize: 20,
                               ),
                             ),

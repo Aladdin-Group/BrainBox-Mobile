@@ -5,10 +5,16 @@ import 'dart:io';
 import 'package:brain_box/core/utils/background_controller.dart';
 import 'package:brain_box/feature/settings/data/models/update_user.dart';
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
+import 'package:gap/gap.dart';
+import 'package:gap/gap.dart';
+import 'package:gap/gap.dart';
+import 'package:gap/gap.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,7 +40,7 @@ RewardedAd? _rewardedAd;
 void _createRewardedAd() {
   RewardedAd.load(
     adUnitId: 'ca-app-pub-3129231972481781/1874947156', // Use AdMob test ad unit ID for testing
-    request: AdRequest(),
+    request: const AdRequest(),
     rewardedAdLoadCallback: RewardedAdLoadCallback(
       onAdLoaded: (RewardedAd ad) {
         _rewardedAd = ad;
@@ -59,7 +65,7 @@ class _ShopPageState extends State<ShopPage> {
       BackgroundController.startService();
     }, onError: (error) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('failure'.tr())));
+          .showSnackBar(SnackBar(content: Text(LocaleKeys.failure.tr())));
     });
     initStore();
     super.initState();
@@ -71,7 +77,7 @@ class _ShopPageState extends State<ShopPage> {
       create: (context) => widget.bloc,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('appTitle'.tr()),
+          title: Text(LocaleKeys.appTitle.tr()),
         ),
         body: ListView(
           children: <Widget>[
@@ -79,25 +85,23 @@ class _ShopPageState extends State<ShopPage> {
               children: [
                 Expanded(
                   child: _buildOptionCard(
-                      'coins500'.tr(), '0.99\$', 'assets/images/img.png', 70,widget.bloc,widget.user,context,
+                      LocaleKeys.coins500.tr(), '0.99\$', 'assets/images/img.png', 70,widget.bloc,widget.user,context,
                       posPay: 1),
                 ),
                 Expanded(
                   child: _buildOptionCard(
-                      'coins5000'.tr(), '4.99\$', 'assets/images/img.png', 70,widget.bloc,widget.user,context,
-                      posPay: 0),
+                      LocaleKeys.coins500.tr(), '4.99\$', 'assets/images/img.png', 70,widget.bloc,widget.user,context),
                 ),
               ],
             ),
-            _buildOptionCard('premiumYear'.tr(), '9.99\$',
+            _buildOptionCard(LocaleKeys.premiumYear.tr(), '9.99\$',
                 'assets/images/img_1.png', 100,widget.bloc,widget.user, context,
                 isVertical: false, posPay: 2),
-            _buildOptionCard('getCoinsForWatching'.tr(), 'Watch video',
+            _buildOptionCard(LocaleKeys.getCoinsForWatching.tr(), 'Watch video',
                 'assets/images/img_2.png', 100,widget.bloc,widget.user,context,
                 isVideoOption: true, isVertical: false, isSub: true),
-            _buildOptionCard(''.tr(), 'Pay with telegram bot'.tr(),
-                'assets/images/telegram.png', 100,widget.bloc,widget.user,context,
-                isVideoOption: false, isVertical: false, isSub: false,isTelegram: true),
+            _buildOptionCard(LocaleKeys.payWithTelegramBot.tr(), LocaleKeys.payWithTelegramBot.tr(),
+                'assets/images/telegram.png', 100,widget.bloc,widget.user,context, isVertical: false,isTelegram: true),
           ],
         ),
       ),
@@ -122,7 +126,7 @@ class _ShopPageState extends State<ShopPage> {
         showCupertinoDialog(
           context: context,
           builder: (context) =>  CupertinoAlertDialog(
-            title: Text('pending'.tr()),
+            title: Text(LocaleKeys.pending.tr()),
           ),
         );
         BackgroundController.startService();
@@ -130,7 +134,7 @@ class _ShopPageState extends State<ShopPage> {
         showCupertinoDialog(
           context: context,
           builder: (context) => CupertinoAlertDialog(
-            title: Text('payingError'.tr()),
+            title: Text(LocaleKeys.payingError.tr()),
           ),
         );
         BackgroundController.startService();
@@ -143,7 +147,7 @@ class _ShopPageState extends State<ShopPage> {
             Navigator.pop(context,true);
           }, failure: () {
             Navigator.pop(context);
-            showDialog(context: context, builder: (builder)=> AlertDialog(title: Text('failure'.tr()),));
+            showDialog(context: context, builder: (builder)=> AlertDialog(title: Text(LocaleKeys.failure.tr()),));
           }, progress: () {
             showDialog(context: context, builder: (context)=>const AlertDialog(content: CupertinoActivityIndicator(),),barrierDismissible: false);
           },));
@@ -153,7 +157,7 @@ class _ShopPageState extends State<ShopPage> {
             Navigator.pop(context,true);
           }, failure: () {
             Navigator.pop(context);
-            showDialog(context: context, builder: (builder)=> AlertDialog(title: Text('failure'.tr()),));
+            showDialog(context: context, builder: (builder)=> AlertDialog(title: Text(LocaleKeys.failure.tr()),));
           }, progress: () {
             showDialog(context: context, builder: (context)=>const AlertDialog(content: CupertinoActivityIndicator(),),barrierDismissible: false);
           },));
@@ -165,7 +169,7 @@ class _ShopPageState extends State<ShopPage> {
               },
               failure: () {
                 Navigator.pop(context);
-                showDialog(context: context, builder: (builder)=> AlertDialog(title: Text('failure'.tr()),));
+                showDialog(context: context, builder: (builder)=> AlertDialog(title: Text(LocaleKeys.failure.tr()),));
               },
               progress: () {
                 showDialog(context: context, builder: (context)=>const AlertDialog(content: CupertinoActivityIndicator(),),barrierDismissible: false);
@@ -219,9 +223,9 @@ Widget _buildOptionCard(
                     width: size,
                     height: 70,
                   ),
-                  const SizedBox(height: 8),
+                  const Gap(8),
                   Text(title),
-                  const SizedBox(height: 8),
+                  const Gap(8),
                   ElevatedButton(
                     onPressed: () async {
                       BackgroundController.stopService().then((value) => {
@@ -230,8 +234,7 @@ Widget _buildOptionCard(
                           });
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.yellow,
-                      onPrimary: Colors.black,
+                      foregroundColor: Colors.black, backgroundColor: Colors.yellow,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
@@ -241,27 +244,28 @@ Widget _buildOptionCard(
                     child: Text(buttonText),
                   ),
                   if (isVideoOption) ...[
-                    const SizedBox(height: 8),
-                    Text('watchVideo'.tr()),
+                    const Gap(8),
+                    Text(LocaleKeys.watchVideo.tr()),
                   ]
                 ],
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Image.asset(
-                    imagePath,
-                    width: size,
-                    height: 70,
-                    fit: BoxFit.contain,
+                  Flexible(
+                    child: Image.asset(
+                      imagePath,
+                      width: size,
+                      height: 70,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SizedBox(height: 8),
-                      Text(title),
-                      const SizedBox(height: 8),
+                      const Gap(8),
+                      Text(title,overflow: TextOverflow.ellipsis,),
+                      const Gap(8),
                       ElevatedButton(
                         onPressed: () async{
                           var botUrl = 'https://t.me/brainboxxbot';
@@ -289,7 +293,7 @@ Widget _buildOptionCard(
                                 );
 
                                 _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('youEarned'.tr(args: ['${reward.amount}']))));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocaleKeys.youEarned.tr(args: ['${reward.amount}']))));
                                   bloc.add(UpdateUseDataEven(user: UpdateUser(addCoin: reward.amount.toInt(), userId: user.id??-1), success: () {
                                     Navigator.pop(context,true);
                                     Navigator.pop(context,true);
@@ -302,7 +306,7 @@ Widget _buildOptionCard(
                                   // Handle the reward
                                 });
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('rewardedAdNotLoaded'.tr())));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocaleKeys.rewardedAdNotLoaded.tr())));
                               }
                             } else {
                               BackgroundController.stopService()
@@ -313,15 +317,14 @@ Widget _buildOptionCard(
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.yellow,
-                          onPrimary: Colors.black,
+                          foregroundColor: Colors.black, backgroundColor: Colors.yellow,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 32, vertical: 12),
                         ),
-                        child: Text(buttonText),
+                        child: Text(buttonText,overflow: TextOverflow.ellipsis,),
                       ),
                     ],
                   ),

@@ -79,9 +79,9 @@ class EducationDatasourceImplementation extends EducationDatasource{
         List<EssentialModel> essentialModels = EssentialModel.fromList(jsonDataList);
 
         // Print the resulting list of EssentialModel objects
-        essentialModels.forEach((essentialModel) {
+        for (var essentialModel in essentialModels) {
           print(essentialModel.toJson());
-        });
+        }
         return essentialModels;
       }else if(response.statusCode == 401){
         throw UserTokenExpire();

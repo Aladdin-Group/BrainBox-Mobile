@@ -99,7 +99,6 @@ class _SearchPageState extends State<SearchPage> {
                                         ),
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Row(
                                               children: [
@@ -148,7 +147,7 @@ class _SearchPageState extends State<SearchPage> {
                                                       width: 210,
                                                       height: 170,
                                                       child: Padding(
-                                                        padding: EdgeInsets.only(left: 10.0),
+                                                        padding: const EdgeInsets.only(left: 10.0),
                                                         child: AutoSizeText(
                                                           listSearch[index].description??'NULL',
                                                           maxLines: 10,
@@ -221,7 +220,6 @@ class _SearchPageState extends State<SearchPage> {
                     },
                   ) : Center(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('Not find,but you can order the movie'.tr()),

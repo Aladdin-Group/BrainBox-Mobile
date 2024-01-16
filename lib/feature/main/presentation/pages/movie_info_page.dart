@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,10 +33,9 @@ class _MovieInfoPageState extends State<MovieInfoPage> {
         slivers: [
           SliverToBoxAdapter(
             child: Align(
-              alignment: Alignment.center,
               child: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: Text('Forcoins'.tr(args: ['${widget.movie.price}',]),textAlign: TextAlign.center,style: TextStyle(
+                child: Text(LocaleKeys.forcoins.tr(args: ['${widget.movie.price}',]),textAlign: TextAlign.center,style: const TextStyle(
                     fontWeight: FontWeight.bold
                 ),),
               ),
@@ -43,7 +43,7 @@ class _MovieInfoPageState extends State<MovieInfoPage> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
+              padding: const EdgeInsets.only(left: 10.0),
               child: AutoSizeText(
                 widget.movie.description??'NULL',
                 maxLines: 10,
@@ -56,21 +56,22 @@ class _MovieInfoPageState extends State<MovieInfoPage> {
               children: [
                 Expanded(child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(onPressed: (){ Navigator.pop(context); }, child: Text('Cancel')),
+                  child: ElevatedButton(onPressed: (){ Navigator.pop(context); }, child:  Text(LocaleKeys.cancel.tr())),
                 )),
                 Expanded(child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(onPressed: (){
                     widget.bloc.add(BuyMovieEvent(success: (success){
                       widget.movie.isBought = true;
+
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WordsScreen(movieId: widget.movie.id,title: widget.movie.name,),));
                     }, failure: (){
-                      showDialog(context: context, builder: (builder)=>AlertDialog(title: Text('Something went wrong'.tr()),));
+                      showDialog(context: context, builder: (builder)=>AlertDialog(title: Text(LocaleKeys.somethingWentWrong.tr()),));
                     }, progress: (){
                       showDialog(context: context, builder: (builder)=>const AlertDialog(title: CupertinoActivityIndicator(),));
                     }, movieId: widget.movie.id??-1));
 
-                  }, child: Text('Purchase'.tr())),
+                  }, child: Text(LocaleKeys.purchase.tr())),
                 )),
               ],
             ),

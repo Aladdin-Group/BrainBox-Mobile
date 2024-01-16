@@ -18,3 +18,9 @@ class GetMoreWordsEvent extends WordsEvent{
   final int movieId;
   GetMoreWordsEvent({required this.success,required this.movieId});
 }
+
+class SaveOrRemoveWord  extends WordsEvent{
+  Content word;
+
+  SaveOrRemoveWord(this.word);
+}

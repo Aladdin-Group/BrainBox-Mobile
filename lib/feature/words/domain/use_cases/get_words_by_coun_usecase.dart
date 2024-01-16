@@ -11,8 +11,8 @@ class GetWordsByCountUseCase extends UseCase<GenericPagination<Content>,List<int
   WordsRepository repository = WordsRepositoryImplementation();
 
   @override
-  Future<Either<Failure, GenericPagination<Content>>> call(List m) {
-    return repository.getWordsByCount(m[0],m[1]);
+  Future<Either<Failure, GenericPagination<Content>>> call(List params) {
+    return repository.getWordsByCount(params[0],params[1]);
   }
 
 

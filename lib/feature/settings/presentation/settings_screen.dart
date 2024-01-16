@@ -10,6 +10,7 @@ import 'package:brain_box/feature/settings/presentation/pages/help_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/saved_words_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/shop_page.dart';
 import 'package:brain_box/feature/settings/presentation/widgets/settings_item.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,8 +30,6 @@ import '../data/models/user.dart';
 import 'manager/settings/settings_bloc.dart';
 import 'package:in_app_review/in_app_review.dart';
 
-
-
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -39,7 +38,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
   User? user;
   ValueNotifier<bool> themeMode = ValueNotifier(false);
   ValueNotifier<bool> appSound = ValueNotifier(false);
@@ -66,8 +64,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       // Consider directing the user to the app's listing on Google Play
       const url = 'https://play.google.com/store/apps/details?id=com.aladdin.brain_box';
       // You can use the url_launcher package to launch the URL
-      if (await canLaunch(url)) {
-        await launch(url);
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url));
       }
     }
   }
@@ -79,12 +77,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     appSound.value = StorageRepository.getBool(StoreKeys.appSound);
     bloc = SettingsBloc();
 
-
     checkPermissions();
     super.initState();
   }
 
-  Future<PermissionStatus> checkPermissions() async{
+  Future<PermissionStatus> checkPermissions() async {
     await Permission.notification.request();
     statusNotification.value = await Permission.notification.status;
     return await Permission.notification.status;
@@ -93,116 +90,126 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => bloc..add(GetUserDataEvent(onSuccess: (userData){
-        isInit.value = true;
-        user = userData;
-        Locale currentLocale = context.locale;
+      create: (context) => bloc
+        ..add(GetUserDataEvent(onSuccess: (userData) {
+          isInit.value = true;
+          user = userData;
+          Locale currentLocale = context.locale;
 
-        // Access the language code (e.g., 'en', 'ru', 'fr')
-        String languageCode = currentLocale.languageCode;
+          // Access the language code (e.g., 'en', 'ru', 'fr')
+          String languageCode = currentLocale.languageCode;
 
-        if(languageCode=='uz'){
-          _selectedFruit = 2;
-        }else if(languageCode=='en'){
-          _selectedFruit = 1;
-        }else{
-          _selectedFruit = 0;
-        }
+          if (languageCode == 'uz') {
+            _selectedFruit = 2;
+          } else if (languageCode == 'en') {
+            _selectedFruit = 1;
+          } else {
+            _selectedFruit = 0;
+          }
 
-        setState(() {
-          isPremium = user!.isPremium??false;
-        });
-      })),
+          setState(() {
+            isPremium = user!.isPremium ?? false;
+          });
+        })),
       child: Scaffold(
         appBar: AppBar(
           title: Row(
             children: [
-              SizedBox(
-                  width: 35, height: 35, child: Image.asset(AppIcons.brain)),
+              SizedBox(width: 35, height: 35, child: Image.asset(AppIcons.brain)),
               const SizedBox(
                 width: 10,
               ),
-              isPremium ? FittedBox(
-                child: Row(
-                  children: [
-                    AutoSizeText(
+              isPremium
+                  ? FittedBox(
+                      child: Row(
+                        children: [
+                          AutoSizeText(
+                            'Brainbox',
+                            style: GoogleFonts.kronaOne(),
+                          ),
+                          AutoSizeText(
+                            LocaleKeys.premium.tr(),
+                            style: GoogleFonts.kronaOne(),
+                          ),
+                        ],
+                      ),
+                    )
+                  : AutoSizeText(
                       'Brainbox',
                       style: GoogleFonts.kronaOne(),
-                    ),
-                    AutoSizeText(
-                      'Premium'.tr(),
-                      style: GoogleFonts.kronaOne(),
-                    ),
-                  ],
-                ),
-              ) :  AutoSizeText(
-                'Brainbox',
-                style: GoogleFonts.kronaOne(),
-              )
+                    )
             ],
           ),
-          actions: isPremium ? [] : [
-            ValueListenableBuilder(
-                valueListenable: isInit,
-                builder: (p1,p2,p3) {
-                  return p2 ? Text(user!.coins.toString(),style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                  ),) : const SizedBox();
-                }
-            ),
-            IconButton(icon: const Icon(Icons.add_circle),onPressed: () async{
-              if(user!=null){
-                bool isPaymentAvailable = await Navigator.push(context, MaterialPageRoute(builder: (builder)=>ShopPage(bloc: bloc,user: user!,)));
-                if(isPaymentAvailable){
-                  bloc.add(GetUserDataEvent(onSuccess: (userData){
-                    isInit.value = true;
-                    user = userData;
-                    setState(() {
-                      isPremium = user!.isPremium??false;
-                    });
-                  }));
-                }
-              }
-            },),
-            const SizedBox(width: 12,),
-          ],
+          actions: isPremium
+              ? []
+              : [
+                  ValueListenableBuilder(
+                      valueListenable: isInit,
+                      builder: (p1, p2, p3) {
+                        return p2
+                            ? Text(
+                                user!.coins.toString(),
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              )
+                            : const SizedBox();
+                      }),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle),
+                    onPressed: () async {
+                      if (user != null) {
+                        bool isPaymentAvailable = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (builder) => ShopPage(
+                                      bloc: bloc,
+                                      user: user!,
+                                    )));
+                        if (isPaymentAvailable) {
+                          bloc.add(GetUserDataEvent(onSuccess: (userData) {
+                            isInit.value = true;
+                            user = userData;
+                            setState(() {
+                              isPremium = user!.isPremium ?? false;
+                            });
+                          }));
+                        }
+                      }
+                    },
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                ],
         ),
         body: BlocBuilder<SettingsBloc, SettingsState>(
           builder: (context, state) {
-            if(state.status.isSuccess){
+            if (state.status.isSuccess) {
               return SafeArea(
                 child: CustomScrollView(
                   physics: const BouncingScrollPhysics(),
                   slivers: [
                     SliverToBoxAdapter(
                       child: SizedBox(
-                        width: 130,
-                        height: 130,
-                        child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: CircleAvatar(
-                            foregroundImage: CachedNetworkImageProvider(
-                              user!.imageUrl??'',
-
+                          width: 130,
+                          height: 130,
+                          child: FittedBox(
+                            child: CircleAvatar(
+                              foregroundImage: CachedNetworkImageProvider(
+                                user!.imageUrl ?? '',
+                              ),
                             ),
-                          ),
-                        )
-                      ),
+                          )),
                     ),
                     SliverToBoxAdapter(
                       child: Text(
-                        user!.name??'Abullajon',
+                        user!.name ?? 'Abullajon',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold
-                        ),
+                        style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SliverToBoxAdapter(
                       child: Text(
-                        user!.email??'adbullajon@gmail.com',
+                        user!.email ?? 'adbullajon@gmail.com',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -214,7 +221,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SliverList.list(
                       children: [
                         SettingsItem(
-                          click: (){
+                          click: () {
                             showCupertinoModalPopup<void>(
                               context: context,
                               builder: (BuildContext context) => Container(
@@ -242,94 +249,152 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         _selectedFruit = selectedItem;
                                       });
                                     },
-                                    children: List<Widget>.generate(_fruitNames.length, (int index) {
+                                    children:
+                                        List<Widget>.generate(_fruitNames.length, (int index) {
                                       return Center(child: Text(_fruitNames[index]));
                                     }),
                                   ),
                                 ),
                               ),
                             ).then((value) => {
-                              if(_selectedFruit==0){
-                                context.setLocale(const Locale('ru','RU')),
-                              }else if(_selectedFruit==1){
-                                context.setLocale(const Locale('en','US')),
-                              }else{
-                                context.setLocale(const Locale('uz','UZ')),
-                              }
-                            });
+                                  if (_selectedFruit == 0)
+                                    {
+                                      context.setLocale(const Locale('ru', 'RU')),
+                                    }
+                                  else if (_selectedFruit == 1)
+                                    {
+                                      context.setLocale(const Locale('en', 'US')),
+                                    }
+                                  else
+                                    {
+                                      context.setLocale(const Locale('uz', 'UZ')),
+                                    }
+                                });
                           },
-                          title: 'Language'.tr(),
+                          title: LocaleKeys.language.tr(),
                           action: ValueListenableBuilder(
-                            valueListenable: appLanguage,
-                            builder: (p1,p2,p3) {
-                              return Text(p2,style: const TextStyle(fontWeight: FontWeight.bold),);
-                            }
-                          ),
+                              valueListenable: appLanguage,
+                              builder: (p1, p2, p3) {
+                                return Text(
+                                  p2,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                );
+                              }),
                         ),
                         BlocBuilder<AppThemeBloc, AppThemeState>(
                           builder: (context, state) {
                             return SettingsItem(
-                              title: 'Night mode'.tr(),
-                              action: ValueListenableBuilder(
-                              valueListenable: themeMode,
-                              builder: (p1,p2,p3){
-                                return Switch(value: p2, onChanged: (value){
-                                  StorageRepository.putBool(key: StoreKeys.appTheme, value: value);
-                                  state.switchValue ? context.read<AppThemeBloc>().add(SwitchOffThemeEven()) : context.read<AppThemeBloc>().add(SwitchOnThemeEven());
-                                  themeMode.value=value;
-                                });
-                              },
-                            )
-                          );
-                        },
+                                title: LocaleKeys.nightMode.tr(),
+                                action: ValueListenableBuilder(
+                                  valueListenable: themeMode,
+                                  builder: (p1, p2, p3) {
+                                    return Switch(
+                                        value: p2,
+                                        onChanged: (value) {
+                                          StorageRepository.putBool(
+                                              key: StoreKeys.appTheme, value: value);
+                                          state.switchValue
+                                              ? context
+                                                  .read<AppThemeBloc>()
+                                                  .add(SwitchOffThemeEven())
+                                              : context
+                                                  .read<AppThemeBloc>()
+                                                  .add(SwitchOnThemeEven());
+                                          themeMode.value = value;
+                                        });
+                                  },
+                                ));
+                          },
                         ),
                         ValueListenableBuilder(
-                          valueListenable: statusNotification,
-                          builder: (p1,p2,p3) {
-                            return p2 == PermissionStatus.granted ? SettingsItem(
-                                title: 'App sound'.tr(),
-                                action: ValueListenableBuilder(
-                                  valueListenable: appSound,
-                                  builder: (p1,p2,p3){
-                                    return Switch(value: p2, onChanged: (value){ StorageRepository.putBool(key: StoreKeys.appSound, value: value);appSound.value=value; });
-                                  },
-                                )
-                            ) : p2 == PermissionStatus.permanentlyDenied || p2 == PermissionStatus.denied ? SettingsItem(
-                                title: 'Permission is denied'.tr(),
-                              action: ElevatedButton(
-                                onPressed: () {openAppSettings();},
-                                child: Text('Go settings'.tr()),
-                              ),
-                            ) : SettingsItem(title: 'Something went wrong !'.tr());
-                          }
+                            valueListenable: statusNotification,
+                            builder: (p1, p2, p3) {
+                              return p2 == PermissionStatus.granted
+                                  ? SettingsItem(
+                                      title: LocaleKeys.appSound.tr(),
+                                      action: ValueListenableBuilder(
+                                        valueListenable: appSound,
+                                        builder: (p1, p2, p3) {
+                                          return Switch(
+                                              value: p2,
+                                              onChanged: (value) {
+                                                StorageRepository.putBool(
+                                                    key: StoreKeys.appSound, value: value);
+                                                appSound.value = value;
+                                              });
+                                        },
+                                      ))
+                                  : p2 == PermissionStatus.permanentlyDenied ||
+                                          p2 == PermissionStatus.denied
+                                      ? SettingsItem(
+                                          title: LocaleKeys.permissionIsDenied.tr(),
+                                          action: ElevatedButton(
+                                            onPressed: () {
+                                              openAppSettings();
+                                            },
+                                            child: Text(LocaleKeys.goSettings.tr()),
+                                          ),
+                                        )
+                                      : SettingsItem(title: LocaleKeys.somethingWentWrong.tr());
+                            }),
+                        SettingsItem(
+                          title: LocaleKeys.savedWords.tr(),
+                          screen: const SavedWordsPage(),
                         ),
-                        SettingsItem(title: 'Saved words'.tr(),screen: const SavedWordsPage(),),
-                        SettingsItem(title: 'Help'.tr(),screen: const HelpPage(),),
-                        SettingsItem(title: 'About'.tr(),screen: const AboutPage(),),
-                        SettingsItem(title: 'Logout'.tr(),click: (){
-                          StorageRepository.deleteBool(StoreKeys.isAuth);
-                          StorageRepository.deleteString(StoreKeys.token);
-                          GoogleSignIn().signOut();
-                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
+                        SettingsItem(
+                          title: LocaleKeys.help.tr(),
+                          screen: const HelpPage(),
+                        ),
+                        SettingsItem(
+                          title: LocaleKeys.about.tr(),
+                          screen: const AboutPage(),
+                        ),
+                        SettingsItem(
+                          title: LocaleKeys.logout.tr(),
+                          click: () {
+                            showAdaptiveDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(LocaleKeys.logout.tr()),
+                                  content:   Text(LocaleKeys.areYouSureYouWantToLogout.tr()),
+                                  actions: [
+                                    TextButton(onPressed: () => Navigator.pop(context), child: Text(LocaleKeys.cancel.tr())),
+                                    TextButton(onPressed: () {
+                                      StorageRepository.deleteBool(StoreKeys.isAuth);
+                                      StorageRepository.deleteString(StoreKeys.token);
+                                      GoogleSignIn().signOut();
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => const AuthScreen()),
+                                              (route) => false);
+                                    }, child: Text(LocaleKeys.logout.tr())),
 
-                        },),
+                                  ],
+                                );
+                              },
+                            );
+
+                          },
+                        ),
                       ],
                     ),
                     const SliverToBoxAdapter(
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text('Rate the app',style: TextStyle(fontSize: 23),textAlign: TextAlign.center,),
+                        child: Text(
+                          'Rate the app',
+                          style: TextStyle(fontSize: 23),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                     SliverToBoxAdapter(
                       child: Align(
-                        alignment: Alignment.center,
                         child: RatingBar.builder(
                           initialRating: StorageRepository.getDouble(StoreKeys.rating),
                           minRating: 1,
-                          direction: Axis.horizontal,
                           allowHalfRating: true,
-                          itemCount: 5,
                           itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                           itemBuilder: (context, _) => const Icon(
                             Icons.star,
@@ -342,7 +407,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                     ),
-                    const SliverToBoxAdapter(child: SizedBox(height: 20,)),
+                    const SliverToBoxAdapter(
+                        child: SizedBox(
+                      height: 20,
+                    )),
                   ],
                 ),
               );
@@ -357,14 +425,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Shimmer.fromColors(
                       baseColor: Colors.grey[300]!,
                       highlightColor: Colors.grey[100]!,
-                      child: CircleAvatar(
+                      child: const CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 65, // Half of width and height of SizedBox
                       ),
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: 30,)),
+                const SliverToBoxAdapter(
+                    child: SizedBox(
+                  height: 30,
+                )),
                 SliverToBoxAdapter(
                   child: Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
@@ -376,8 +447,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ), // For user name
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: 30,),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 30,
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: Shimmer.fromColors(
@@ -390,8 +463,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ), // For user email
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: 20,),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 20,
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: Shimmer.fromColors(
@@ -404,8 +479,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ), // For user email
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: 20,),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 20,
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: Shimmer.fromColors(
@@ -418,8 +495,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ), // For user email
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: 20,),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 20,
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: Shimmer.fromColors(
@@ -432,8 +511,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ), // For user email
                 ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: 20,),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 20,
+                  ),
                 ),
                 SliverToBoxAdapter(
                   child: Shimmer.fromColors(
@@ -457,5 +538,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
-
 }
