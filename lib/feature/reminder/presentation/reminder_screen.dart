@@ -23,9 +23,7 @@ class ReminderScreen extends StatefulWidget {
   State<ReminderScreen> createState() => _ReminderScreenState();
 }
 
-
 class _ReminderScreenState extends State<ReminderScreen> {
-
   final TextEditingController customDateController = TextEditingController();
   final TextEditingController word = TextEditingController();
   final TextEditingController wordTranslate = TextEditingController();
@@ -47,7 +45,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
     super.initState();
   }
 
-  Future initWords() async{
+  Future initWords() async {
     localWords = await HiveController.getListFromHive();
     setState(() {});
     notificationPermissionStatus.value = await Permission.notification.request();
@@ -55,312 +53,327 @@ class _ReminderScreenState extends State<ReminderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: ValueListenableBuilder(
+    return SafeArea(
+      child: Scaffold(
+        body: ValueListenableBuilder(
             valueListenable: notificationPermissionStatus,
-            builder: (param1,param2,param3){
-              return notificationPermissionStatus.value == PermissionStatus.granted ? CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: AutoSizeText(
-                        LocaleKeys.notificationTime.tr(),
-                        style: const TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: DropdownMenu<ReminderDate>(
-                        key: dropDownKey,
-                        initialSelection: reminderDate??ReminderDate.every5Minutes,
-                        enableSearch: false,
-                        label: Text(LocaleKeys.selectPerMinute.tr()),
-                        onSelected: (ReminderDate? date) async{
-                          BackgroundController.stopService().then((value) => {
-                            BackgroundController.startService()
-                          });
-                          if(!mounted) return;
-                          if('ReminderDate.custom'==date) {
-                            showDialog(
-                                barrierDismissible: false,
-                                context: context, builder: (context) {
-                              return AlertDialog(
-                                title: Text(LocaleKeys.pleaseEnterEveryMinute.tr()),
-                                content: TextField(
-                                  autofocus: true,
-                                  controller: customDateController,
-                                  decoration: const InputDecoration(
-                                      border: OutlineInputBorder()
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  maxLength: 2,
-
-                                ),
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () => Navigator.pop(context, null),
-                                    // passing false
-                                    child: Text(LocaleKeys.cancel.tr()),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, customDateController.text),
-                                    // passing true
-                                    child: Text(LocaleKeys.yes.tr()),
-                                  ),
-                                ],
-                              );
-                            }
-                            ).then((value) =>
-                            {
-                              if(value == null) {
-                                setState(() {
-                                  reminderDate = ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
-                                }),
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please try again !'.tr(args: [(StorageRepository.getDouble(StoreKeys.reminderDate).toInt().toString())]))))
-                              } else {
-                                if(customDateController.text.trim().isNotEmpty){
-                                  StorageRepository.putDouble(StoreKeys.customReminderDate, double.parse(customDateController.text)),
-                                  StorageRepository.putDouble(
-                                      StoreKeys.reminderDate, date!.position.toDouble()),
-                                  setState(() {
-                                    reminderDate = date;
-                                  }),
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocaleKeys.success.tr())))
-                                }else{
-                                  dropDownKey.currentState?.reset(),
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(LocaleKeys.fieldIsEmpty.tr())))
-                                }
-                              }
-                            });
-                          }else{
-                            StorageRepository.putDouble(
-                                StoreKeys.reminderDate, date!.position.toDouble());
-                            setState(() {
-                              reminderDate = date;
-                            });
-                          }
-                        },
-                        dropdownMenuEntries: ReminderDate.values
-                            .map<DropdownMenuEntry<ReminderDate>>(
-                                (ReminderDate date) {
-                              return DropdownMenuEntry<ReminderDate>(
-                                value: date,
-                                label: date.label,
-                              );
-                            }).toList(),
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 80,
-                        width: double.maxFinite,
-                        child: Card(
+            builder: (param1, param2, param3) {
+              return notificationPermissionStatus.value == PermissionStatus.granted
+                  ? CustomScrollView(
+                      slivers: [
+                        SliverToBoxAdapter(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: AutoSizeText(
-                                    LocaleKeys.getReminderFromSavedWords.tr(),
-                                    style: const TextStyle(
-                                        fontSize: 17
-                                    ),
-                                  ),
-                                ),
-                                ValueListenableBuilder(
-                                    valueListenable: getReminderSaved,
-                                    builder: (p1,p2,p3) {
-                                      return Switch(
-                                          value: p2,
-                                          onChanged: (value){
-                                            if(value){
-                                              BackgroundController.startService();
-                                            }else{
-                                              BackgroundController.stopService();
-                                            }
-                                            StorageRepository.putBool(key: StoreKeys.service, value: value);
-                                            getReminderSaved.value = value;
-                                          }
-                                      );
-                                    }
-                                )
-                              ],
+                            child: AutoSizeText(
+                              LocaleKeys.notificationTime.tr(),
+                              style: const TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0,right: 10,top: 10),
-                      child: Card(
-                        child: IconButton(onPressed: (){
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(LocaleKeys.writeSomeWord.tr()),
-                                content: SizedBox(
-                                  height: 150.0, // Adjust the height as needed
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.only(bottom: 10.0),
-                                        child: TextField(
-                                          controller: word,
-                                          decoration: InputDecoration(
-                                            labelText: LocaleKeys.word.tr(),
-                                            border: const OutlineInputBorder(),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: DropdownMenu<ReminderDate>(
+                              key: dropDownKey,
+                              initialSelection: reminderDate ?? ReminderDate.every5Minutes,
+                              enableSearch: false,
+                              label: Text(LocaleKeys.selectPerMinute.tr()),
+                              onSelected: (ReminderDate? date) async {
+                                BackgroundController.stopService()
+                                    .then((value) => {BackgroundController.startService()});
+                                if (!mounted) return;
+                                if ('ReminderDate.custom' == date) {
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(LocaleKeys.pleaseEnterEveryMinute.tr()),
+                                          content: TextField(
+                                            autofocus: true,
+                                            controller: customDateController,
+                                            decoration: const InputDecoration(border: OutlineInputBorder()),
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter.digitsOnly
+                                            ],
+                                            maxLength: 2,
                                           ),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () => Navigator.pop(context, null),
+                                              // passing false
+                                              child: Text(LocaleKeys.cancel.tr()),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () => Navigator.pop(context, customDateController.text),
+                                              // passing true
+                                              child: Text(LocaleKeys.yes.tr()),
+                                            ),
+                                          ],
+                                        );
+                                      }).then((value) => {
+                                        if (value == null)
+                                          {
+                                            setState(() {
+                                              reminderDate = ReminderDate.getValue(
+                                                  StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
+                                            }),
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                content: Text('Please try again !'.tr(args: [
+                                              (StorageRepository.getDouble(StoreKeys.reminderDate).toInt().toString())
+                                            ]))))
+                                          }
+                                        else
+                                          {
+                                            if (customDateController.text.trim().isNotEmpty)
+                                              {
+                                                StorageRepository.putDouble(StoreKeys.customReminderDate,
+                                                    double.parse(customDateController.text)),
+                                                StorageRepository.putDouble(
+                                                    StoreKeys.reminderDate, date!.position.toDouble()),
+                                                setState(() {
+                                                  reminderDate = date;
+                                                }),
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(content: Text(LocaleKeys.success.tr())))
+                                              }
+                                            else
+                                              {
+                                                dropDownKey.currentState?.reset(),
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(content: Text(LocaleKeys.fieldIsEmpty.tr())))
+                                              }
+                                          }
+                                      });
+                                } else {
+                                  StorageRepository.putDouble(StoreKeys.reminderDate, date!.position.toDouble());
+                                  setState(() {
+                                    reminderDate = date;
+                                  });
+                                }
+                              },
+                              dropdownMenuEntries:
+                                  ReminderDate.values.map<DropdownMenuEntry<ReminderDate>>((ReminderDate date) {
+                                return DropdownMenuEntry<ReminderDate>(
+                                  value: date,
+                                  label: date.label,
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              height: 80,
+                              width: double.maxFinite,
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: AutoSizeText(
+                                          LocaleKeys.getReminderFromSavedWords.tr(),
+                                          style: const TextStyle(fontSize: 17),
                                         ),
                                       ),
-                                      TextField(
-                                        controller: wordTranslate,
-                                        decoration: InputDecoration(
-                                          labelText: LocaleKeys.translate.tr(),
-                                          border: const OutlineInputBorder(),
-                                        ),
-                                      ),
+                                      ValueListenableBuilder(
+                                          valueListenable: getReminderSaved,
+                                          builder: (p1, p2, p3) {
+                                            return Switch(
+                                                value: p2,
+                                                onChanged: (value) {
+                                                  if (value) {
+                                                    BackgroundController.startService();
+                                                  } else {
+                                                    BackgroundController.stopService();
+                                                  }
+                                                  StorageRepository.putBool(key: StoreKeys.service, value: value);
+                                                  getReminderSaved.value = value;
+                                                });
+                                          })
                                     ],
                                   ),
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop(); // Close the dialog
-                                    },
-                                    child: Text(LocaleKeys.cancel.tr()),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () async{
-                                      // Add your save functionality here
-                                      final localWord = LocalWord(notificationId: HiveController.genericId(),id: random.nextInt(100).toString(),word: word.text.trim(),translate: wordTranslate.text.trim());
-                                      await HiveController.saveObject(localWord);
-                                      if (!mounted) return;
-                                      setState(() {
-                                        localWords.add(localWord);
-                                      });
-                                      word.clear();
-                                      wordTranslate.clear();
-                                      BackgroundController.stopService();
-                                      if(!mounted) return;
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(LocaleKeys.save.tr()),
-                                  ),
-                                ],
-                              );
-                            },
-                          ).then((value) => {
-                            BackgroundController.startService(),
-                          });
-                        }, icon: const Icon(Icons.add)),
-                      ),
-                    ),
-                  ),
-                  localWords.isNotEmpty ? SliverList.builder(
-                      itemCount: localWords.length,
-                      itemBuilder: (p1,index)=> Padding(
-                        padding: const EdgeInsets.only(left: 10.0,right: 10),
-                        child: Card(
-                          child: Row(
-                            children: [
-                              const Gap(10),
-                              Text('${localWords[index].word} - ${localWords[index].translate}'),
-                              const Expanded(child: SizedBox.shrink()),
-                              IconButton(onPressed: ()async{
-                                HiveController.removeObjectFromHive(localWords[index].id!);
-                                setState(() {
-                                  localWords.removeWhere((element) => element.id == localWords[index].id);
-                                });
-                                final service = FlutterBackgroundService();
-                                var isRunning = await service.isRunning();
-                                if (isRunning) {
-                                  service.invoke("stopService");
-                                }
-                                Future.delayed(const Duration(seconds: 5),(){
-                                  FlutterBackgroundService().startService();
-                                });
-                              }, icon: const Icon(Icons.close)),
-                              const Gap(10),
-                            ],
-                          ),
-                        ),
-                      )
-                  ) :
-                  SliverFillRemaining(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoSizeText(
-                         LocaleKeys.addSomeWordsForMemorize.tr(),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0,right: 10),
-                          child: AutoSizeText(
-                            LocaleKeys.whenYouAddSomeWordAppWillSendReminderYou.tr(),
-                            style: const TextStyle(
-                                color: Colors.grey
+                              ),
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        )
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
+                            child: Card(
+                              child: IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(LocaleKeys.writeSomeWord.tr()),
+      
+                                          content: SizedBox(
+                                            height: 150.0, // Adjust the height as needed
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  margin: const EdgeInsets.only(bottom: 10.0),
+                                                  child: TextField(
+                                                    controller: word,
+                                                    decoration: InputDecoration(
+                                                      labelText: LocaleKeys.word.tr(),
+                                                      border: const OutlineInputBorder(),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TextField(
+                                                  controller: wordTranslate,
+                                                  decoration: InputDecoration(
+                                                    labelText: LocaleKeys.translate.tr(),
+                                                    border: const OutlineInputBorder(),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop(); // Close the dialog
+                                              },
+                                              child: Text(LocaleKeys.cancel.tr()),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                // Add your save functionality here
+                                                final localWord = LocalWord(
+                                                    notificationId: HiveController.genericId(),
+                                                    id: random.nextInt(100).toString(),
+                                                    word: word.text.trim(),
+                                                    translate: wordTranslate.text.trim());
+                                                await HiveController.saveObject(localWord);
+                                                if (!mounted) return;
+                                                setState(() {
+                                                  localWords.add(localWord);
+                                                });
+                                                word.clear();
+                                                wordTranslate.clear();
+                                                BackgroundController.stopService();
+                                                if (!mounted) return;
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(LocaleKeys.save.tr()),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ).then((value) => {
+                                          BackgroundController.startService(),
+                                        });
+                                  },
+                                  icon: const Icon(Icons.add)),
+                            ),
+                          ),
+                        ),
+                        localWords.isNotEmpty
+                            ? SliverList.builder(
+                                itemCount: localWords.length,
+                                itemBuilder: (p1, index) => Padding(
+                                      padding: const EdgeInsets.only(left: 10.0, right: 10),
+                                      child: Card(
+                                        child: Row(
+                                          children: [
+                                            const Gap(10),
+                                            Text('${localWords[index].word} - ${localWords[index].translate}'),
+                                            const Expanded(child: SizedBox.shrink()),
+                                            IconButton(
+                                                onPressed: () async {
+                                                  HiveController.removeObjectFromHive(localWords[index].id!);
+                                                  setState(() {
+                                                    localWords
+                                                        .removeWhere((element) => element.id == localWords[index].id);
+                                                  });
+                                                  final service = FlutterBackgroundService();
+                                                  var isRunning = await service.isRunning();
+                                                  if (isRunning) {
+                                                    service.invoke("stopService");
+                                                  }
+                                                  Future.delayed(const Duration(seconds: 5), () {
+                                                    FlutterBackgroundService().startService();
+                                                  });
+                                                },
+                                                icon: const Icon(Icons.close)),
+                                            const Gap(10),
+                                          ],
+                                        ),
+                                      ),
+                                    ))
+                            : SliverFillRemaining(
+
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      AutoSizeText(
+                                        LocaleKeys.addSomeWordsForMemorize.tr(),
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10.0, right: 10),
+                                        child: AutoSizeText(
+                                          LocaleKeys.whenYouAddSomeWordAppWillSendReminderYou.tr(),
+                                          style: const TextStyle(color: Colors.grey),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
                       ],
-                    ),
-                  )
-                ],
-              )
+                    )
                   : SizedBox(
-                width: double.maxFinite,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0,right: 10.0),
-                      child: AutoSizeText(
-                        LocaleKeys.notificationIsNotAllowed.tr(),
-                        style: const TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold
-                        ),
+                      width: double.maxFinite,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                            child: AutoSizeText(
+                              LocaleKeys.notificationIsNotAllowed.tr(),
+                              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              right: 10.0,
+                              left: 10,
+                              bottom: 15,
+                            ),
+                            child: AutoSizeText(
+                              LocaleKeys.pressAllowNotificationButtonAndSelectNotificationsAndSwtichAllow.tr(),
+                              style: const TextStyle(color: Colors.grey),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          ElevatedButton(
+                              onPressed: () {
+                                openAppSettings();
+                              },
+                              child: Text(LocaleKeys.allowNotification.tr()))
+                        ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0,left: 10,bottom: 15,),
-                      child: AutoSizeText(
-                        LocaleKeys.pressAllowNotificationButtonAndSelectNotificationsAndSwtichAllow.tr(),
-                        style: const TextStyle(
-                            color: Colors.grey
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    ElevatedButton(onPressed: (){openAppSettings();}, child: Text(LocaleKeys.allowNotification.tr()))
-                  ],
-                ),
-              );
-            }
-        )
+                    );
+            }),
       ),
     );
   }

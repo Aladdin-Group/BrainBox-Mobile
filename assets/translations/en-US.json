@@ -26,7 +26,6 @@
   "writeSomeWord": "Write some word",
   "getReminderFromSavedWords": "Get reminder from saved words",
   "fieldIsEmpty": "Field is empty !",
-  "success": "Success !",
   "pleaseTryAgain": "Please try again {}!",
   "yes": "Yes",
   "pleaseEnterEveryMinute": "Please enter every minute !",
@@ -91,5 +90,9 @@
   "addCoins": "Add Coins",
   "success": "Success!",
   "onAdFailedToShowFullScreenContent": "Error displaying fullscreen ad",
-  "areYouSureYouWantToLogout" : "Are you sure you want to logout?"
+  "areYouSureYouWantToLogout": "Are you sure you want to logout?",
+  "whyMoviesTitle": "Why Movies?",
+  "joinOurCommunityTitle": "Join Our Community:",
+  "safeAndSecureTitle": "Safe and Secure:",
+  "no": "No found Movies"
 }

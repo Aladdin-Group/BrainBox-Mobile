@@ -42,7 +42,6 @@ class CodegenLoader extends AssetLoader{
   "writeSomeWord": "Write some word",
   "getReminderFromSavedWords": "Get reminder from saved words",
   "fieldIsEmpty": "Field is empty !",
-  "success": "Success!",
   "pleaseTryAgain": "Please try again {}!",
   "yes": "Yes",
   "pleaseEnterEveryMinute": "Please enter every minute !",
@@ -105,8 +104,12 @@ class CodegenLoader extends AssetLoader{
   "email": "Email",
   "coins": "Coins",
   "addCoins": "Add Coins",
+  "success": "Success!",
   "onAdFailedToShowFullScreenContent": "Error displaying fullscreen ad",
-  "areYouSureYouWantToLogout": "Are you sure you want to logout?"
+  "areYouSureYouWantToLogout": "Are you sure you want to logout?",
+  "whyMoviesTitle": "Why Movies?",
+  "joinOurCommunityTitle": "Join Our Community:",
+  "safeAndSecureTitle": "Safe and Secure:"
 };
 static const Map<String,dynamic> ru_RU = {
   "welcomeBack": "Добро пожаловать",
@@ -159,7 +162,7 @@ static const Map<String,dynamic> ru_RU = {
   "helpSupport": "Помощь и поддержка",
   "frequentlyAskedQuestions": "Часто задаваемые вопросы",
   "needMoreHelp": "Нужна дополнительная помощь?",
-  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup.uz@gmail.com.": "Если у вас есть дополнительные вопросы или вам нужна дальнейшая помощь, не стесняйтесь обращаться в нашу службу поддержки по адресу aladdinsgroup.uz@gmail.com.",
+  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Если у вас есть дополнительные вопросы или вам нужна дальнейшая помощь, не стесняйтесь обращаться в нашу службу поддержки по адресу aladdinsgroup.uz@gmail.com.",
   "welcomeToBrainbox": "Добро пожаловать в BrainBox",
   "yourGatewayToLanguageMasteryThroughTheMagicOfMovies": "Ваш путь к владению языком через магию кино!",
   "ourMission": "Наша миссия:",
@@ -201,7 +204,10 @@ static const Map<String,dynamic> ru_RU = {
   "coins": "Монеты",
   "addCoins": "Добавить монеты",
   "onAdFailedToShowFullScreenContent": "Ошибка при отображении рекламы",
-  "areYouSureYouWantToLogout": "Вы действительно хотите выйти?"
+  "areYouSureYouWantToLogout": "Вы действительно хотите выйти?",
+  "whyMoviesTitle": "Почему фильмы?",
+  "joinOurCommunityTitle": "Присоединяйтесь к нашему сообществу:",
+  "safeAndSecureTitle": "Безопасно и надежно:"
 };
 static const Map<String,dynamic> uz_UZ = {
   "welcomeBack": "Xush kelibsiz",
@@ -231,7 +237,6 @@ static const Map<String,dynamic> uz_UZ = {
   "writeSomeWord": "Ba'zi so'zlar yozing",
   "getReminderFromSavedWords": "Saqlangan so'zlardan eslatma oling",
   "fieldIsEmpty": "Maydon bo'sh!",
-  "success": "Muvaffaqiyatli!",
   "pleaseTryAgain": "Iltimos, yana bir bor urinib ko'ring {}!",
   "yes": "Ha",
   "pleaseEnterEveryMinute": "Iltimos, har daqiqada kiriting!",
@@ -261,13 +266,13 @@ static const Map<String,dynamic> uz_UZ = {
   "brainboxLangSubsEngageFun": "BrainBox da biz til o'rganishning qiziqarli, samarali va zavqli bo'lishiga ishonamiz. Tilni o'rganishdagi noyob yondashuvimiz sizni o'rganish va ko'ngilocharlik uchrashadigan dunyoga sho'ng'itish uchun film subtitrlarining kuchidan foydalanadi.",
   "howItWorks": "Bu Qanday Ishlaydi:",
   "chooseYourMovie": "1. Filmingizni Tanlang: Keng ko'lamli film kutubxonamizga sho'ng'ing va sevimli filmingizni tanlang. Bu Gollivud blokbasteri yoki xorijiy mustaqil tosh bo'ladimi, bizning to'plamimiz barcha ta'mlarga va o'rganish darajalariga moslashtirilgan.",
-  "pickYourLanguage": "Tilni Tanlang: O'rganmoqchi bo'lgan tilingizni tanlang. Ispaniyadan mandaringa, fransuzdan yaponiyagacha, biz keng ko'lamli tillarni taklif etamiz.",
-  "learnWithSubtitles": "Subtitrlar bilan O'rganing: Siz tomosha qilayotganda, bizning intuitiv ilovamiz sizning ona tilingizda ham, o'rganayotgan tilingizda ham subtitrlarni ko'rsatadi. Bu ikki tomonlama subtitr tizimi tushunishni ta'minlaydi va sizni so'z boyligingizni kengaytirishga undaydi.",
-  "interactiveLearningTools": "Interaktiv O'quv Vositalari: Filmdagi dialoglardan yaratilgan interaktiv viktorinalar, flesh-kartalar va so'zlar ro'yxati bilan ishtirok eting. Bilimingizni sinab ko'ring va har bir film keyin o'z rivojlanishingizni kuzatib boring.",
-  "customizedLearningExperience": "Maxsuslashtirilgan O'quv Tajribasi: O'zingizning o'rganish tezligingizni belgilang va diqqat qaratmoqchi bo'lgan aniq mavzularni yoki so'zlarni tanlang. Bizning ilovamiz sizning o'rganish uslubingizga moslashadi, bu esa har bir film tomosha qilish tajribasini til mahoratiga qadam qo'yishga aylantiradi.",
-  "whyMovies": "Nega Filmlar? Filmlar faqat o'yin-kulgi haqida emas; ular madaniy lahzalardir. Ular kontekstli o'rganishni ta'minlaydi, bu idiomatik iboralarni, jargonlarni va suhbatning tabiiy oqimini tushunishni osonlashtiradi. Filmlar orqali o'rganish orqali siz shunchaki so'zlarni eslab qolmaysiz; Siz haqiqiy hayotda mahalliy aholi gapiradigan tilni boshdan kechirmoqdasiz.",
-  "safeAndSecure": "Xavfsiz va xavfsiz: Maxfiyligingiz va onlayn xavfsizligingiz muhim. BrainBox ma'lumotlaringizni himoya qilish va xavfsiz o'quv muhitini ta'minlashga intiladi.",
-  "joinOurCommunity": "Join Our Community: Til ishqibozlarining global hamjamiyatiga a'zo bo'ling. Dunyo boʻylab oʻquvchilar bilan tushunchalarni baham koʻring, filmlarni muhokama qiling va yangi til koʻnikmalaringizni mashq qiling.",
+  "pickYourLanguage": "2. Tilni Tanlang: O'rganmoqchi bo'lgan tilingizni tanlang. Ispaniyadan mandaringa, fransuzdan yaponiyagacha, biz keng ko'lamli tillarni taklif etamiz.",
+  "learnWithSubtitles": "3.  Subtitrlar bilan O'rganing: Siz tomosha qilayotganda, bizning intuitiv ilovamiz sizning ona tilingizda ham, o'rganayotgan tilingizda ham subtitrlarni ko'rsatadi. Bu ikki tomonlama subtitr tizimi tushunishni ta'minlaydi va sizni so'z boyligingizni kengaytirishga undaydi.",
+  "interactiveLearningTools": "4. Interaktiv O'quv Vositalari: Filmdagi dialoglardan yaratilgan interaktiv viktorinalar, flesh-kartalar va so'zlar ro'yxati bilan ishtirok eting. Bilimingizni sinab ko'ring va har bir film keyin o'z rivojlanishingizni kuzatib boring.",
+  "customizedLearningExperience": "5. Maxsuslashtirilgan O'quv Tajribasi: O'zingizning o'rganish tezligingizni belgilang va diqqat qaratmoqchi bo'lgan aniq mavzularni yoki so'zlarni tanlang. Bizning ilovamiz sizning o'rganish uslubingizga moslashadi, bu esa har bir film tomosha qilish tajribasini til mahoratiga qadam qo'yishga aylantiradi.",
+  "whyMovies": "Filmlar faqat o'yin-kulgi haqida emas; ular madaniy lahzalardir. Ular kontekstli o'rganishni ta'minlaydi, bu idiomatik iboralarni, jargonlarni va suhbatning tabiiy oqimini tushunishni osonlashtiradi. Filmlar orqali o'rganish orqali siz shunchaki so'zlarni eslab qolmaysiz; Siz haqiqiy hayotda mahalliy aholi gapiradigan tilni boshdan kechirmoqdasiz.",
+  "safeAndSecure": "Maxfiyligingiz va onlayn xavfsizligingiz muhim. BrainBox ma'lumotlaringizni himoya qilish va xavfsiz o'quv muhitini ta'minlashga intiladi.",
+  "joinOurCommunity": "Til ishqibozlarining global hamjamiyatiga a'zo bo'ling. Dunyo boʻylab oʻquvchilar bilan tushunchalarni baham koʻring, filmlarni muhokama qiling va yangi til koʻnikmalaringizni mashq qiling.",
   "howDoIStartLearningANewLanguage": "Yangi tilni o'rganishni qanday boshlashim kerak? Yangi tilni oʻrganishni boshlash uchun avval tillar roʻyxatidan oʻzingizni qiziqtirgan tilni tanlang, soʻngra ikki tomonlama subtitrli tomosha qilish uchun filmni tanlang.",
   "canITrackMyLearningProgress": "O'qishdagi muvaffaqiyatimni kuzata olamanmi? Ha, filmlarni tomosha qilganingizda va interaktiv mashqlarni bajarganingizda muvaffaqiyatingiz avtomatik ravishda kuzatiladi.",
   "signWithGoogle": "Google bilan tizimga kiring",
@@ -294,8 +299,12 @@ static const Map<String,dynamic> uz_UZ = {
   "email": "Elektron pochta",
   "coins": "Monetalar",
   "addCoins": "Monetalarni qo'shish",
+  "success": "Muvaffaqiyatli!",
   "onAdFailedToShowFullScreenContent": "To'liq ekrandagi reklama ko'rsatilmadi",
-  "areYouSureYouWantToLogout": "Haqiqatan ham tizimdan chiqmoqchimisiz?"
+  "areYouSureYouWantToLogout": "Haqiqatan ham tizimdan chiqmoqchimisiz?",
+  "whyMoviesTitle": "Nega Filmlar?",
+  "joinOurCommunityTitle": "Bizning jamoaga a'zo bo'ling:",
+  "safeAndSecureTitle": "Xavfsiz va xavfsiz:"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en_US": en_US, "ru_RU": ru_RU, "uz_UZ": uz_UZ};
 }

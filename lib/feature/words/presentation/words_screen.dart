@@ -216,9 +216,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title ?? 'NAME_OF_MOVIE'),
-      ),
+      appBar: AppBar(title: Text(widget.title ?? 'NAME_OF_MOVIE')),
       body: BlocConsumer<WordsBloc, WordsState>(
         builder: (context, state) {
           print('update');
@@ -263,7 +261,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
             }
           }
           if (state.status.isSuccess) {
-            print(state.listWords.first.isSaved);
+            // print(state.listWords.first.isSaved);
             List<Content> wordsList = state.listWords;
             Locale currentLocale = context.locale;
             languageCode = currentLocale.languageCode;
@@ -310,6 +308,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                                 onPressed: () {
                                   // SavedController.saveObject(state.listWords[index]);
                                   context.read<WordsBloc>().add(SaveOrRemoveWord(state.listWords[index]));
+                                  setState(() {});
                                   // if (wordsList[index].isSaved != null) {
                                   //   if (!wordsList[index].isSaved!) {
                                   //     SavedController.saveObject(wordsList[index]);
@@ -346,10 +345,13 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                                   //   });
                                   // }
                                 },
-                                icon: Icon(state.listWords[index].isSaved == null || state.listWords[index].isSaved == false ?Icons.bookmark_border : Icons.bookmark)),
+                                icon: Icon(
+                                    state.listWords[index].isSaved == null || state.listWords[index].isSaved == false
+                                        ? Icons.bookmark_border
+                                        : Icons.bookmark)),
                             IconButton(
-                                onPressed: () async{
-                               _speak(wordsList[index].value ?? 'SORRY I can\'t speak this');
+                                onPressed: () async {
+                                  _speak(wordsList[index].value ?? 'SORRY I can\'t speak this');
                                 },
                                 icon: const Icon(Icons.volume_up))
                           ],

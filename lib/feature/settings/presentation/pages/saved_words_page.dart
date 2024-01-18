@@ -44,7 +44,7 @@ class _SavedWordsPageState extends State<SavedWordsPage> {
     return Scaffold(
       appBar: AppBar(title: Text(LocaleKeys.savedWords.tr())),
       body: BlocBuilder<SaveWordsBloc, SaveWordsState>(
-        bloc: BlocProvider.of<SaveWordsBloc>(context)..add(GetSavedWords()),
+        bloc: context.read<SaveWordsBloc>()..add(GetSavedWords()),
         builder: (context, state) {
           print('update');
           if (state.status.isInProgress) {

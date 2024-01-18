@@ -3,12 +3,14 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:brain_box/core/adapters/storage/word_adapter.dart';
+import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
 import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
+import 'package:brain_box/feature/navigation/presentation/cubit/navigation_cubit.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
 import 'package:brain_box/feature/settings/presentation/manager/save_words/save_words_bloc.dart';
-import 'package:brain_box/feature/splash/presentation/splash_screen.dart';
+import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -267,12 +269,13 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
-        BlocProvider(create: (context) => MainBloc()),
+        BlocProvider(create: (context) => MainBloc()..add(InitialMainEvent())),
         BlocProvider(create: (context) => AppThemeBloc()),
+        BlocProvider(create: (context) => NavigationCubit()),
+        BlocProvider(create: (context) => SettingsBloc()..add(GetUserDataEvent())),
         BlocProvider(create: (context) => WordsBloc()),
         BlocProvider(create: (context) => EducationBloc()),
         BlocProvider(create: (context) => SaveWordsBloc()),
-
       ],
       child: BlocBuilder<AppThemeBloc, AppThemeState>(
         builder: (context, state) {
@@ -293,7 +296,8 @@ class MyApp extends StatelessWidget {
                     colorScheme: lightColorScheme,
                     visualDensity: VisualDensity.adaptivePlatformDensity,
                   ),
-            home: const SplashScreen(),
+            // home: const SplashScreen(),
+            onGenerateRoute: AppRoutes.generateRoute,
           );
         },
       ),

@@ -15,7 +15,7 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About'.tr()),
+        title: Text(LocaleKeys.about.tr()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -75,32 +75,32 @@ class _AboutPageState extends State<AboutPage> {
             // ... Continue with other steps
             const Gap(16),
             Text(
-              'Why Movies?'.tr(),
+             LocaleKeys.whyMoviesTitle.tr(),
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              'Movies are not just about entertainment; they are cultural snapshots. They provide contextual learning, making it easier to understand idiomatic expressions, slang, and the natural flow of conversation. By learning through movies, you\'re not just memorizing words; you\'re experiencing the language as it\'s spoken by natives in real-life situations.'
+              LocaleKeys.whyMovies
                   .tr(),
               style: const TextStyle(fontSize: 16),
             ),
             // ... Add more sections as needed
             const Gap(16),
             Text(
-              'Safe and Secure:'.tr(),
+              LocaleKeys.safeAndSecureTitle.tr(),
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              'Your privacy and online safety are paramount. BrainBox is committed to protecting your data and providing a secure learning environment.'
+              LocaleKeys.safeAndSecure
                   .tr(),
               style: const TextStyle(fontSize: 16),
             ),
             const Gap(16),
-            const Text(
-              'Join Our Community:',
+             Text(
+              LocaleKeys.joinOurCommunityTitle.tr(),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
-              'Become part of a global community of language enthusiasts. Share insights, discuss movies, and practice your new language skills with learners from around the world.'
+              LocaleKeys.joinOurCommunity
                   .tr(),
               style: const TextStyle(fontSize: 16),
             ),

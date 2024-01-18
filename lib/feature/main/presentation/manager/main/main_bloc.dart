@@ -7,7 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:meta/meta.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../../../core/exceptions/exception.dart';
 import '../../../../../core/singletons/storage/storage_repository.dart';
@@ -21,141 +21,171 @@ import '../../../domain/usecases/search_movie_usecase.dart';
 import '../../../domain/usecases/submit_movie_usecase.dart';
 
 part 'main_event.dart';
+
 part 'main_state.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
-
-  List<String> levels = [MovieLevel.ELEMENTARY,MovieLevel.INTERMEDIATE,MovieLevel.UPPER_INTERMEDIATE,MovieLevel.BEGINNER];
+  List<String> levels = [
+    MovieLevel.ELEMENTARY,
+    MovieLevel.INTERMEDIATE,
+    MovieLevel.UPPER_INTERMEDIATE,
+    MovieLevel.BEGINNER
+  ];
   final GetMoviesUseCase getMoviesUseCase = GetMoviesUseCase();
   final BuyMovieUseCase buyMovieUseCase = BuyMovieUseCase();
   final UserdataUseCase getUserInfoEvent = UserdataUseCase();
   final SearchMovieUseCase searchMovieUseCase = SearchMovieUseCase();
   final SubmitMovieUseCase submitMovieUseCase = SubmitMovieUseCase();
 
+  // Variables
+  final hive = Hive.box(StoreKeys.userData);
+  SearchController searchController = SearchController();
+
   MainBloc() : super(const MainState()) {
-    on<GetAllMoviesEvent>((event, emit) async{
-      print('event');
-      emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-      var movie = <String, List<Content>>{};
-      var counts = <Map<String,int>>[];
-      var page = <Map<String,int>>[];
-      var index = 0;
-      for(var level in levels){
-        var req = <String,int>{};
-        var countLevel = <String,int>{};
-        req[level] = 0;
+    on<InitialMainEvent>(_initialMain);
+    on<GetAllMoviesEvent>(_getAllMovies);
+    on<GetMoreMovieEvent>(_getMoreMovies);
+    on<BuyMovieEvent>(_buymovie);
+    on<GetUserInfoEvent>(_getUserInfo);
+    on<SearchMovieEvent>(_searchMovie);
+    on<SubmitMovieEvent>(_submitMovie);
+  }
 
-        var paging = <String,int>{};
-        paging[level] = 1;
-        page.add(paging);
-        index++;
-        final result = await getMoviesUseCase.call(req);
-        if(result.isRight){
-          movie[level] = result.right.results;
-          countLevel[level] = result.right.count;
-          counts.add(countLevel);
-          levels.length == index ? emit(state.copyWith(
-            status:FormzSubmissionStatus.success,
-            movies: movie,
-          )) : emit(state.copyWith(
-            movies: movie,
-            count: counts,
-            page: page
-          ));
-        }else{
-          if(result.left is UserTokenExpire){
-              StorageRepository.deleteBool(StoreKeys.isAuth);
-              StorageRepository.deleteString(StoreKeys.token);
-              GoogleSignIn().signOut();
-              Navigator.pushAndRemoveUntil(event.context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
-          }
-          emit(state.copyWith(status: FormzSubmissionStatus.failure));
-        }
-      }
-    });
-    on<GetMoreMovieEvent>((event,emit) async{
-      Map<String,int> page = {};
-      Map<String,int> myPage = {};
-      var movie = {};
-      var moviesCount = 0;
-      var levelPage = 0;
-      var movieIndex = 0;
-      for(var pagingItem in state.page){
-        movieIndex++;
-        if(pagingItem.containsKey(event.movieLevel)){
-          page = pagingItem;
-          levelPage = pagingItem[event.movieLevel]!;
-          break;
-        }
-      }
+  void _initialMain(InitialMainEvent event, Emitter<MainState> emit) async {
+    final user = hive.get(StoreKeys.user);
+    if (user != null) {
+      emit(state.copyWith(user: user));
+    }
+  }
 
-      // result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage
-      final result = await getMoviesUseCase.call(page);
-      var statePage = state.page;
-      // myPage[event.movieLevel] = result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage;
-      // statePage[movieIndex] =  myPage;
-      if(result.isRight){
-        movie[event.movieLevel] = result.right.results;
-        var map = state.movies;
-        map[event.movieLevel]!.addAll(movie[event.movieLevel] ?? []);
-        emit(state.copyWith(
-          movies: map,
-          status: FormzSubmissionStatus.success,
-          // page: statePage,
-        ));
-        event.onSuccess(result.right.results);
-        for(var movie in state.movies[event.movieLevel]!){
-          moviesCount++;
-        }
-        page[event.movieLevel] = result.right.count > (moviesCount + result.right.results.length) ? levelPage + 1 : levelPage;
-      }else{
-        if(result.left is ServerException){
+  void _submitMovie(SubmitMovieEvent event, Emitter<MainState> emit) async {
+    print('SubmitMovieEvent');
+    submitMovieUseCase.call(event.movieName);
+  }
+
+  void _searchMovie(SearchMovieEvent event, Emitter<MainState> emit) async {
+    final result = await searchMovieUseCase.call(event.keyWord);
+    if (result.isRight) {
+      event.success(result.right);
+    } else {
+      event.failure();
+    }
+  }
+
+  void _getUserInfo(GetUserInfoEvent event, Emitter<MainState> emit) async {
+    // event.progress();
+    emit(state.copyWith(getUserInfoStatus: FormzSubmissionStatus.inProgress));
+    final result = await getUserInfoEvent.call(-1);
+
+    if (result.isRight) {
+      hive.put(StoreKeys.user, result.right);
+      emit(state.copyWith(getUserInfoStatus: FormzSubmissionStatus.success, user: result.right));
+    } else {
+      // event.failure(result.left);
+      if (result.left is UserTokenExpire) {
+        StorageRepository.deleteBool(StoreKeys.isAuth);
+        StorageRepository.deleteString(StoreKeys.token);
+        await GoogleSignIn().signOut();
+      }
+      emit(state.copyWith(getUserInfoStatus: FormzSubmissionStatus.failure));
+    }
+  }
+
+  void _buymovie(BuyMovieEvent event, Emitter<MainState> emit) async {
+    event.progress();
+
+    final result = await buyMovieUseCase.call(event.movieId);
+
+    if (result.isRight) {
+      event.success(result.right);
+    } else {
+      event.failure();
+    }
+  }
+
+  void _getMoreMovies(GetMoreMovieEvent event, Emitter<MainState> emit) async {
+    Map<String, int> page = {};
+    Map<String, int> myPage = {};
+    var movie = {};
+    var moviesCount = 0;
+    var levelPage = 0;
+    var movieIndex = 0;
+    for (var pagingItem in state.page) {
+      movieIndex++;
+      if (pagingItem.containsKey(event.movieLevel)) {
+        page = pagingItem;
+        levelPage = pagingItem[event.movieLevel]!;
+        break;
+      }
+    }
+
+    // result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage
+    final result = await getMoviesUseCase.call(page);
+    var statePage = state.page;
+    // myPage[event.movieLevel] = result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage;
+    // statePage[movieIndex] =  myPage;
+    if (result.isRight) {
+      movie[event.movieLevel] = result.right.results;
+      var map = state.movies;
+      map[event.movieLevel]!.addAll(movie[event.movieLevel] ?? []);
+      emit(state.copyWith(
+        movies: map,
+        status: FormzSubmissionStatus.success,
+        // page: statePage,
+      ));
+      event.onSuccess(result.right.results);
+      for (var movie in state.movies[event.movieLevel]!) {
+        moviesCount++;
+      }
+      page[event.movieLevel] = result.right.count > (moviesCount + result.right.results.length)
+          ? levelPage + 1
+          : levelPage;
+    } else {
+      if (result.left is ServerException) {
+        StorageRepository.deleteBool(StoreKeys.isAuth);
+        StorageRepository.deleteString(StoreKeys.token);
+        GoogleSignIn().signOut();
+        Navigator.pushAndRemoveUntil(event.context,
+            MaterialPageRoute(builder: (context) => const AuthScreen()), (route) => false);
+      }
+      emit(state.copyWith(status: FormzSubmissionStatus.failure));
+    }
+  }
+
+  void _getAllMovies(GetAllMoviesEvent event, Emitter<MainState> emit) async {
+    emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    var movie = <String, List<Content>>{};
+    var counts = <Map<String, int>>[];
+    var page = <Map<String, int>>[];
+    var index = 0;
+    for (var level in levels) {
+      var req = <String, int>{};
+      var countLevel = <String, int>{};
+      req[level] = 0;
+
+      var paging = <String, int>{};
+      paging[level] = 1;
+      page.add(paging);
+      index++;
+      final result = await getMoviesUseCase.call(req);
+      if (result.isRight) {
+        movie[level] = result.right.results;
+        countLevel[level] = result.right.count;
+        counts.add(countLevel);
+        levels.length == index
+            ? emit(state.copyWith(
+                status: FormzSubmissionStatus.success,
+                movies: movie,
+              ))
+            : emit(state.copyWith(movies: movie, count: counts, page: page));
+      } else {
+        if (result.left is UserTokenExpire) {
           StorageRepository.deleteBool(StoreKeys.isAuth);
           StorageRepository.deleteString(StoreKeys.token);
           GoogleSignIn().signOut();
-          Navigator.pushAndRemoveUntil(event.context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
         }
         emit(state.copyWith(status: FormzSubmissionStatus.failure));
       }
-    });
-    on<BuyMovieEvent>((event,emit)async{
-
-      event.progress();
-
-      final result = await buyMovieUseCase.call(event.movieId);
-
-      if(result.isRight){
-        event.success(result.right);
-      }else{
-        event.failure();
-      }
-
-    });
-    on<GetUserInfoEvent>((event,emit)async{
-
-      event.progress();
-
-      final result = await getUserInfoEvent.call(-1);
-
-      if(result.isRight){
-        event.success(result.right);
-      }else{
-        event.failure(result.left);
-      }
-
-    });
-    on<SearchMovieEvent>((event,emit)async{
-      final result = await searchMovieUseCase.call(event.keyWord);
-      if(result.isRight){
-        event.success(result.right);
-      }else{
-        event.failure();
-      }
-    });
-    on<SubmitMovieEvent>((event,emit)async{
-      print('SubmitMovieEvent');
-      submitMovieUseCase.call(event.movieName);
-
-    });
+    }
   }
 }

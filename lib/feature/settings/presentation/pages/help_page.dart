@@ -2,9 +2,10 @@ import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:gap/gap.dart';
 import 'package:gap/gap.dart';
-
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HelpPage extends StatefulWidget {
   const HelpPage({super.key});
@@ -14,8 +15,6 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
-
-
   ValueNotifier<String> mode = ValueNotifier('user');
 
   @override
@@ -23,12 +22,11 @@ class _HelpPageState extends State<HelpPage> {
     super.initState();
   }
 
-  Future checkDevMode()async{
+  Future checkDevMode() async {
     bool developerMode = await FlutterJailbreakDetection.developerMode;
-    if(developerMode){
+    if (developerMode) {
       mode.value = 'Developer!';
     }
-
   }
 
   @override
@@ -41,27 +39,28 @@ class _HelpPageState extends State<HelpPage> {
         padding: const EdgeInsets.all(16.0),
         children: <Widget>[
           Text(
-           LocaleKeys.frequentlyAskedQuestions.tr(),
+            LocaleKeys.frequentlyAskedQuestions.tr(),
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const Gap(16),
-           ExpansionTile(
+          ExpansionTile(
             // title: Text('How do I start learning a new language?'),
             title: Text(LocaleKeys.howDoIStartLearningANewLanguage.tr()),
-            children:  <Widget>[
+            children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(LocaleKeys.howDoIStartLearningANewLanguage.tr()),
               ),
             ],
           ),
-           ExpansionTile(
+          ExpansionTile(
             // title: Text('Can I track my learning progress?'),
             title: Text(LocaleKeys.canITrackMyLearningProgress.tr()),
-            children: const <Widget>[
+            children:  <Widget>[
               Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text('Yes, your progress is tracked automatically as you watch movies and complete interactive exercises.'),
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                    LocaleKeys.canITrackMyLearningProgress.tr()),
               ),
             ],
           ),
@@ -71,8 +70,14 @@ class _HelpPageState extends State<HelpPage> {
             LocaleKeys.needMoreHelp.tr(),
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          Text(
-            LocaleKeys.ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup.tr(),
+          Linkify(
+            onOpen: (link) async {
+              if (await canLaunchUrlString(link.url)) {
+                await launchUrlString(link.url);
+              }
+            },
+            text: LocaleKeys.ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup
+                .tr(),
             style: const TextStyle(fontSize: 16),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/exceptions/exception.dart';
 import 'package:brain_box/feature/main/presentation/pages/search_page.dart';
 import 'package:brain_box/feature/main/presentation/widgets/movie_item_widget.dart';
@@ -14,7 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:in_app_update/in_app_update.dart';
-import 'package:shimmer/shimmer.dart';
+// import 'package:shimmer/shimmer.dart';
 
 import '../../../core/assets/constants/icons.dart';
 import '../../../core/singletons/storage/storage_repository.dart';
@@ -31,28 +32,21 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-
 class _MainScreenState extends State<MainScreen> {
-  SearchController searchController = SearchController();
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  var index = 0;
-  final hive = Hive.box(StoreKeys.userData);
-  User? user;
-
 
   @override
   void initState() {
     super.initState();
-    user = hive.get(StoreKeys.user);
     initializeLocalNotifications();
   }
 
   Future<void> initializeLocalNotifications() async {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
+        AndroidInitializationSettings('app_icon');
     const InitializationSettings initializationSettings =
-    InitializationSettings(android: initializationSettingsAndroid);
+        InitializationSettings(android: initializationSettingsAndroid);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
@@ -82,13 +76,18 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Icon(CupertinoIcons.arrow_down_to_line,size: 70,color: Color.fromARGB(
-                  255, 10, 175, 196),), // Ensure you have this image in your assets
+              const Icon(
+                CupertinoIcons.arrow_down_to_line,
+                size: 70,
+                color: Color.fromARGB(255, 10, 175, 196),
+              ), // Ensure you have this image in your assets
               const Gap(20),
               Text(
                 LocaleKeys.readyToUpdate.tr(),
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(
-                    255, 10, 175, 196)),
+                style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 10, 175, 196)),
               ),
               const Gap(15),
               Padding(
@@ -102,14 +101,14 @@ class _MainScreenState extends State<MainScreen> {
               const Gap(30),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                      255, 10, 175, 196),
+                  backgroundColor: const Color.fromARGB(255, 10, 175, 196),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
-                child: Text(LocaleKeys.updateNow.tr(), style: const TextStyle(fontSize: 20, color: Colors.white)),
+                child: Text(LocaleKeys.updateNow.tr(),
+                    style: const TextStyle(fontSize: 20, color: Colors.white)),
                 onPressed: () {
                   InAppUpdate.performImmediateUpdate().catchError((e) => print(e.toString()));
                 },
@@ -123,138 +122,152 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> checkForUpdates(BuildContext context) async {
     final updateInfo = await InAppUpdate.checkForUpdate();
-    if (updateInfo.updateAvailability==UpdateAvailability.updateAvailable) {
+    if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
       showUpdateBottomSheet(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<MainBloc>(
-      create: (context) => MainBloc()..add(GetUserInfoEvent(success: (success){
-        user = success;
-        checkForUpdates(context);
-        hive.put(StoreKeys.user, success);
-      }, failure: (failure){
-        if(failure is UserTokenExpire){
-          StorageRepository.deleteBool(StoreKeys.isAuth);
-          StorageRepository.deleteString(StoreKeys.token);
-          GoogleSignIn().signOut();
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
+    return BlocConsumer<MainBloc, MainState>(
+      bloc: context.read<MainBloc>()
+        ..add(GetUserInfoEvent())
+        ..add(GetAllMoviesEvent()),
+      listener: (context, state) {
+        if (state.status.isInProgress) {}
+        if (state.status.isSuccess) {}
+        if (state.status.isFailure) {}
+        if (state.getUserInfoStatus.isInProgress) {}
+        if (state.getUserInfoStatus.isSuccess) {
+          checkForUpdates(context);
         }
-      }, progress: (){}))..add(GetAllMoviesEvent(context: context)),
-      child: Scaffold(
-          appBar: AppBar(
-            title: Row(
-              children: [
-                SizedBox(
-                    width: 35, height: 35, child: Image.asset(AppIcons.brain)),
-                const SizedBox(
-                  width: 10,
-                ),
-                (user?.isPremium??false) ? FittedBox(
-                  child: Row(
-                    children: [
-                      AutoSizeText(
-                        'Brainbox',
-                        style: GoogleFonts.kronaOne(),
-                      ),
-                      AutoSizeText(
-                        LocaleKeys.premium.tr(),
-                        style: GoogleFonts.kronaOne(),
-                      ),
-                    ],
+        if (state.getUserInfoStatus.isFailure) {
+          context.pushAndRemoveUntil(const AuthScreen());
+        }
+        if (state.getAllMoviesStatus.isInProgress) {}
+        if (state.getAllMoviesStatus.isSuccess) {}
+        if (state.getAllMoviesStatus.isFailure) {}
+      },
+      builder: (context, state) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Row(
+                children: [
+                  SizedBox(width: 35, height: 35, child: Image.asset(AppIcons.brain)),
+                  const SizedBox(
+                    width: 10,
                   ),
-                ) : AutoSizeText(
-                  'Brainbox',
-                  style: GoogleFonts.kronaOne(),
+                  (state.user?.isPremium ?? false)
+                      ? FittedBox(
+                          child: Row(
+                            children: [
+                              AutoSizeText(
+                                'Brainbox',
+                                style: GoogleFonts.kronaOne(),
+                              ),
+                              AutoSizeText(
+                                LocaleKeys.premium.tr(),
+                                style: GoogleFonts.kronaOne(),
+                              ),
+                            ],
+                          ),
+                        )
+                      : AutoSizeText(
+                          'Brainbox',
+                          style: GoogleFonts.kronaOne(),
+                        )
+                ],
+              ),
+              actions: [
+                Row(
+                  children: [
+                    IconButton(
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) =>
+                                      SearchPage()));
+                        },
+                        icon: const Icon(Icons.search)),
+                  ],
                 )
               ],
             ),
-            actions: [
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () async{
-                        Navigator.push(context, MaterialPageRoute(builder: (builder)=> SearchPage(bloc: context.read<MainBloc>())));
-                      },
-                      icon: const Icon(Icons.search)),
-                ],
-              )
-            ],
-          ),
-          body: BlocConsumer<MainBloc, MainState>(
-            listener: (context, state) {
-
-            },
-            builder: (context, state) {
-              var movie = state.movies;
-              if(state.status.isSuccess){
-                if(state.movies.isEmpty){
-                  return Center(
-                    child: Text(LocaleKeys.sorryBaseIsEmpty.tr()),
-                  );
-                }else{
-                  return SafeArea(
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            // prototypeItem: Text('data'),
-                            itemCount: movie.length,
-                            itemBuilder: (context, index) {
-                              String key = state.movies.keys.elementAt(index);
-                              List<Content> movies = state.movies[key] ?? [];
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 25.0, top: 10, bottom: 10),
-                                    child: Text(
-                                      key,
-                                      style: const TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
+            body: BlocConsumer<MainBloc, MainState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                var movie = state.movies;
+                if (state.status.isSuccess) {
+                  if (state.movies.isEmpty) {
+                    return Center(
+                      child: Text(LocaleKeys.sorryBaseIsEmpty.tr()),
+                    );
+                  } else {
+                    return SafeArea(
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              // prototypeItem: Text('data'),
+                              itemCount: movie.length,
+                              itemBuilder: (context, index) {
+                                String key = state.movies.keys.elementAt(index);
+                                List<Content> movies = state.movies[key] ?? [];
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 25.0, top: 10, bottom: 10),
+                                      child: Text(
+                                        key,
+                                        style: const TextStyle(
+                                            fontSize: 25, fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 270,
-                                    width: double.maxFinite,
-                                    child: ListView.builder(
-                                        itemCount: movies.length,
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: (context, hor) {
-                                          var movieIndex = 0;
-                                          for(var i = 0; i < state.count.length; i++){
-                                            if(state.count[i].keys.first==key){
-                                              movieIndex=i;
-                                              break;
+                                    SizedBox(
+                                      height: 270,
+                                      width: double.maxFinite,
+                                      child: ListView.builder(
+                                          itemCount: movies.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (context, hor) {
+                                            var movieIndex = 0;
+                                            for (var i = 0; i < state.count.length; i++) {
+                                              if (state.count[i].keys.first == key) {
+                                                movieIndex = i;
+                                                break;
+                                              }
                                             }
-                                          }
-                                          if (hor == movies.length - 1) {
-                                            if (state.count[movieIndex][key]! > movies.length) {
-                                              context.read<MainBloc>().add(GetMoreMovieEvent(movieLevel: key, onSuccess: (onSuccess){
-                                                setState(() {
-                                                },);
-                                              },context: context));
-                                            }
-                                          }else{
-                                          }
-                                          return  MovieItemWidget(movie: movies[hor],bloc: context.read<MainBloc>(),);
-                                        }
+                                            if (hor == movies.length - 1) {
+                                              if (state.count[movieIndex][key]! > movies.length) {
+                                                context.read<MainBloc>().add(GetMoreMovieEvent(
+                                                    movieLevel: key,
+                                                    onSuccess: (onSuccess) {
+                                                      setState(
+                                                        () {},
+                                                      );
+                                                    },
+                                                    context: context));
+                                              }
+                                            } else {}
+                                            return MovieItemWidget(
+                                              movie: movies[hor],
+                                              bloc: context.read<MainBloc>(),
+                                            );
+                                          }),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  );
+                                  ],
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
                 }
-              }
                 return ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: 10, // Number of shimmer category items
@@ -295,8 +308,9 @@ class _MainScreenState extends State<MainScreen> {
                     );
                   },
                 );
-            },
-          )),
+              },
+            ));
+      },
     );
   }
 }

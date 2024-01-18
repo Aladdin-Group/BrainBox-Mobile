@@ -49,7 +49,7 @@
   "helpSupport": "Помощь и поддержка",
   "frequentlyAskedQuestions": "Часто задаваемые вопросы",
   "needMoreHelp": "Нужна дополнительная помощь?",
-  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup.uz@gmail.com.": "Если у вас есть дополнительные вопросы или вам нужна дальнейшая помощь, не стесняйтесь обращаться в нашу службу поддержки по адресу aladdinsgroup.uz@gmail.com.",
+  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Если у вас есть дополнительные вопросы или вам нужна дальнейшая помощь, не стесняйтесь обращаться в нашу службу поддержки по адресу aladdinsgroup.uz@gmail.com.",
   "welcomeToBrainbox": "Добро пожаловать в BrainBox",
   "yourGatewayToLanguageMasteryThroughTheMagicOfMovies": "Ваш путь к владению языком через магию кино!",
   "ourMission": "Наша миссия:",
@@ -91,5 +91,8 @@
   "coins": "Монеты",
   "addCoins": "Добавить монеты",
   "onAdFailedToShowFullScreenContent": "Ошибка при отображении рекламы",
-  "areYouSureYouWantToLogout" : "Вы действительно хотите выйти?"
+  "areYouSureYouWantToLogout" : "Вы действительно хотите выйти?",
+  "whyMoviesTitle": "Почему фильмы?",
+  "joinOurCommunityTitle": "Присоединяйтесь к нашему сообществу:",
+  "safeAndSecureTitle": "Безопасно и надежно:"
 }

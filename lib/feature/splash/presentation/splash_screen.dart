@@ -1,7 +1,8 @@
+import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:brain_box/core/assets/constants/colors.dart';
+import 'package:brain_box/core/assets/constants/icons.dart';
 import 'package:brain_box/feature/lang/presentation/language_screen.dart';
-import 'package:brain_box/feature/navigation/presentation/bloc/navigation_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/singletons/storage/storage_repository.dart';
 import '../../../core/singletons/storage/store_keys.dart';
@@ -15,34 +16,40 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-  late NavigationBloc navigationBloc;
-
   @override
   void initState() {
     super.initState();
-    navigationBloc = NavigationBloc();
     route(context);
   }
 
-  Future route(BuildContext context)async{
-    await Future.delayed(const Duration(milliseconds: 20),() {
-      bool isAuth = StorageRepository.getBool(StoreKeys.isAuth) || StorageRepository.getBool(StoreKeys.isSkip);
-      if(!isAuth){
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const LanguageScreen(),),(route) => false,);
-      }else{
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder:  (context) =>  BlocProvider<NavigationBloc>.value(value: navigationBloc,child: const LadingPage(),),),(route) => false,);
-      }
-    },);
+  Future route(BuildContext context) async {
+    await Future.delayed(
+      const Duration(milliseconds: 20),
+      () async {
+        // TODO: remove this
+        await StorageRepository.putBool(key: StoreKeys.isAuth, value: true);
+        await StorageRepository.putString(StoreKeys.token,
+            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGT1ItTE9HSU4iLCJpc3MiOiJNRURJVU0iLCJ1c2VybmFtZSI6ImlzbG9tQGdtYWlsLmNvbSIsImlhdCI6MTcwNTU3ODE2NywiZXhwIjo4ODEwNTU3ODE2N30.BZwxulL1w_NX-DtwB2hf2W5v19_6oYWQz52Z3YXq-is");
+        bool isAuth = StorageRepository.getBool(StoreKeys.isAuth) || StorageRepository.getBool(StoreKeys.isSkip);
+        if (!isAuth) {
+          // context.pushAndRemoveUntil(const LanguageScreen());
+          context.pushAndRemoveUntil(const LanguageScreen());
+        } else {
+          context.pushAndRemoveUntil(const LadingPage());
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 10, 175, 196),
+      backgroundColor: AppColors.main,
       body: Center(
-        child: Image.asset('assets/icons/brain.png'),
-      ),
+          child: Image.asset(
+        AppIcons.brain,
+        width: 200,
+      )),
     );
   }
 }

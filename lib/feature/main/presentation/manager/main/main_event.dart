@@ -1,45 +1,48 @@
 part of 'main_bloc.dart';
 
-
 abstract class MainEvent {}
 
-class GetAllMoviesEvent extends MainEvent{
-  final context;
-  GetAllMoviesEvent({required this.context});
+class GetAllMoviesEvent extends MainEvent {
 }
 
-class GetMoreMovieEvent extends MainEvent{
+class GetMoreMovieEvent extends MainEvent {
   String movieLevel;
   final context;
   Function(List<Content> p0) onSuccess;
-  GetMoreMovieEvent({required this.movieLevel,required this.onSuccess,required this.context});
+
+  GetMoreMovieEvent({required this.movieLevel, required this.onSuccess, required this.context});
 }
 
-class BuyMovieEvent extends MainEvent{
+class BuyMovieEvent extends MainEvent {
   int movieId;
   Function(dynamic) success;
   Function() failure;
   Function() progress;
-  BuyMovieEvent({required this.success,required this.failure,required this.progress,required this.movieId});
+
+  BuyMovieEvent(
+      {required this.success,
+      required this.failure,
+      required this.progress,
+      required this.movieId});
 }
 
-class GetUserInfoEvent extends MainEvent{
-  Function(User user) success;
-  Function() progress;
-  Function(Failure) failure;
+class GetUserInfoEvent extends MainEvent {
 
-  GetUserInfoEvent({required this.success,required this.failure,required this.progress});
+
 }
 
-class SearchMovieEvent extends MainEvent{
+class SearchMovieEvent extends MainEvent {
   String keyWord;
   Function(List<SearchModel> list) success;
   Function() failure;
 
-  SearchMovieEvent({required this.success,required this.failure,required this.keyWord});
+  SearchMovieEvent({required this.success, required this.failure, required this.keyWord});
 }
 
-class SubmitMovieEvent extends MainEvent{
+class SubmitMovieEvent extends MainEvent {
   String movieName;
+
   SubmitMovieEvent({required this.movieName});
 }
+
+class InitialMainEvent extends MainEvent {}

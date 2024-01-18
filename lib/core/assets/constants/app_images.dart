@@ -11,6 +11,9 @@ class AppImages {
   static const String essential_5 = 'https://www.essentialenglish.review/ContentStudio/Images/4000-Essential-English-Words-5.jpg';
   static const String essential_6 = 'https://www.essentialenglish.review/ContentStudio/Images/4000-Essential-English-Words-6.jpg';
 
-  // assets/images/no_found.png
+
   static const String noFound = 'assets/images/img_3.png';
+  static const String brain = 'assets/icons/brain.png';
+  static const String authBackground = 'assets/images/auth_background.jpg';
+
 }

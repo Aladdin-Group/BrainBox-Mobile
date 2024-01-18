@@ -28,7 +28,6 @@ abstract class  LocaleKeys {
   static const writeSomeWord = 'writeSomeWord';
   static const getReminderFromSavedWords = 'getReminderFromSavedWords';
   static const fieldIsEmpty = 'fieldIsEmpty';
-  static const success = 'success';
   static const pleaseTryAgain = 'pleaseTryAgain';
   static const yes = 'yes';
   static const pleaseEnterEveryMinute = 'pleaseEnterEveryMinute';
@@ -91,7 +90,11 @@ abstract class  LocaleKeys {
   static const email = 'email';
   static const coins = 'coins';
   static const addCoins = 'addCoins';
+  static const success = 'success';
   static const onAdFailedToShowFullScreenContent = 'onAdFailedToShowFullScreenContent';
   static const areYouSureYouWantToLogout = 'areYouSureYouWantToLogout';
+  static const whyMoviesTitle = 'whyMoviesTitle';
+  static const joinOurCommunityTitle = 'joinOurCommunityTitle';
+  static const safeAndSecureTitle = 'safeAndSecureTitle';
 
 }
