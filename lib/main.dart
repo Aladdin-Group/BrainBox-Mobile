@@ -38,179 +38,179 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 
-@pragma('vm:entry-point')
-Future<bool> onIosBackground(ServiceInstance service) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  DartPluginRegistrant.ensureInitialized();
-
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  await preferences.reload();
-  final log = preferences.getStringList('log') ?? <String>[];
-  log.add(DateTime.now().toIso8601String());
-  await preferences.setStringList('log', log);
-
-  return true;
-}
-
-@pragma('vm:entry-point')
-void onStart(ServiceInstance service) async {
-
-  final appDocumentDirectory =
-  await getApplicationDocumentsDirectory();
-  Hive.init(appDocumentDirectory.path);
-  Hive.registerAdapter(WordHiveAdapter());
-  await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
-
-  List<LocalWord?>? localWords = await HiveController.getListFromHive();
-
-  int position = 0;
-
-  ReminderDate reminderDate = ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
-  // Only available for flutter 3.0.0 and later
-  DartPluginRegistrant.ensureInitialized();
-
-  /// OPTIONAL when use custom notification
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  if (service is AndroidServiceInstance) {
-    service.on('setAsForeground').listen((event) {
-      service.setAsForegroundService();
-    });
-
-    service.on('setAsBackground').listen((event) {
-      service.setAsBackgroundService();
-    });
-  }
-
-  service.on('stopService').listen((event) {
-    print('stopService');
-    service.stopSelf();
-  });
-
-  // bring to foreground
-  Timer.periodic(Duration(minutes: reminderDate.everyTime), (timer) async {
-    if (service is AndroidServiceInstance) {
-      if (await service.isForegroundService()) {
-        /// OPTIONAL for use custom notification
-        /// the notification id must be equals with AndroidConfiguration when you call configure() method.
-        if(localWords.isNotEmpty){
-          if(localWords.length>position){
-            try{
-              flutterLocalNotificationsPlugin.show(
-                localWords[position]!.notificationId??0,
-                '${localWords[position]!.word} => ${localWords[position]!.translate}',
-                (localWords.length-1 == position) ? 'This last word, Do you want repeat ?' : 'Need for your feature !',
-                (localWords.length-1 == position) ? const NotificationDetails(
-                  android: AndroidNotificationDetails(
-                    'MEMORIZING_foreground',
-                    'MEMORIZING FOREGROUND SERVICE',
-                      enableVibration: true,
-                    icon: 'app_icon',
-                    actions: [
-                      AndroidNotificationAction(
-                        'accept',
-                        'Accept',
-                      ),
-                      AndroidNotificationAction(
-                        'decline',
-                        'Decline',
-                      )
-                    ]
-                  )
-              ): const NotificationDetails(
-                  android: AndroidNotificationDetails(
-                    'MEMORIZING_foreground',
-                    'MEMORIZING FOREGROUND SERVICE',
-                    enableVibration: true,
-                    icon: 'app_icon',
-                  ),
-                )
-              );
-            }catch(e){
-              print(e);
-            }
-          }
-        }
-        if(position==localWords.length){
-          position = 0;
-          return;
-        }
-        position++;
-      }
-    }
-
-    service.invoke(
-      'update',
-    );
-  });
-}
-
-Future<void> onNotificationClick(String payload) async {
-  print(payload);
-  if (payload == 'accept') {
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-  }
-}
-
-Future<void> initializeService() async {
-  final service = FlutterBackgroundService();
-
-  /// OPTIONAL, using custom notification channel id
-  const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'my_foreground', // id
-    'MY FOREGROUND SERVICE', // title
-    playSound: true,
-    description: 'This channel is used for important notifications.', // description
-    importance: Importance.max, // importance must be at low or higher level
-  );
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
-
-  if (Platform.isIOS || Platform.isAndroid) {
-    // await flutterLocalNotificationsPlugin.initialize(
-    //   const InitializationSettings(
-    //     iOS: DarwinInitializationSettings(),
-    //     android: AndroidInitializationSettings('app_icon'),
-    //   ),
-    // );
-  }
-
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  await service.configure(
-    androidConfiguration: AndroidConfiguration(
-      // this will be executed when app is in foreground or background in separated isolate
-      onStart: onStart,
-      // auto start service
-      autoStart: false,
-      isForegroundMode: true,
-    ),
-    iosConfiguration: IosConfiguration(
-      // auto start service
-      autoStart: false,
-
-      // this will be executed when app is in foreground in separated isolate
-      onForeground: onStart,
-
-      // you have to enable background fetch capability on xcode project
-      onBackground: onIosBackground,
-    ),
-  );
-}
+// @pragma('vm:entry-point')
+// Future<bool> onIosBackground(ServiceInstance service) async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   DartPluginRegistrant.ensureInitialized();
+//
+//   SharedPreferences preferences = await SharedPreferences.getInstance();
+//   await preferences.reload();
+//   final log = preferences.getStringList('log') ?? <String>[];
+//   log.add(DateTime.now().toIso8601String());
+//   await preferences.setStringList('log', log);
+//
+//   return true;
+// }
+//
+// @pragma('vm:entry-point')
+// void onStart(ServiceInstance service) async {
+//
+//   final appDocumentDirectory =
+//   await getApplicationDocumentsDirectory();
+//   Hive.init(appDocumentDirectory.path);
+//   Hive.registerAdapter(WordHiveAdapter());
+//   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
+//
+//   List<LocalWord?>? localWords = await HiveController.getListFromHive();
+//
+//   int position = 0;
+//
+//   ReminderDate reminderDate = ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
+//   // Only available for flutter 3.0.0 and later
+//   DartPluginRegistrant.ensureInitialized();
+//
+//   /// OPTIONAL when use custom notification
+//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+//
+//   if (service is AndroidServiceInstance) {
+//     service.on('setAsForeground').listen((event) {
+//       service.setAsForegroundService();
+//     });
+//
+//     service.on('setAsBackground').listen((event) {
+//       service.setAsBackgroundService();
+//     });
+//   }
+//
+//   service.on('stopService').listen((event) {
+//     print('stopService');
+//     service.stopSelf();
+//   });
+//
+//   // bring to foreground
+//   Timer.periodic(Duration(minutes: reminderDate.everyTime), (timer) async {
+//     if (service is AndroidServiceInstance) {
+//       if (await service.isForegroundService()) {
+//         /// OPTIONAL for use custom notification
+//         /// the notification id must be equals with AndroidConfiguration when you call configure() method.
+//         if(localWords.isNotEmpty){
+//           if(localWords.length>position){
+//             try{
+//               flutterLocalNotificationsPlugin.show(
+//                 localWords[position]!.notificationId??0,
+//                 '${localWords[position]!.word} => ${localWords[position]!.translate}',
+//                 (localWords.length-1 == position) ? 'This last word, Do you want repeat ?' : 'Need for your feature !',
+//                 (localWords.length-1 == position) ? const NotificationDetails(
+//                   android: AndroidNotificationDetails(
+//                     'MEMORIZING_foreground',
+//                     'MEMORIZING FOREGROUND SERVICE',
+//                       enableVibration: true,
+//                     icon: 'app_icon',
+//                     actions: [
+//                       AndroidNotificationAction(
+//                         'accept',
+//                         'Accept',
+//                       ),
+//                       AndroidNotificationAction(
+//                         'decline',
+//                         'Decline',
+//                       )
+//                     ]
+//                   )
+//               ): const NotificationDetails(
+//                   android: AndroidNotificationDetails(
+//                     'MEMORIZING_foreground',
+//                     'MEMORIZING FOREGROUND SERVICE',
+//                     enableVibration: true,
+//                     icon: 'app_icon',
+//                   ),
+//                 )
+//               );
+//             }catch(e){
+//               print(e);
+//             }
+//           }
+//         }
+//         if(position==localWords.length){
+//           position = 0;
+//           return;
+//         }
+//         position++;
+//       }
+//     }
+//
+//     service.invoke(
+//       'update',
+//     );
+//   });
+// }
+//
+// Future<void> onNotificationClick(String payload) async {
+//   print(payload);
+//   if (payload == 'accept') {
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//     print('Accept');
+//   }
+// }
+//
+// Future<void> initializeService() async {
+//   final service = FlutterBackgroundService();
+//
+//   /// OPTIONAL, using custom notification channel id
+//   const AndroidNotificationChannel channel = AndroidNotificationChannel(
+//     'my_foreground', // id
+//     'MY FOREGROUND SERVICE', // title
+//     playSound: true,
+//     description: 'This channel is used for important notifications.', // description
+//     importance: Importance.max, // importance must be at low or higher level
+//   );
+//
+//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//   FlutterLocalNotificationsPlugin();
+//
+//   if (Platform.isIOS || Platform.isAndroid) {
+//     // await flutterLocalNotificationsPlugin.initialize(
+//     //   const InitializationSettings(
+//     //     iOS: DarwinInitializationSettings(),
+//     //     android: AndroidInitializationSettings('app_icon'),
+//     //   ),
+//     // );
+//   }
+//
+//   await flutterLocalNotificationsPlugin
+//       .resolvePlatformSpecificImplementation<
+//       AndroidFlutterLocalNotificationsPlugin>()
+//       ?.createNotificationChannel(channel);
+//
+//   await service.configure(
+//     androidConfiguration: AndroidConfiguration(
+//       // this will be executed when app is in foreground or background in separated isolate
+//       onStart: onStart,
+//       // auto start service
+//       autoStart: false,
+//       isForegroundMode: true,
+//     ),
+//     iosConfiguration: IosConfiguration(
+//       // auto start service
+//       autoStart: false,
+//
+//       // this will be executed when app is in foreground in separated isolate
+//       onForeground: onStart,
+//
+//       // you have to enable background fetch capability on xcode project
+//       onBackground: onIosBackground,
+//     ),
+//   );
+// }
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -256,7 +256,7 @@ void main() async{
   await Hive.openBox<Content>(StoreKeys.savedWordsList);
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
   await Hive.openBox(StoreKeys.userData);
-  await initializeService();
+  // await initializeService();
   await MobileAds.instance.initialize();
   FlutterNativeSplash.remove();
   setupLocator();

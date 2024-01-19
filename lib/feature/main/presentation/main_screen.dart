@@ -36,11 +36,24 @@ class _MainScreenState extends State<MainScreen> {
   var index = 0;
   final hive = Hive.box(StoreKeys.userData);
   User? user;
+  late MainBloc bloc;
 
 
   @override
   void initState() {
     super.initState();
+    bloc = MainBloc()..add(GetUserInfoEvent(success: (success){
+      user = success;
+      checkForUpdates(context);
+      hive.put(StoreKeys.user, success);
+    }, failure: (failure){
+      if(failure is UserTokenExpire){
+        StorageRepository.deleteBool(StoreKeys.isAuth);
+        StorageRepository.deleteString(StoreKeys.token);
+        GoogleSignIn().signOut();
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
+      }
+    }, progress: (){}))..add(GetAllMoviesEvent(context: context));
     user = hive.get(StoreKeys.user);
     initializeLocalNotifications();
   }
@@ -129,18 +142,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MainBloc>(
-      create: (context) => MainBloc()..add(GetUserInfoEvent(success: (success){
-        user = success;
-        checkForUpdates(context);
-        hive.put(StoreKeys.user, success);
-      }, failure: (failure){
-        if(failure is UserTokenExpire){
-          StorageRepository.deleteBool(StoreKeys.isAuth);
-          StorageRepository.deleteString(StoreKeys.token);
-          GoogleSignIn().signOut();
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> const AuthScreen()), (route) => false);
-        }
-      }, progress: (){}))..add(GetAllMoviesEvent(context: context)),
+      create: (context) => bloc,
       child: Scaffold(
           appBar: AppBar(
             title: Row(
@@ -186,8 +188,8 @@ class _MainScreenState extends State<MainScreen> {
 
             },
             builder: (context, state) {
-              var movie = state.movies;
               if(state.status.isSuccess){
+                var movie = state.movies;
                 if(state.movies.isEmpty){
                   return Center(
                     child: Text('Sorry base is empty'.tr()),

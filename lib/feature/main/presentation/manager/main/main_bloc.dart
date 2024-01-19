@@ -34,7 +34,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   MainBloc() : super(const MainState()) {
     on<GetAllMoviesEvent>((event, emit) async{
-      print('event');
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
       var movie = <String, List<Content>>{};
       var counts = <Map<String,int>>[];
