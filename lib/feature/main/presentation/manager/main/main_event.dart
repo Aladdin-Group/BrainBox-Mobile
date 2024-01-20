@@ -7,10 +7,9 @@ class GetAllMoviesEvent extends MainEvent {
 
 class GetMoreMovieEvent extends MainEvent {
   String movieLevel;
-  final context;
-  Function(List<Content> p0) onSuccess;
+  VoidCallback onSuccess;
 
-  GetMoreMovieEvent({required this.movieLevel, required this.onSuccess, required this.context});
+  GetMoreMovieEvent({required this.movieLevel, required this.onSuccess});
 }
 
 class BuyMovieEvent extends MainEvent {

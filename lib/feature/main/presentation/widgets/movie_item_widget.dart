@@ -51,6 +51,8 @@ class _MovieItemWidgetState extends State<MovieItemWidget> {
                           fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(
                             widget.movie.avatarUrl??'',
+                            maxWidth: 300,
+                            maxHeight: 300,
                           ),
                         )
                     ),

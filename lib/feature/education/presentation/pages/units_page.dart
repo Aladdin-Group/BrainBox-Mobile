@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 
 class UnitsPage extends StatefulWidget {
   final Essential book;
-  final EducationBloc bloc;
 
-  const UnitsPage({super.key, required this.book, required this.bloc});
+  const UnitsPage({super.key, required this.book});
 
   @override
   State<UnitsPage> createState() => _UnitsPageState();
@@ -34,7 +33,6 @@ class _UnitsPageState extends State<UnitsPage> {
                           builder: (builder) => EssentialWordsPage(
                                 essential: widget.book,
                                 unit: i,
-                                bloc: widget.bloc,
                               )));
                 },
               )),
@@ -48,7 +46,7 @@ class _UnitsPageState extends State<UnitsPage> {
                   MaterialPageRoute(
                       builder: (builder) => SelectUnitPage(
                             book: widget.book,
-                            bloc: widget.bloc,
+
                           )));
             },
             child: const Text('Start test')),

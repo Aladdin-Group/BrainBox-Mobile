@@ -1,8 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:brain_box/core/exceptions/failure.dart';
+import 'package:brain_box/core/utils/generic_pagination.dart';
 import 'package:brain_box/feature/auth/presentation/auth_screen.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
 import 'package:brain_box/feature/main/data/models/movie_level.dart';
+import 'package:brain_box/feature/main/data/models/request_movie_model.dart';
+import 'package:brain_box/main.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
@@ -104,80 +107,124 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   void _getMoreMovies(GetMoreMovieEvent event, Emitter<MainState> emit) async {
-    Map<String, int> page = {};
-    Map<String, int> myPage = {};
-    var movie = {};
-    var moviesCount = 0;
-    var levelPage = 0;
-    var movieIndex = 0;
-    for (var pagingItem in state.page) {
-      movieIndex++;
-      if (pagingItem.containsKey(event.movieLevel)) {
-        page = pagingItem;
-        levelPage = pagingItem[event.movieLevel]!;
-        break;
-      }
-    }
+    print('GetMoreMovieEvent');
 
-    // result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage
-    final result = await getMoviesUseCase.call(page);
-    var statePage = state.page;
-    // myPage[event.movieLevel] = result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage;
-    // statePage[movieIndex] =  myPage;
+    RequestMovieModel? request = state.movies[event.movieLevel];
+    if (request == null) {
+      return;
+    }
+    print('GetMoreMovieEvent1');
+print(request.page);
+print(request.data!.page);
+    if (request.page >= request.data!.page) {
+      return;
+    }
+    print('GetMoreMovieEvent2');
+    request.page = request.page + 1;
+    final result = await getMoviesUseCase.call(request);
     if (result.isRight) {
-      movie[event.movieLevel] = result.right.results;
-      var map = state.movies;
-      map[event.movieLevel]!.addAll(movie[event.movieLevel] ?? []);
+      request.listData.addAll(result.right.results);
+      print(request.listData.length);
+      event.onSuccess();
       emit(state.copyWith(
-        movies: map,
-        status: FormzSubmissionStatus.success,
-        // page: statePage,
+          status: FormzSubmissionStatus.success,
+          movies:Map<String,RequestMovieModel>.from(state.movies)..update(event.movieLevel, (value) => request,ifAbsent: () => request),
       ));
-      event.onSuccess(result.right.results);
-      for (var movie in state.movies[event.movieLevel]!) {
-        moviesCount++;
-      }
-      page[event.movieLevel] = result.right.count > (moviesCount + result.right.results.length)
-          ? levelPage + 1
-          : levelPage;
     } else {
       if (result.left is ServerException) {
         StorageRepository.deleteBool(StoreKeys.isAuth);
         StorageRepository.deleteString(StoreKeys.token);
         GoogleSignIn().signOut();
-        Navigator.pushAndRemoveUntil(event.context,
+        Navigator.pushAndRemoveUntil(navigatorKey.currentContext!,
             MaterialPageRoute(builder: (context) => const AuthScreen()), (route) => false);
       }
       emit(state.copyWith(status: FormzSubmissionStatus.failure));
     }
   }
 
+// Map<String, int> page = {};
+// Map<String, int> myPage = {};
+// var movie = {};
+// var moviesCount = 0;
+// var levelPage = 0;
+// var movieIndex = 0;
+// for (var pagingItem in state.page) {
+//   movieIndex++;
+//   if (pagingItem.containsKey(event.movieLevel)) {
+//     page = pagingItem;
+//     levelPage = pagingItem[event.movieLevel]!;
+//     break;
+//   }
+// }
+//
+// // result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage
+// var statePage = state.page;
+// // myPage[event.movieLevel] = result.right.count > ((state.movies[event.movieLevel]?.length??1) + result.right.results.length) ? levelPage + 1 : levelPage;
+// // statePage[movieIndex] =  myPage;
+// if (result.isRight) {
+//   movie[event.movieLevel] = result.right.results;
+//   var map = state.movies;
+//   // map[event.movieLevel]!.addAll(movie[event.movieLevel] ?? []);
+//   List<Content> movies = state.movies[event.movieLevel]!.toList();
+//   Map<String,List<Content>> newMap = state.movies;
+//   newMap[event.movieLevel] = movies..addAll(result.right.results);
+//   print(state.movies[event.movieLevel]?.length);
+//   print(newMap[event.movieLevel]?.length);
+//   newMap[event.movieLevel]?.forEach((element) {print(element.name);});
+//
+//   emit(state.copyWith(
+//     movies: newMap,
+//     status: FormzSubmissionStatus.success,
+//     genericPagination: result.right,
+//     // page: statePage,
+//   ));
+//   event.onSuccess(result.right.results);
+//   for (var movie in state.movies[event.movieLevel]!) {
+//     moviesCount++;
+//   }
+//   page[event.movieLevel] = result.right.count > (moviesCount + result.right.results.length)
+//       ? levelPage + 1
+//       : levelPage;
+// } else {
+//
+// }
+// }
+
   void _getAllMovies(GetAllMoviesEvent event, Emitter<MainState> emit) async {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-    var movie = <String, List<Content>>{};
-    var counts = <Map<String, int>>[];
-    var page = <Map<String, int>>[];
-    var index = 0;
-    for (var level in levels) {
-      var req = <String, int>{};
-      var countLevel = <String, int>{};
-      req[level] = 0;
+    // emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+    // var movie = <String, List<Content>>{};
+    // var counts = <Map<String, int>>[];
+    // var page = <Map<String, int>>[];
+    // var index = 0;
+    for (String level in levels) {
+      final RequestMovieModel request = RequestMovieModel(level: level, page: 0);
+      //   var req = <String, int>{};
+      //   var countLevel = <String, int>{};
+      //   req[level] = 0;
+      //
+      //   var paging = <String, int>{};
+      //   paging[level] = 1;
+      //   page.add(paging);
+      //   index++;
 
-      var paging = <String, int>{};
-      paging[level] = 1;
-      page.add(paging);
-      index++;
-      final result = await getMoviesUseCase.call(req);
+      final result = await getMoviesUseCase.call(request);
       if (result.isRight) {
-        movie[level] = result.right.results;
-        countLevel[level] = result.right.count;
-        counts.add(countLevel);
-        levels.length == index
-            ? emit(state.copyWith(
-                status: FormzSubmissionStatus.success,
-                movies: movie,
-              ))
-            : emit(state.copyWith(movies: movie, count: counts, page: page));
+        print('success movie');
+        print(result.right.results.length);
+        // request.copyWith(listData: result.right.results, data: result.right);
+        request.listData = result.right.results;
+        request.data = result.right;
+        //     movie[level] = result.right.results;
+        //     countLevel[level] = result.right.count;
+        //     counts.add(countLevel);
+        //     levels.length == index
+        emit(state.copyWith(
+          status: FormzSubmissionStatus.success,
+          movies: Map<String, RequestMovieModel>.from(state.movies)
+            ..update(level, (value) => request, ifAbsent: () => request),
+        ));
+        //         : emit(state.copyWith(movies: movie, count: counts, page: page,));
       } else {
         if (result.left is UserTokenExpire) {
           StorageRepository.deleteBool(StoreKeys.isAuth);

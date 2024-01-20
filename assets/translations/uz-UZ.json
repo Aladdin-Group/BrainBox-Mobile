@@ -48,7 +48,7 @@
   "helpSupport": "Yordam va Qo'llab-quvvatlash",
   "frequentlyAskedQuestions": "Tez-tez so'raladigan savollar",
   "needMoreHelp": "Ko'proq yordam kerakmi?",
-  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Agar sizda ko'proq savollar bo'lsa yoki qo'shimcha yordam kerak bo'lsa, aladdinsgroup.uz@gmail.com manzilida bizning qo'llab-quvvatlash jamoamizga murojaat qilishingizdan mamnunmiz.",
+  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Agar sizda ko'proq savollar bo'lsa yoki qo'shimcha yordam kerak bo'lsa, aladdinsgroup.uz@gmail.com manzilida bizning qo'llab-quvvatlash jamoamizga murojaat qilishingizdan mamnunmiz. Biz ham Telegram orqali murojaat qilish imkoniyatiga ega bo'lmagan bo'lmaganmiz: https://t.me/brainboxxbot",
   "welcomeToBrainbox": "BrainBoxga xush kelibsiz",
   "yourGatewayToLanguageMasteryThroughTheMagicOfMovies": "Filmlar sehri orqali til o'rganishga o'zingizning yo'lingiz!",
   "ourMission": "Bizning Vazifamiz:",
@@ -93,5 +93,17 @@
   "areYouSureYouWantToLogout" : "Haqiqatan ham tizimdan chiqmoqchimisiz?",
   "whyMoviesTitle": "Nega Filmlar?",
   "joinOurCommunityTitle": "Bizning jamoaga a'zo bo'ling:",
-  "safeAndSecureTitle": "Xavfsiz va xavfsiz:"
+  "safeAndSecureTitle": "Xavfsiz va xavfsiz:",
+  "noFoundMovies": "Filmlar topilmadi",
+  "movies": "Filmlar",
+  "showTranslations": "Tarjimani koʻrsatish",
+  "error": "Xatolik",
+  "pleaseSelectAtLeastOneUnit": "Kamida bitta bo`limni tanlang",
+  "notifications": "Bildirishnomalar",
+  "notificationsNotYet": "Hozircha bildirishnomalar yo`q",
+  "searchAnyMovie": "Istalgan filmni qidirish \uD83D\uDCFD️\uD83C\uDF7F",
+  "weCouldnTFind": "Filmni topa olmadik :(\nLekin siz bizga yordam bera olasiz, subtitr topmoqchi bo'lgan film nomini yuboring va biz uni tezroq qo'shamiz",
+  "submit": "Yuborish",
+  "movieName": "Film nomi"
+
 }

@@ -22,6 +22,8 @@ class EducationBloc extends Bloc<EducationEvent, EducationState> {
   final GetEssentialWordsUseCase getEssentialWordsUseCase = GetEssentialWordsUseCase();
 
   EducationBloc() : super(const EducationState()) {
+    on<ShowTranslationsEvent>(_showTranslationsEvent);
+    on<ChangeWordFontSize>(_changeWordFontSizeEvent);
     on<GetEduItemsEvent>((event, emit) async {
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
@@ -70,5 +72,13 @@ class EducationBloc extends Bloc<EducationEvent, EducationState> {
 
       event.onSuccess(list);
     });
+  }
+
+  void _changeWordFontSizeEvent(ChangeWordFontSize event, Emitter<EducationState> emit) {
+    emit(state.copyWith(fontSize: event.fontSize));
+  }
+
+  void _showTranslationsEvent(ShowTranslationsEvent event, Emitter<EducationState> emit) {
+    emit(state.copyWith(showTranslation: !state.showTranslation));
   }
 }

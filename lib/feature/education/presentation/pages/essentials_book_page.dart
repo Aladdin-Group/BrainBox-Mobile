@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import '../../data/models/book_model.dart';
 
 class EssentialsBookPage extends StatefulWidget {
-  final EducationBloc bloc;
-  const EssentialsBookPage({super.key,required this.bloc});
+  const EssentialsBookPage({
+    super.key,
+  });
 
   @override
   State<EssentialsBookPage> createState() => _EssentialsBookPageState();
 }
 
 class _EssentialsBookPageState extends State<EssentialsBookPage> {
-
   List<BookModel> list = [];
 
   @override
@@ -40,17 +40,16 @@ class _EssentialsBookPageState extends State<EssentialsBookPage> {
       body: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Number of columns
-          crossAxisSpacing: 8.0, // Spacing between columns
-          mainAxisSpacing: 8.0, // Spacing between rows
-          mainAxisExtent: 200
-        ),
+            crossAxisCount: 2, // Number of columns
+            crossAxisSpacing: 8.0, // Spacing between columns
+            mainAxisSpacing: 8.0, // Spacing between rows
+            mainAxisExtent: 200),
         itemCount: list.length,
         itemBuilder: (context, index) {
           return BookItem(
-              model: list[index],
-            onClick: (Essential essential){
-                Navigator.push(context, MaterialPageRoute(builder: (builder)=> UnitsPage(book: essential,bloc: widget.bloc,)));
+            model: list[index],
+            onClick: (Essential essential) {
+              Navigator.push(context, MaterialPageRoute(builder: (builder) => UnitsPage(book: essential)));
             },
           );
         },

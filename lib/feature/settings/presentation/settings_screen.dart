@@ -6,6 +6,7 @@ import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/feature/auth/presentation/auth_screen.dart';
+import 'package:brain_box/feature/settings/data/repositories/language_repo.dart';
 import 'package:brain_box/feature/settings/presentation/manager/theme/app_theme_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/pages/about_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/help_page.dart';
@@ -41,20 +42,23 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   // User? user;
-  ValueNotifier<bool> themeMode = ValueNotifier(false);
+  // ValueNotifier<bool> themeMode = ValueNotifier(false);
   ValueNotifier<bool> appSound = ValueNotifier(false);
   ValueNotifier<bool> isInit = ValueNotifier(false);
-  ValueNotifier<String> appLanguage = ValueNotifier('En');
+
+  // ValueNotifier<String> appLanguage = ValueNotifier('En');
   bool isPremium = false;
   ValueNotifier<PermissionStatus> statusNotification = ValueNotifier(PermissionStatus.denied);
   late SettingsBloc bloc;
-  int _selectedFruit = 0;
+
+  // int _selectedFruit = 0;
   final double _kItemExtent = 32.0;
-  final List<String> _fruitNames = <String>[
-    'Русский',
-    'English',
-    'Uzbek',
-  ];
+
+  // final List<String> _languages = <String>[
+  //   'Русский',
+  //   'English',
+  //   'Uzbek',
+  // ];
 
   final InAppReview inAppReview = InAppReview.instance;
 
@@ -74,8 +78,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void initState() {
-    appLanguage.value = StorageRepository.getString(StoreKeys.appLang);
-    themeMode.value = StorageRepository.getBool(StoreKeys.appTheme);
+    // appLanguage.value = StorageRepository.getString(StoreKeys.appLang);
+    // themeMode.value = StorageRepository.getBool(StoreKeys.appTheme);
     appSound.value = StorageRepository.getBool(StoreKeys.appSound);
     bloc = SettingsBloc();
 
@@ -157,10 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
       ),
       body: BlocBuilder<SettingsBloc, SettingsState>(
-
         builder: (context, state) {
-          print("=================================================================");
-          print(state.user?.imageUrl);
           if (state.status.isSuccess) {
             return SafeArea(
               child: CustomScrollView(
@@ -216,64 +217,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   useMagnifier: true,
                                   itemExtent: _kItemExtent,
                                   scrollController: FixedExtentScrollController(
-                                    initialItem: _selectedFruit,
+                                    initialItem: LanguageRepository.languages
+                                        .indexOf(context.read<SettingsBloc>().state.languageModel),
                                   ),
-                                  onSelectedItemChanged: (int selectedItem) {
-                                    setState(() {
-                                      _selectedFruit = selectedItem;
-                                    });
-                                  },
-                                  children: List<Widget>.generate(_fruitNames.length, (int index) {
-                                    return Center(child: Text(_fruitNames[index]));
-                                  }),
+                                  onSelectedItemChanged: (int selectedItem) => context.read<SettingsBloc>().add(
+                                      ChangeLanguageEvent(languageModel: LanguageRepository.languages[selectedItem])),
+                                  children: List<Widget>.generate(LanguageRepository.languages.length,
+                                      (int index) => Center(child: Text(LanguageRepository.languages[index].name))),
                                 ),
                               ),
                             ),
-                          ).then((value) => {
-                                if (_selectedFruit == 0)
-                                  {
-                                    context.setLocale(const Locale('ru', 'RU')),
-                                  }
-                                else if (_selectedFruit == 1)
-                                  {
-                                    context.setLocale(const Locale('en', 'US')),
-                                  }
-                                else
-                                  {
-                                    context.setLocale(const Locale('uz', 'UZ')),
-                                  }
-                              });
+                          );
                         },
                         title: LocaleKeys.language.tr(),
-                        action: ValueListenableBuilder(
-                            valueListenable: appLanguage,
-                            builder: (p1, p2, p3) {
-                              return Text(
-                                p2,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              );
-                            }),
+                        // action: ValueListenableBuilder(
+                        //     valueListenable: appLanguage,
+                        //     builder: (p1, p2, p3) {
+                        //       return Text(
+                        //         p2,
+                        //         style: const TextStyle(fontWeight: FontWeight.bold),
+                        //       );
+                        //     }),
                       ),
-                      BlocBuilder<AppThemeBloc, AppThemeState>(
-                        builder: (context, state) {
-                          return SettingsItem(
-                              title: LocaleKeys.nightMode.tr(),
-                              action: ValueListenableBuilder(
-                                valueListenable: themeMode,
-                                builder: (p1, p2, p3) {
-                                  return Switch(
-                                      value: p2,
-                                      onChanged: (value) {
-                                        StorageRepository.putBool(key: StoreKeys.appTheme, value: value);
-                                        state.switchValue
-                                            ? context.read<AppThemeBloc>().add(SwitchOffThemeEven())
-                                            : context.read<AppThemeBloc>().add(SwitchOnThemeEven());
-                                        themeMode.value = value;
-                                      });
-                                },
-                              ));
-                        },
-                      ),
+                      SettingsItem(
+                          title: LocaleKeys.nightMode.tr(),
+                          action: Switch(
+                              value: context.watch<AppThemeBloc>().state.switchValue,
+                              onChanged: (value) {
+                                print(value);
+                                context.read<AppThemeBloc>().add(value ? SwitchOnThemeEven() : SwitchOffThemeEven());
+                              })),
                       ValueListenableBuilder(
                           valueListenable: statusNotification,
                           builder: (p1, p2, p3) {
@@ -505,3 +478,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+//.then((value) => {
+//                                 if (_selectedFruit == 0)
+//                                   {
+//                                     context.setLocale(const Locale('ru', 'RU')),
+//                                   }
+//                                 else if (_selectedFruit == 1)
+//                                   {
+//                                     context.setLocale(const Locale('en', 'US')),
+//                                   }
+//                                 else
+//                                   {
+//                                     context.setLocale(const Locale('uz', 'UZ')),
+//                                   }
+//                               })

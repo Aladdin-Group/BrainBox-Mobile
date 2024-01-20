@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/exceptions/exception.dart';
+import 'package:brain_box/core/route/ruotes.dart';
+import 'package:brain_box/feature/main/data/models/request_movie_model.dart';
 import 'package:brain_box/feature/main/presentation/pages/search_page.dart';
 import 'package:brain_box/feature/main/presentation/widgets/movie_item_widget.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
@@ -43,8 +45,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> initializeLocalNotifications() async {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -85,9 +86,7 @@ class _MainScreenState extends State<MainScreen> {
               Text(
                 LocaleKeys.readyToUpdate.tr(),
                 style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 10, 175, 196)),
+                    fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 10, 175, 196)),
               ),
               const Gap(15),
               Padding(
@@ -107,8 +106,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
-                child: Text(LocaleKeys.updateNow.tr(),
-                    style: const TextStyle(fontSize: 20, color: Colors.white)),
+                child: Text(LocaleKeys.updateNow.tr(), style: const TextStyle(fontSize: 20, color: Colors.white)),
                 onPressed: () {
                   InAppUpdate.performImmediateUpdate().catchError((e) => print(e.toString()));
                 },
@@ -129,188 +127,232 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<MainBloc, MainState>(
-      bloc: context.read<MainBloc>()
-        ..add(GetUserInfoEvent())
-        ..add(GetAllMoviesEvent()),
-      listener: (context, state) {
-        if (state.status.isInProgress) {}
-        if (state.status.isSuccess) {}
-        if (state.status.isFailure) {}
-        if (state.getUserInfoStatus.isInProgress) {}
-        if (state.getUserInfoStatus.isSuccess) {
-          checkForUpdates(context);
-        }
-        if (state.getUserInfoStatus.isFailure) {
-          context.pushAndRemoveUntil(const AuthScreen());
-        }
-        if (state.getAllMoviesStatus.isInProgress) {}
-        if (state.getAllMoviesStatus.isSuccess) {}
-        if (state.getAllMoviesStatus.isFailure) {}
-      },
-      builder: (context, state) {
-        return Scaffold(
-            appBar: AppBar(
-              title: Row(
-                children: [
-                  SizedBox(width: 35, height: 35, child: Image.asset(AppIcons.brain)),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  (state.user?.isPremium ?? false)
-                      ? FittedBox(
-                          child: Row(
-                            children: [
-                              AutoSizeText(
-                                'Brainbox',
-                                style: GoogleFonts.kronaOne(),
-                              ),
-                              AutoSizeText(
-                                LocaleKeys.premium.tr(),
-                                style: GoogleFonts.kronaOne(),
-                              ),
-                            ],
-                          ),
-                        )
-                      : AutoSizeText(
-                          'Brainbox',
-                          style: GoogleFonts.kronaOne(),
-                        )
-                ],
+    return Scaffold(
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     context.read<MainBloc>().add(GetAllMoviesEvent());
+        //   },
+        // ),
+        appBar: AppBar(
+          title: Row(
+            children: [
+              SizedBox(width: 35, height: 35, child: Image.asset(AppIcons.brain)),
+              const SizedBox(
+                width: 10,
               ),
-              actions: [
-                Row(
-                  children: [
-                    IconButton(
-                        onPressed: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (builder) =>
-                                      SearchPage()));
-                        },
-                        icon: const Icon(Icons.search)),
-                  ],
-                )
-              ],
-            ),
-            body: BlocConsumer<MainBloc, MainState>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                var movie = state.movies;
-                if (state.status.isSuccess) {
-                  if (state.movies.isEmpty) {
-                    return Center(
-                      child: Text(LocaleKeys.sorryBaseIsEmpty.tr()),
-                    );
-                  } else {
-                    return SafeArea(
-                      child: Column(
+              (context.read<MainBloc>().state.user?.isPremium ?? false)
+                  ? FittedBox(
+                      child: Row(
                         children: [
-                          Expanded(
-                            child: ListView.builder(
-                              // prototypeItem: Text('data'),
-                              itemCount: movie.length,
-                              itemBuilder: (context, index) {
-                                String key = state.movies.keys.elementAt(index);
-                                List<Content> movies = state.movies[key] ?? [];
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 25.0, top: 10, bottom: 10),
-                                      child: Text(
-                                        key,
-                                        style: const TextStyle(
-                                            fontSize: 25, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 270,
-                                      width: double.maxFinite,
-                                      child: ListView.builder(
-                                          itemCount: movies.length,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, hor) {
-                                            var movieIndex = 0;
-                                            for (var i = 0; i < state.count.length; i++) {
-                                              if (state.count[i].keys.first == key) {
-                                                movieIndex = i;
-                                                break;
-                                              }
-                                            }
-                                            if (hor == movies.length - 1) {
-                                              if (state.count[movieIndex][key]! > movies.length) {
-                                                context.read<MainBloc>().add(GetMoreMovieEvent(
-                                                    movieLevel: key,
-                                                    onSuccess: (onSuccess) {
-                                                      setState(
-                                                        () {},
-                                                      );
-                                                    },
-                                                    context: context));
-                                              }
-                                            } else {}
-                                            return MovieItemWidget(
-                                              movie: movies[hor],
-                                              bloc: context.read<MainBloc>(),
-                                            );
-                                          }),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          )
+                          AutoSizeText(
+                            'Brainbox',
+                            style: GoogleFonts.kronaOne(),
+                          ),
+                          AutoSizeText(
+                            LocaleKeys.premium.tr(),
+                            style: GoogleFonts.kronaOne(),
+                          ),
                         ],
                       ),
-                    );
-                  }
-                }
-                return ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 10, // Number of shimmer category items
-                  itemBuilder: (context, index) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 25.0, top: 10, bottom: 10),
-                          child: Container(
-                            width: 150,
-                            height: 25,
-                            color: Colors.white,
-                          ),
+                    )
+                  : AutoSizeText(
+                      'Brainbox',
+                      style: GoogleFonts.kronaOne(),
+                    )
+            ],
+          ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  context.pushNamed(RouteNames.notifications);
+                },
+                icon: const Icon(Icons.notifications)),
+            IconButton(
+                onPressed: () async {
+                  Navigator.push(context, MaterialPageRoute(builder: (builder) => const SearchPage()));
+                },
+                icon: const Icon(Icons.search))
+          ],
+        ),
+        body: BlocConsumer<MainBloc, MainState>(
+          listener: (context, state) {
+            if (state.status.isInProgress) {}
+            if (state.status.isSuccess) {}
+            if (state.status.isFailure) {}
+            if (state.getUserInfoStatus.isInProgress) {}
+            if (state.getUserInfoStatus.isSuccess) {
+              checkForUpdates(context);
+            }
+            if (state.getUserInfoStatus.isFailure) {
+              context.pushAndRemoveUntil(const AuthScreen());
+            }
+            if (state.getAllMoviesStatus.isInProgress) {}
+            if (state.getAllMoviesStatus.isSuccess) {}
+            if (state.getAllMoviesStatus.isFailure) {}
+          },
+          builder: (context, state) {
+            print("update");
+            var movie = state.movies;
+            if (state.status.isInProgress) {
+              return ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 10, // Number of shimmer category items
+                itemBuilder: (context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25.0, top: 10, bottom: 20),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: const SkeletonShimmer(height: 30, width: 150),
                         ),
-                        SizedBox(
-                          height: 270,
-                          width: double.maxFinite,
-                          child: ListView.builder(
-                            itemCount: 5, // Number of shimmer movies in each category
+                      ),
+                      SizedBox(
+                        height: 270,
+                        width: double.maxFinite,
+                        child: ListView.separated(
+                            // padding: const EdgeInsets.symmetric(horizontal: 10),
+                            itemCount: 5,
+                            // Number of shimmer movies in each category
                             scrollDirection: Axis.horizontal,
                             physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
                             itemBuilder: (context, index) {
-                              return Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Container(
-                                  width: 200, // Approximate width of a movie item
-                                  height: 270,
-                                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                                  color: Colors.white,
-                                ),
+                              return const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SkeletonShimmer(height: 200, width: 170),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Gap(8),
+                                        SkeletonShimmer(height: 30, width: 150),
+                                        Gap(8),
+                                        SkeletonShimmer(height: 20, width: 120),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               );
+                              // return Shimmer.fromColors(
+                              //   baseColor: Colors.grey[300]!,
+                              //   highlightColor: Colors.grey[100]!,
+                              //   child: Container(
+                              //     width: 200, // Approximate width of a movie item
+                              //     height: 270,
+                              //     margin: const EdgeInsets.symmetric(horizontal: 10),
+                              //     color: Colors.white,
+                              //   ),
+                              // );
                             },
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ));
-      },
+                            separatorBuilder: (BuildContext context, int index) {
+                              return const Gap(20);
+                            }),
+                      ),
+                    ],
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const Gap(10);
+                },
+              );
+            }
+            if (state.movies.isEmpty) {
+              return Center(
+                child: Text(LocaleKeys.sorryBaseIsEmpty.tr()),
+              );
+            } else {
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      // prototypeItem: Text('data'),
+                      itemCount: movie.length,
+                      itemBuilder: (context, index) {
+                        String key = state.movies.keys.elementAt(index);
+                        RequestMovieModel? movie = state.movies[key];
+                        print(state.movies[key]?.listData.length);
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 25.0, top: 10, bottom: 10),
+                              child: Text(
+                                key,
+                                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 270,
+                              width: double.maxFinite,
+                              child: ListView.builder(
+                                  itemCount: state.movies[key]?.listData.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, hor) {
+                                    // return Text("${state.movies[key]?.listData.length}");
+                                    // print("${state.movies[key]?.length}length");
+                                    // var movieIndex = 0;
+                                    // for (var i = 0; i < state.count.length; i++) {
+                                    //   if (state.count[i].keys.first == key) {
+                                    //     movieIndex = i;
+                                    //     break;
+                                    //   }
+                                    // }
+                                    if (hor == state.movies[key]!.listData.length - 1) {
+                                      context.read<MainBloc>().add(GetMoreMovieEvent(
+                                          movieLevel: key,
+                                          onSuccess: () {
+                                            setState(() {});
+                                          }));
+                                    }
+                                    return MovieItemWidget(
+                                      movie: state.movies[key]!.listData[hor],
+                                      bloc: context.read<MainBloc>(),
+                                    );
+                                  }),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  )
+                ],
+              );
+            }
+          },
+        ));
+  }
+}
+
+class SkeletonShimmer extends StatelessWidget {
+  const SkeletonShimmer({
+    super.key,
+    required this.height,
+    required this.width,
+    this.radius = 16,
+    this.margin = 0,
+  });
+
+  final double height;
+  final double width;
+  final double radius;
+  final double margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: margin),
+        height: height,
+        width: width,
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(radius)),
+      ),
     );
   }
 }

@@ -64,7 +64,7 @@ class CodegenLoader extends AssetLoader{
   "helpSupport": "Help & Support",
   "frequentlyAskedQuestions": "Frequently Asked Questions",
   "needMoreHelp": "Need More Help?",
-  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "If you have more questions or need further assistance, feel free to contact our support team at aladdinsgroup.uz@gmail.com.",
+  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "If you have more questions or need further assistance, feel free to contact our support team. We are also available on Telegram through our bot: https://t.me/brainboxxbot. Email address: aladdinsgroup.uz@gmail.com.",
   "welcomeToBrainbox": "Welcome to BrainBox",
   "yourGatewayToLanguageMasteryThroughTheMagicOfMovies": "Your Gateway to Language Mastery Through the Magic of Movies!",
   "ourMission": "Our Mission:",
@@ -109,7 +109,18 @@ class CodegenLoader extends AssetLoader{
   "areYouSureYouWantToLogout": "Are you sure you want to logout?",
   "whyMoviesTitle": "Why Movies?",
   "joinOurCommunityTitle": "Join Our Community:",
-  "safeAndSecureTitle": "Safe and Secure:"
+  "safeAndSecureTitle": "Safe and Secure:",
+  "noFoundMovies": "No found Movies",
+  "movies": "Movies",
+  "showTranslations": "Show Translations",
+  "error": "Error",
+  "pleaseSelectAtLeastOneUnit": "Please select at least one unit",
+  "notifications": "Notifications",
+  "notificationsNotYet": "Notifications not yet",
+  "searchAnyMovie": "Search any movie 📽️🍿",
+  "weCouldnTFind": "We couldn’t find movie :(\nBut you can help us, submit movie name that you want to find subtitle for and we’ll add it asap",
+  "submit": "Submit",
+  "movieName": "Movie Name"
 };
 static const Map<String,dynamic> ru_RU = {
   "welcomeBack": "Добро пожаловать",
@@ -162,7 +173,7 @@ static const Map<String,dynamic> ru_RU = {
   "helpSupport": "Помощь и поддержка",
   "frequentlyAskedQuestions": "Часто задаваемые вопросы",
   "needMoreHelp": "Нужна дополнительная помощь?",
-  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Если у вас есть дополнительные вопросы или вам нужна дальнейшая помощь, не стесняйтесь обращаться в нашу службу поддержки по адресу aladdinsgroup.uz@gmail.com.",
+  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Если у вас есть дополнительные вопросы или вам нужна дальнейшая помощь, не стесняйтесь обращаться в нашу службу поддержки. Мы также доступны в Telegram по ссылке нашего бота: https://t.me/brainboxxbot. Адрес электронной почты: aladdinsgroup.uz@gmail.com.",
   "welcomeToBrainbox": "Добро пожаловать в BrainBox",
   "yourGatewayToLanguageMasteryThroughTheMagicOfMovies": "Ваш путь к владению языком через магию кино!",
   "ourMission": "Наша миссия:",
@@ -182,9 +193,9 @@ static const Map<String,dynamic> ru_RU = {
   "payWithTelegramBot": "Оплата с Telegram-бота",
   "failure": "Ошибка",
   "appTitle": "Магазин",
-  "coins500": "500 монет за 0.99\$",
-  "coins5000": "5000 монет за 4.99\$",
-  "premiumYear": "Премиум на год за 9.99\$",
+  "coins500": "500 монет ",
+  "coins5000": "5000 монет ",
+  "premiumYear": "Премиум на год ",
   "getCoinsForWatching": "Получите 30 монет за просмотр",
   "watchVideo": "Посмотреть видео и получить 30 монет",
   "pending": "В ожидании...",
@@ -207,7 +218,18 @@ static const Map<String,dynamic> ru_RU = {
   "areYouSureYouWantToLogout": "Вы действительно хотите выйти?",
   "whyMoviesTitle": "Почему фильмы?",
   "joinOurCommunityTitle": "Присоединяйтесь к нашему сообществу:",
-  "safeAndSecureTitle": "Безопасно и надежно:"
+  "safeAndSecureTitle": "Безопасно и надежно:",
+  "noFoundMovies": "По вашему запросу ничего не найдено",
+  "movies": "Фильмы",
+  "showTranslations": "Показать переводы",
+  "error": "Ошибка",
+  "pleaseSelectAtLeastOneUnit": "Пожалуйста, выберите хотя бы одну единицу",
+  "notifications": "Уведомления",
+  "notificationsNotYet": "Пока нет уведомлений",
+  "searchAnyMovie": "Поиск любого фильма 📽️🍿",
+  "weCouldnTFind": "Не удалось найти фильм :(\nНо вы можете нам помочь, отправьте название фильма, для которого вы хотите найти субтитры, и мы добавим его как можно скорее.",
+  "submit": "Отправить",
+  "movieName": "Название фильма"
 };
 static const Map<String,dynamic> uz_UZ = {
   "welcomeBack": "Xush kelibsiz",
@@ -259,7 +281,7 @@ static const Map<String,dynamic> uz_UZ = {
   "helpSupport": "Yordam va Qo'llab-quvvatlash",
   "frequentlyAskedQuestions": "Tez-tez so'raladigan savollar",
   "needMoreHelp": "Ko'proq yordam kerakmi?",
-  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Agar sizda ko'proq savollar bo'lsa yoki qo'shimcha yordam kerak bo'lsa, aladdinsgroup.uz@gmail.com manzilida bizning qo'llab-quvvatlash jamoamizga murojaat qilishingizdan mamnunmiz.",
+  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "Agar sizda ko'proq savollar bo'lsa yoki qo'shimcha yordam kerak bo'lsa, aladdinsgroup.uz@gmail.com manzilida bizning qo'llab-quvvatlash jamoamizga murojaat qilishingizdan mamnunmiz. Biz ham Telegram orqali murojaat qilish imkoniyatiga ega bo'lmagan bo'lmaganmiz: https://t.me/brainboxxbot",
   "welcomeToBrainbox": "BrainBoxga xush kelibsiz",
   "yourGatewayToLanguageMasteryThroughTheMagicOfMovies": "Filmlar sehri orqali til o'rganishga o'zingizning yo'lingiz!",
   "ourMission": "Bizning Vazifamiz:",
@@ -304,7 +326,18 @@ static const Map<String,dynamic> uz_UZ = {
   "areYouSureYouWantToLogout": "Haqiqatan ham tizimdan chiqmoqchimisiz?",
   "whyMoviesTitle": "Nega Filmlar?",
   "joinOurCommunityTitle": "Bizning jamoaga a'zo bo'ling:",
-  "safeAndSecureTitle": "Xavfsiz va xavfsiz:"
+  "safeAndSecureTitle": "Xavfsiz va xavfsiz:",
+  "noFoundMovies": "Filmlar topilmadi",
+  "movies": "Filmlar",
+  "showTranslations": "Tarjimani koʻrsatish",
+  "error": "Xatolik",
+  "pleaseSelectAtLeastOneUnit": "Kamida bitta bo`limni tanlang",
+  "notifications": "Bildirishnomalar",
+  "notificationsNotYet": "Hozircha bildirishnomalar yo`q",
+  "searchAnyMovie": "Istalgan filmni qidirish 📽️🍿",
+  "weCouldnTFind": "Filmni topa olmadik :(\nLekin siz bizga yordam bera olasiz, subtitr topmoqchi bo'lgan film nomini yuboring va biz uni tezroq qo'shamiz",
+  "submit": "Yuborish",
+  "movieName": "Film nomi"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en_US": en_US, "ru_RU": ru_RU, "uz_UZ": uz_UZ};
 }

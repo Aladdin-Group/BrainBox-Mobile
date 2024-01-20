@@ -1,18 +1,26 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:brain_box/core/adapters/storage/word_adapter.dart';
+import 'package:brain_box/core/fcm_service/fcm_service.dart';
 import 'package:brain_box/core/route/ruotes.dart';
+import 'package:brain_box/core/singletons/storage/saved_controller.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
 import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
 import 'package:brain_box/feature/navigation/presentation/cubit/navigation_cubit.dart';
+import 'package:brain_box/feature/notification/data/models/notification_model.dart';
+import 'package:brain_box/feature/notification/data/models/push_notification_model.dart';
+import 'package:brain_box/feature/notification/data/repositories/notification_box.dart';
+import 'package:brain_box/feature/notification/presentation/manager/local_notification_bloc.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
 import 'package:brain_box/feature/settings/presentation/manager/save_words/save_words_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -55,24 +63,44 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 }
 
 @pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  showLocalNotification(
+      PushNotificationModel(title: "${message.notification?.title} on background", body: message.notification?.body));
+  await NotificationBox.addNotification(NotificationModel.fromMap(message.data));
+  navigatorKey.currentContext?.read<LocalNotificationBloc>().add(FetchNotifications());
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  print('Handling a background message ${message.messageId}');
+}
+
+@pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(WordHiveAdapter());
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
-
   List<LocalWord?>? localWords = await HiveController.getListFromHive();
-
+  bool getFromSavedList = StorageRepository.getBool(StoreKeys.getWordsFromSavedList);
+  if (getFromSavedList) {
+    final savedList = SavedController.getListFromHive();
+    for (final element in savedList) {
+      final local = LocalWord(
+        id: element.id,
+        word: element.value,
+        translate: element.translationEn, notificationId: Random().nextInt(100),
+      );
+      localWords.add(local);
+    }
+  }
   int position = 0;
 
-  ReminderDate reminderDate =
-      ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
+  ReminderDate reminderDate = ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
 
   /// OPTIONAL when use custom notification
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
@@ -106,8 +134,7 @@ void onStart(ServiceInstance service) async {
                       : 'Need for your feature !',
                   (localWords.length - 1 == position)
                       ? const NotificationDetails(
-                          android: AndroidNotificationDetails(
-                              'MEMORIZING_foreground', 'MEMORIZING FOREGROUND SERVICE',
+                          android: AndroidNotificationDetails('MEMORIZING_foreground', 'MEMORIZING FOREGROUND SERVICE',
                               icon: 'app_icon',
                               actions: [
                               AndroidNotificationAction(
@@ -173,8 +200,7 @@ Future<void> initializeService() async {
     importance: Importance.max, // importance must be at low or higher level
   );
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   if (Platform.isIOS || Platform.isAndroid) {
     // await flutterLocalNotificationsPlugin.initialize(
@@ -212,11 +238,11 @@ Future<void> initializeService() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await registerForFCMNotifications();
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
@@ -248,6 +274,7 @@ void main() async {
   Hive.registerAdapter(WordHiveAdapter());
   Hive.registerAdapter(UserHiveAdapter());
   Hive.registerAdapter(ContentHiveAdapter());
+  Hive.registerAdapter(NotificationModelAdapter());
   await Hive.openBox<Content>(StoreKeys.savedWordsList);
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
   await Hive.openBox(StoreKeys.userData);
@@ -261,6 +288,8 @@ void main() async {
       child: const MyApp()));
 }
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -269,38 +298,45 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
-        BlocProvider(create: (context) => MainBloc()..add(InitialMainEvent())),
+        BlocProvider(
+            create: (context) => MainBloc()
+              ..add(InitialMainEvent())
+              ..add(GetUserInfoEvent())
+              ..add(GetAllMoviesEvent())),
         BlocProvider(create: (context) => AppThemeBloc()),
         BlocProvider(create: (context) => NavigationCubit()),
-        BlocProvider(create: (context) => SettingsBloc()..add(GetUserDataEvent())),
+        BlocProvider(create: (context) => LocalNotificationBloc()..add(FetchNotifications())),
+        BlocProvider(
+            create: (context) => SettingsBloc()
+              ..add(GetUserDataEvent())
+              ..add(SettingsInitialEvent())),
         BlocProvider(create: (context) => WordsBloc()),
         BlocProvider(create: (context) => EducationBloc()),
         BlocProvider(create: (context) => SaveWordsBloc()),
       ],
-      child: BlocBuilder<AppThemeBloc, AppThemeState>(
-        builder: (context, state) {
-          return MaterialApp(
-            title: 'Flutter Demo',
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            debugShowCheckedModeBanner: false,
-            theme: state.switchValue
-                ? ThemeData(
-                    useMaterial3: true,
-                    colorScheme: darkColorScheme,
-                    visualDensity: VisualDensity.adaptivePlatformDensity,
-                  )
-                : ThemeData(
-                    useMaterial3: true,
-                    colorScheme: lightColorScheme,
-                    visualDensity: VisualDensity.adaptivePlatformDensity,
-                  ),
-            // home: const SplashScreen(),
-            onGenerateRoute: AppRoutes.generateRoute,
-          );
-        },
-      ),
+      child: Builder(builder: (context) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          debugShowCheckedModeBanner: false,
+          navigatorKey: navigatorKey,
+          theme: context.watch<AppThemeBloc>().state.switchValue
+              ? ThemeData(
+                  useMaterial3: true,
+                  colorScheme: darkColorScheme,
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                )
+              : ThemeData(
+                  useMaterial3: true,
+                  colorScheme: lightColorScheme,
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                ),
+          // home: const SplashScreen(),
+          onGenerateRoute: AppRoutes.generateRoute,
+        );
+      }),
     );
   }
 }

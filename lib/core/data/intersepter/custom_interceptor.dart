@@ -41,6 +41,7 @@ class CustomInterceptor implements Interceptor {
       await _refreshToken(response.requestOptions.baseUrl);
       if (StorageRepository.getString(StoreKeys.token).replaceAll('Bearer', '').trim().isNotEmpty) {
         response.requestOptions.headers['Authorization'] = StorageRepository.getString(StoreKeys.token);
+        response.requestOptions.headers['Cache-Control']  = 'max-age=3600';
       }
       final resolved = await _resolveResponse(response.requestOptions);
       handler.resolve(resolved);

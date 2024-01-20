@@ -32,7 +32,6 @@ class NavigationCubit extends Cubit<int> {
       label: LocaleKeys.settings.tr(),
     ),
   ];
-
   List<Widget> pages = [
     const MainScreen(),
     const EducationScreen(),

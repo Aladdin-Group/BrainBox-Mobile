@@ -48,7 +48,7 @@
   "helpSupport": "Help & Support",
   "frequentlyAskedQuestions": "Frequently Asked Questions",
   "needMoreHelp": "Need More Help?",
-  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "If you have more questions or need further assistance, feel free to contact our support team at aladdinsgroup.uz@gmail.com.",
+  "ifYouHaveMoreQuestionsOrNeedFurtherAssistanceFeelFreeToContactOurSupportTeamAtAladdinsgroup": "If you have more questions or need further assistance, feel free to contact our support team. We are also available on Telegram through our bot: https://t.me/brainboxxbot. Email address: aladdinsgroup.uz@gmail.com.",
   "welcomeToBrainbox": "Welcome to BrainBox",
   "yourGatewayToLanguageMasteryThroughTheMagicOfMovies": "Your Gateway to Language Mastery Through the Magic of Movies!",
   "ourMission": "Our Mission:",
@@ -94,5 +94,15 @@
   "whyMoviesTitle": "Why Movies?",
   "joinOurCommunityTitle": "Join Our Community:",
   "safeAndSecureTitle": "Safe and Secure:",
-  "no": "No found Movies"
+  "noFoundMovies": "No found Movies",
+  "movies": "Movies",
+  "showTranslations": "Show Translations",
+  "error": "Error",
+  "pleaseSelectAtLeastOneUnit": "Please select at least one unit",
+  "notifications": "Notifications",
+  "notificationsNotYet": "Notifications not yet",
+  "searchAnyMovie": "Search any movie \uD83D\uDCFD️\uD83C\uDF7F",
+  "weCouldnTFind": "We couldn’t find movie :(\nBut you can help us, submit movie name that you want to find subtitle for and we’ll add it asap",
+  "submit": "Submit",
+  "movieName": "Movie Name"
 }

@@ -1,5 +1,6 @@
 import 'package:brain_box/core/utils/generic_pagination.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
+import 'package:brain_box/feature/main/data/models/request_movie_model.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/exceptions/exception.dart';
@@ -11,35 +12,34 @@ import '../../../../core/singletons/storage/store_keys.dart';
 import '../models/search_model.dart';
 
 abstract class MainDatasource {
-  Future<GenericPagination<Content>> getAllMovies(Map<String,int> map);
+  Future<GenericPagination<Content>> getAllMovies(RequestMovieModel requestMovieModel);
+
   Future<dynamic> buyMovie(int movieId);
+
   Future<List<SearchModel>> searchMovie(String keyWord);
+
   Future submitMovie(String movieName);
 }
 
-class MainDatasourceImplementation extends MainDatasource{
-
+class MainDatasourceImplementation extends MainDatasource {
   final dio = serviceLocator<DioSettings>().dio;
 
   @override
-  Future<GenericPagination<Content>> getAllMovies(Map<String,int> map) async{
+  Future<GenericPagination<Content>> getAllMovies(RequestMovieModel requestMovieModel) async {
     final token = StorageRepository.getString(StoreKeys.token);
     try {
-      var query = {
-        "page": map[map.keys.elementAt(0)],
-        "size": 5,
-        "level": map.keys.first
-      };
       final response = await dio.get(
         '/api/v1/movie/getAllMoviePage',
-         queryParameters: query,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+
+        queryParameters: requestMovieModel.toMap(),
+
+        options: Options(headers: {'Authorization': 'Bearer $token', 'Cache-Control': 'max-age=3600'}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return GenericPagination.fromJson(response.data, (p0) {
-          return  Content.fromJson(p0 as Map<String, dynamic>);
+          return Content.fromJson(p0 as Map<String, dynamic>);
         });
-      }else if(response.statusCode == 401){
+      } else if (response.statusCode == 401) {
         throw UserTokenExpire();
       }
       throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
@@ -51,7 +51,7 @@ class MainDatasourceImplementation extends MainDatasource{
   }
 
   @override
-  Future buyMovie(int movieId) async{
+  Future buyMovie(int movieId) async {
     final token = StorageRepository.getString(StoreKeys.token);
     try {
       final response = await dio.post(
@@ -70,7 +70,7 @@ class MainDatasourceImplementation extends MainDatasource{
   }
 
   @override
-  Future<List<SearchModel>> searchMovie(String keyWord) async{
+  Future<List<SearchModel>> searchMovie(String keyWord) async {
     final token = StorageRepository.getString(StoreKeys.token);
     try {
       final response = await dio.get(
@@ -89,7 +89,7 @@ class MainDatasourceImplementation extends MainDatasource{
   }
 
   @override
-  Future submitMovie(String movieName) async{
+  Future submitMovie(String movieName) async {
     final token = StorageRepository.getString(StoreKeys.token);
     try {
       final response = await dio.post(
@@ -107,7 +107,4 @@ class MainDatasourceImplementation extends MainDatasource{
       throw ParsingException(errorMessage: e.toString());
     }
   }
-
-
-
 }

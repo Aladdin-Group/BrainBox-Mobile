@@ -96,5 +96,16 @@ abstract class  LocaleKeys {
   static const whyMoviesTitle = 'whyMoviesTitle';
   static const joinOurCommunityTitle = 'joinOurCommunityTitle';
   static const safeAndSecureTitle = 'safeAndSecureTitle';
+  static const noFoundMovies = 'noFoundMovies';
+  static const movies = 'movies';
+  static const showTranslations = 'showTranslations';
+  static const error = 'error';
+  static const pleaseSelectAtLeastOneUnit = 'pleaseSelectAtLeastOneUnit';
+  static const notifications = 'notifications';
+  static const notificationsNotYet = 'notificationsNotYet';
+  static const searchAnyMovie = 'searchAnyMovie';
+  static const weCouldnTFind = 'weCouldnTFind';
+  static const submit = 'submit';
+  static const movieName = 'movieName';
 
 }

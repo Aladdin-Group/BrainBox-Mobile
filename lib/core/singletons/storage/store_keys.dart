@@ -33,4 +33,6 @@ class StoreKeys{
   static const String userData = 'userData';
 
   static const String user = 'user';
+
+  static const String getWordsFromSavedList = 'getWordsFromSavedList';
 }

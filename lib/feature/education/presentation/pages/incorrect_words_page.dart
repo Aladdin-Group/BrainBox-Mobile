@@ -48,7 +48,7 @@ class _IncorrectWordsPageState extends State<IncorrectWordsPage> {
       body: ListView.builder(
         itemCount: widget.list.length,
           itemBuilder: (context,index){
-            return EssentialWordItem(model: widget.list[index], languageCode: languageCode, index: index+1, onClick: (){
+            return EssentialWordItem(model: widget.list[index],  index: index+1, onClick: (){
                 _speak(widget.list[index].word??'NOT');
               });
           }

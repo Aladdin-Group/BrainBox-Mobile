@@ -23,7 +23,9 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
     on<GetMovieInfoEvent>(_getMovieInfoEvent);
     on<GetWordsEvent>(_getWordsEvent);
     on<GetMoreWordsEvent>(_getMoreWordsEvent);
+
   }
+
 
   void _getMoreWordsEvent(GetMoreWordsEvent event, Emitter<WordsState> emit) async {
     var hiveList = SavedController.getListFromHive();

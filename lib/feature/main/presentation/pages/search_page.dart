@@ -1,15 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:brain_box/core/assets/constants/app_images.dart';
 import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/feature/main/data/models/movie_availbility.dart';
 import 'package:brain_box/feature/main/data/models/search_model.dart';
 import 'package:brain_box/feature/main/presentation/manager/main/main_bloc.dart';
+import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:gap/gap.dart';
 
 import '../../../words/presentation/words_screen.dart';
 
@@ -24,6 +27,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   List<SearchModel> listSearch = [];
   TextEditingController searchController = TextEditingController();
+  TextEditingController movieNameController = TextEditingController();
   bool isOpenDialog = false;
   ValueNotifier<MovieAvailability> isAvailableMovie = ValueNotifier(MovieAvailability.initial);
 
@@ -53,7 +57,7 @@ class _SearchPageState extends State<SearchPage> {
                       keyWord: value));
                 },
                 decoration: InputDecoration(
-                  hintText: 'Search'.tr(),
+                  hintText: LocaleKeys.search.tr(),
                   prefixIcon: const Icon(Icons.search),
                   border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25.0)),
@@ -66,9 +70,7 @@ class _SearchPageState extends State<SearchPage> {
                   valueListenable: isAvailableMovie,
                   builder: (context, value, p1) {
                     return value == MovieAvailability.initial
-                        ? const Center(
-                            child: Text('Search any movie 📽️🍿'),
-                          )
+                        ? Center(child: Text(LocaleKeys.searchAnyMovie.tr()))
                         : value == MovieAvailability.have
                             ? ListView.builder(
                                 itemCount: listSearch.length, // Replace with your data length
@@ -307,7 +309,7 @@ class _SearchPageState extends State<SearchPage> {
                                               //   ),
                                               // ));
 
-                                          ));
+                                              ));
                                         }
                                       },
                                       title: Text(listSearch[index].name ?? 'NULL'), // Replace with your data
@@ -327,16 +329,55 @@ class _SearchPageState extends State<SearchPage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('Not find,but you can order the movie'.tr()),
-                                    CupertinoButton(
-                                        child: const Text('Request'),
+                                    Image.asset(AppImages.noFound, width: 160),
+                                    const Gap(20),
+                                    Text(
+                                      LocaleKeys.weCouldnTFind.tr(),
+                                      textAlign: TextAlign.center,
+                                      style: context.titleMedium?.copyWith(color: Colors.grey),
+                                    ),
+                                    const Gap(20),
+                                    FilledButton(
                                         onPressed: () {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(content: Text('Sent your order')));
-                                          context
-                                              .read<MainBloc>()
-                                              .add(SubmitMovieEvent(movieName: searchController.text));
-                                        }),
+                                          showAdaptiveDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(LocaleKeys.submit.tr()),
+                                                content: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    TextField(
+                                                      controller: movieNameController,
+                                                      decoration: InputDecoration(
+                                                        border: const OutlineInputBorder(),
+                                                        hintText: LocaleKeys.movieName.tr(),
+                                                      ),
+                                                    ),
+                                                    Gap(16),
+                                                    FilledButton(
+                                                        onPressed: () {
+                                                          context.read<MainBloc>().add(
+                                                              SubmitMovieEvent(movieName: movieNameController.text));
+                                                          context.pop();
+                                                        },
+                                                        child: Text(LocaleKeys.submit.tr()))
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Text(LocaleKeys.submit.tr()))
+                                    // Text('Not find,but you can order the movie'.tr()),
+                                    // CupertinoButton(
+                                    //     child: const Text('Request'),
+                                    //     onPressed: () {
+                                    //       ScaffoldMessenger.of(context)
+                                    //           .showSnackBar(const SnackBar(content: Text('Sent your order')));
+
+                                    //     }),
                                   ],
                                 ),
                               );

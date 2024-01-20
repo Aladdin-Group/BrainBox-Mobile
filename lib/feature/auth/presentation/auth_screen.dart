@@ -21,69 +21,73 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocConsumer<AuthBloc, AuthState>(
-        builder: (context, state) {
-          return Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(AppImages.authBackground),
+    return SafeArea(
+      top: false,
+
+      child: Scaffold(
+        body: BlocConsumer<AuthBloc, AuthState>(
+          builder: (context, state) {
+            return Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(AppImages.authBackground),
+                ),
               ),
-            ),
-            child: Container(
-              decoration: BoxDecoration(gradient: AppColors.authTopGradient),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Row(
-                  //   crossAxisAlignment: CrossAxisAlignment.end,
-                  //   mainAxisAlignment: MainAxisAlignment.end,
-                  //   children: [
-                  //     IconButton(onPressed: (){
-                  //       StorageRepository.putBool(key: StoreKeys.isSkip, value: true);
-                  //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BlocProvider<NavigationBloc>.value(value: navigationBloc,child: const LadingPage(),),), (route) => false);
-                  //     }, icon: const Icon(Icons.close,color: Colors.white,)),
-                  //     const SizedBox(width: 20),
-                  //   ],
-                  // ),
-                  const Gap(100),
-                  AutoSizeText(
-                    LocaleKeys.welcomeBack.tr(),
-                    style: AppTextStyles.authTitle,
-                    textAlign: TextAlign.center,
-                  ),
-                  const Gap(40),
-                  SizedBox(
-                    height: 50,
-                    child: FilledButton.tonal(
-                      onPressed: () async {
-                        context.read<AuthBloc>().add(IsDevModeEvent());
-                      },
-                      style: CustomStyles.buttonStyle,
-                      child: Text(LocaleKeys.signWithGoogle.tr(), style: AppTextStyles.titleLarge),
+              child: Container(
+                decoration: BoxDecoration(gradient: AppColors.authTopGradient),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Row(
+                    //   crossAxisAlignment: CrossAxisAlignment.end,
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: [
+                    //     IconButton(onPressed: (){
+                    //       StorageRepository.putBool(key: StoreKeys.isSkip, value: true);
+                    //       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => BlocProvider<NavigationBloc>.value(value: navigationBloc,child: const LadingPage(),),), (route) => false);
+                    //     }, icon: const Icon(Icons.close,color: Colors.white,)),
+                    //     const SizedBox(width: 20),
+                    //   ],
+                    // ),
+                    const Gap(100),
+                    AutoSizeText(
+                      LocaleKeys.welcomeBack.tr(),
+                      style: AppTextStyles.authTitle,
+                      textAlign: TextAlign.center,
                     ),
-                  )
-                ],
+                    const Gap(40),
+                    SizedBox(
+                      height: 50,
+                      child: FilledButton.tonal(
+                        onPressed: () async {
+                          context.read<AuthBloc>().add(IsDevModeEvent());
+                        },
+                        style: CustomStyles.buttonStyle,
+                        child: Text(LocaleKeys.signWithGoogle.tr(), style: AppTextStyles.titleLarge),
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-        listener: (BuildContext context, AuthState state) async {
-          if (state.status.isInProgress) {
-            CustomDialogs.showLoadingDialog(context);
-          } else if (state.status.isSuccess) {
-            context.pushAndRemoveUntil(const LadingPage());
-          } else if (state.status.isFailure) {
-            // if (!context.mounted) return;
-            // showDialog(
-            //   context: context,
-            //   builder: (BuildContext context) =>
-            //       AlertDialog(title: Text(account.displayName ?? 'no')),
-            // );
-          }
-        },
+            );
+          },
+          listener: (BuildContext context, AuthState state) async {
+            if (state.status.isInProgress) {
+              CustomDialogs.showLoadingDialog(context);
+            } else if (state.status.isSuccess) {
+              context.pushAndRemoveUntil( const LadingPage());
+            } else if (state.status.isFailure) {
+              // if (!context.mounted) return;
+              // showDialog(
+              //   context: context,
+              //   builder: (BuildContext context) =>
+              //       AlertDialog(title: Text(account.displayName ?? 'no')),
+              // );
+            }
+          },
+        ),
       ),
     );
   }
