@@ -104,6 +104,6 @@
   "searchAnyMovie": "Istalgan filmni qidirish \uD83D\uDCFD️\uD83C\uDF7F",
   "weCouldnTFind": "Filmni topa olmadik :(\nLekin siz bizga yordam bera olasiz, subtitr topmoqchi bo'lgan film nomini yuboring va biz uni tezroq qo'shamiz",
   "submit": "Yuborish",
-  "movieName": "Film nomi"
-
+  "movieName": "Film nomi",
+  "learnMore" : "Ko'proq ma'lumot"
 }

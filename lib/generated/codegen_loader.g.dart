@@ -120,7 +120,8 @@ class CodegenLoader extends AssetLoader{
   "searchAnyMovie": "Search any movie 📽️🍿",
   "weCouldnTFind": "We couldn’t find movie :(\nBut you can help us, submit movie name that you want to find subtitle for and we’ll add it asap",
   "submit": "Submit",
-  "movieName": "Movie Name"
+  "movieName": "Movie Name",
+  "learnMore": "Learn More"
 };
 static const Map<String,dynamic> ru_RU = {
   "welcomeBack": "Добро пожаловать",
@@ -229,7 +230,8 @@ static const Map<String,dynamic> ru_RU = {
   "searchAnyMovie": "Поиск любого фильма 📽️🍿",
   "weCouldnTFind": "Не удалось найти фильм :(\nНо вы можете нам помочь, отправьте название фильма, для которого вы хотите найти субтитры, и мы добавим его как можно скорее.",
   "submit": "Отправить",
-  "movieName": "Название фильма"
+  "movieName": "Название фильма",
+  "learnMore": "Узнать больше"
 };
 static const Map<String,dynamic> uz_UZ = {
   "welcomeBack": "Xush kelibsiz",
@@ -337,7 +339,8 @@ static const Map<String,dynamic> uz_UZ = {
   "searchAnyMovie": "Istalgan filmni qidirish 📽️🍿",
   "weCouldnTFind": "Filmni topa olmadik :(\nLekin siz bizga yordam bera olasiz, subtitr topmoqchi bo'lgan film nomini yuboring va biz uni tezroq qo'shamiz",
   "submit": "Yuborish",
-  "movieName": "Film nomi"
+  "movieName": "Film nomi",
+  "learnMore": "Ko'proq ma'lumot"
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en_US": en_US, "ru_RU": ru_RU, "uz_UZ": uz_UZ};
 }

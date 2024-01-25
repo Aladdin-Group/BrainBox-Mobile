@@ -82,7 +82,7 @@ class LanguageScreen extends StatelessWidget {
     return SizedBox(
       height: 50,
       /// Filled button todo
-      child: ElevatedButton(
+      child: FilledButton(
         onPressed: () => _chooseAndAuth(languageCode, countryCode, context),
         style: CustomStyles.buttonStyle,
         child: Text(label, style: const TextStyle(fontSize: 20)),

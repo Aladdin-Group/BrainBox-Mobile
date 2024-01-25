@@ -5,11 +5,13 @@ import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/core/utils/background_controller.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
+import 'package:brain_box/feature/reminder/presentation/manager/remainder_bloc.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -62,7 +64,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
               builder: (param1, param2, param3) {
                 return notificationPermissionStatus.value == PermissionStatus.granted
                     ? CustomScrollView(
-
                         slivers: [
                           SliverToBoxAdapter(
                             child: Padding(
@@ -78,7 +79,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                           ),
                           SliverToBoxAdapter(
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 10.0,bottom: 10),
+                              padding: const EdgeInsets.only(left: 10.0, bottom: 10, top: 10),
                               child: DropdownMenu<ReminderDate>(
                                 key: dropDownKey,
                                 initialSelection: reminderDate ?? ReminderDate.every5Minutes,
@@ -193,15 +194,46 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                               return Switch(
                                                   value: p2,
                                                   onChanged: (value) {
-                                                    if (value) {
-                                                      BackgroundController.startService();
-                                                    } else {
-                                                      BackgroundController.stopService();
-                                                    }
-                                                    StorageRepository.putBool(key: StoreKeys.service, value: value);
-                                                    StorageRepository.putBool(key: StoreKeys.getWordsFromSavedList, value: value);
+                                                    StorageRepository.putBool(
+                                                        key: StoreKeys.getWordsFromSavedList, value: value);
                                                     getReminderSaved.value = value;
                                                   });
+                                            })
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                height: 80,
+                                width: double.maxFinite,
+                                child: Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: AutoSizeText(
+                                            LocaleKeys.notifications.tr(),
+                                            style: const TextStyle(fontSize: 17),
+                                          ),
+                                        ),
+                                        Switch(
+                                            value: context.watch<RemainderBloc>().state.notification,
+                                            onChanged: (value) {
+                                              context.read<RemainderBloc>().add(ChangeNotification(value));
+                                              if (value) {
+                                                BackgroundController.startService();
+                                              } else {
+                                                BackgroundController.stopService();
+                                              }
+                                              StorageRepository.putBool(key: StoreKeys.service, value: value);
                                             })
                                       ],
                                     ),
@@ -221,7 +253,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                         builder: (BuildContext context) {
                                           return AlertDialog(
                                             title: Text(LocaleKeys.writeSomeWord.tr()),
-
                                             content: SizedBox(
                                               height: 150.0, // Adjust the height as needed
                                               child: Column(
@@ -319,7 +350,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                         ),
                                       ))
                               : SliverFillRemaining(
-
                                   child: Padding(
                                     padding: const EdgeInsets.all(12.0),
                                     child: Column(

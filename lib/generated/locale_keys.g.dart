@@ -107,5 +107,6 @@ abstract class  LocaleKeys {
   static const weCouldnTFind = 'weCouldnTFind';
   static const submit = 'submit';
   static const movieName = 'movieName';
+  static const learnMore = 'learnMore';
 
 }

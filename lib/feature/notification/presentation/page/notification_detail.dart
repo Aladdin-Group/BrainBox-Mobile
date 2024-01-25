@@ -25,15 +25,7 @@ class NotificationDetailScreen extends StatelessWidget {
               child: Text(notification.title,style: context.titleLarge),
             ),
             // add here date time format using intl
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                DateFormat.yMMMd().add_jm().format(notification.time),
-                style: context.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                )
-              )
-            ) ,
+
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(notification.body,style: context.bodyMedium),

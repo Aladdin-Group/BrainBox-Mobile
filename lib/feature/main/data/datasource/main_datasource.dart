@@ -30,9 +30,7 @@ class MainDatasourceImplementation extends MainDatasource {
     try {
       final response = await dio.get(
         '/api/v1/movie/getAllMoviePage',
-
         queryParameters: requestMovieModel.toMap(),
-
         options: Options(headers: {'Authorization': 'Bearer $token', 'Cache-Control': 'max-age=3600'}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

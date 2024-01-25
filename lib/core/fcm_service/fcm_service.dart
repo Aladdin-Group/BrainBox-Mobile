@@ -42,6 +42,7 @@ Future<void> registerForFCMNotifications() async {
   String? fcmToken = await messaging.getToken();
   // token: cU6wYJF9Tfu4lzXvbsvR-m:APA91bGTeoZNg8dn4RK1b5vTZOLF9OhVCNWwwMNjHOfu6fq38e8ETetjcesaqHBc4Zxng2k4ef1S2RFqjZNJmfw3WMr7Zg9vakIRwMvbnyB3HreuwKu2KG4n_6FHjRyRVjCBaaNf_d7N
   print("token:$fcmToken");
+
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('User granted permission');
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {

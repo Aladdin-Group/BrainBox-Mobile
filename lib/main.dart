@@ -16,6 +16,7 @@ import 'package:brain_box/feature/notification/data/models/push_notification_mod
 import 'package:brain_box/feature/notification/data/repositories/notification_box.dart';
 import 'package:brain_box/feature/notification/presentation/manager/local_notification_bloc.dart';
 import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
+import 'package:brain_box/feature/reminder/presentation/manager/remainder_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/manager/save_words/save_words_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
@@ -298,6 +299,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => LocalNotificationBloc()..add(GetNotifications())..add(GetLastNotificationIDEvent())),
         BlocProvider(
             create: (context) => MainBloc()
               ..add(InitialMainEvent())
@@ -305,7 +307,8 @@ class MyApp extends StatelessWidget {
               ..add(GetAllMoviesEvent())),
         BlocProvider(create: (context) => AppThemeBloc()),
         BlocProvider(create: (context) => NavigationCubit()),
-        BlocProvider(create: (context) => LocalNotificationBloc()..add(FetchNotifications())),
+        BlocProvider(create: (context) => RemainderBloc()..add(RemainderInitial())),
+
         BlocProvider(
             create: (context) => SettingsBloc()
               ..add(GetUserDataEvent())
