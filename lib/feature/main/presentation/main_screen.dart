@@ -154,6 +154,7 @@ class _MainScreenState extends State<MainScreen> {
                         onPressed: () {
                           print('close');
                           context.pop();
+                          context.pushNamed(RouteNames.notifications);
                         },
                         child: Text(LocaleKeys.learnMore.tr())),
                   ],
