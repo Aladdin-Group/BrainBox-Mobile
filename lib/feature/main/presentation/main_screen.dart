@@ -31,9 +31,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
+
   @override
   void initState() {
     super.initState();
+
     initializeLocalNotifications();
   }
 
@@ -152,6 +154,7 @@ class _MainScreenState extends State<MainScreen> {
           );
         }
       },
+
       child: Scaffold(
           // floatingActionButton: FloatingActionButton(
           //   onPressed: () {
@@ -220,6 +223,7 @@ class _MainScreenState extends State<MainScreen> {
               if (state.status.isInProgress) {
                 return ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
+
                   itemCount: 10, // Number of shimmer category items
                   itemBuilder: (context, index) {
                     return Column(

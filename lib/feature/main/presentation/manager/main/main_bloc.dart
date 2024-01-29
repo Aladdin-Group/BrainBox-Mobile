@@ -63,6 +63,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     on<SubmitMovieEvent>(_submitMovie);
   }
 
+
   void _initialMain(InitialMainEvent event, Emitter<MainState> emit) async {
     final user = hive.get(StoreKeys.user);
     if (user != null) {
