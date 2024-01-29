@@ -7,7 +7,7 @@ import '../../../../core/assets/constants/icons.dart';
 
 class TestResultPage extends StatefulWidget {
   List<Content> inCorrectAnswer;
-  TestResultPage({Key? key,required this.inCorrectAnswer}) : super(key: key);
+  TestResultPage({super.key,required this.inCorrectAnswer});
 
   @override
   State<TestResultPage> createState() => _TestResultPageState();

@@ -27,7 +27,8 @@ class WordsDatasourceImplementation extends WordsDatasource{
     try {
       final response = await dio.get(
         '/api/v1/movie/getMovie/$id',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        // response.requestOptions.headers['Cache-Control']  = 'max-age=3600';
+        options: Options(headers: {'Authorization': 'Bearer $token', 'Cache-Control': 'max-age=3600'}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return MovieModel.fromJson(response.data);
@@ -48,7 +49,8 @@ class WordsDatasourceImplementation extends WordsDatasource{
     try {
       final response = await dio.get(
         '/api/v1/subtitleWords/getWordsByCount?language=1&movieId=$movieId&page=$page&size=20',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        // response.requestOptions.headers['Cache-Control']  = 'max-age=3600';
+        options: Options(headers: {'Authorization': 'Bearer $token', 'Cache-Control': 'max-age=3600'}),
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return GenericPagination.fromJson(response.data, (p0) => Content.fromJson(p0 as Map<String,dynamic>));

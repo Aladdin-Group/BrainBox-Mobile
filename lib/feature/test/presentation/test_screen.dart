@@ -10,30 +10,32 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:gap/gap.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../words/data/models/words_response.dart';
 import 'manager/test_bloc.dart';
 
 class TestScreen extends StatefulWidget {
   final int movieId;
-  TestScreen({super.key,required this.movieId});
+
+  const TestScreen({super.key, required this.movieId});
 
   @override
   State<TestScreen> createState() => _TestScreenState();
 }
 
 class _TestScreenState extends State<TestScreen> {
-
   late TestBloc bloc;
   List<String> vars = ['Large', 'Fresh', 'Small', 'Orange'];
   List<Content> incorrectAnswers = [];
-  ValueNotifier<Content> current = ValueNotifier(Content());
+  ValueNotifier<Content> current = ValueNotifier(Content.empty());
   ValueNotifier<int> size = ValueNotifier(0);
   ValueNotifier<int> testIndex = ValueNotifier(1);
   ValueNotifier<int> timerCount = ValueNotifier(60);
   ValueNotifier<bool> isDisable = ValueNotifier(false);
-  AudioPlayer audioPlayer = AudioPlayer();
+  AudioPlayer audioPlayer = AudioPlayer(playerId: const Uuid().v4())..audioCache.prefix = 'assets/';
 
   ValueNotifier<List<String>> options = ValueNotifier(['varA', 'varB', 'varC', 'varD']);
   ValueNotifier<int?> selectedOptionIndex = ValueNotifier(null);
@@ -49,14 +51,16 @@ class _TestScreenState extends State<TestScreen> {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     _timer?.cancel(); // Cancel the timer if it's active
+    await audioPlayer.dispose();
     super.dispose();
   }
 
   void onVariantSelected(String selectedVariant) {
     // Check if the selected variant is correct
-    bool isCorrect = selectedVariant == (languageCode == 'ru' ? current.value.translationRu : current.value.translationEn) ;
+    bool isCorrect =
+        selectedVariant == (languageCode == 'ru' ? current.value.translationRu : current.value.translationEn);
 
     // Provide visual feedback
     // You might need to store the selected index and use setState to trigger a rebuild for visual feedback
@@ -85,13 +89,21 @@ class _TestScreenState extends State<TestScreen> {
         current.value = bloc.state.list[nextIndex]; // Set the new current question
         isDisable.value = false; // Re-enable the selection
         selectedOptionIndex.value = null; // Reset the selected option
+
+        // Reset the timer for the new question
+        timerCount.value = 60;
       });
 
       // Generate a new set of variants for the next question
       generateVariantsForQuestion(current.value);
     } else {
       // No more questions, navigate to the results page or handle the test end
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TestResultPage(inCorrectAnswer: incorrectAnswers,)));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TestResultPage(
+                    inCorrectAnswer: incorrectAnswers,
+                  )));
     }
   }
 
@@ -100,12 +112,12 @@ class _TestScreenState extends State<TestScreen> {
     String correctAnswer = (languageCode == 'ru' ? question.translationRu : question.translationEn)!;
 
     // Create a set to hold unique options and add the correct answer
-    Set<String> newOptions = { correctAnswer };
+    Set<String> newOptions = {correctAnswer};
 
     // Add random options until we have the desired number
     while (newOptions.length < 4) {
       Content randomContent = bloc.state.list[Random().nextInt(bloc.state.list.length)];
-      newOptions.add((languageCode == 'ru' ? randomContent.translationRu : randomContent.translationEn) !);
+      newOptions.add((languageCode == 'ru' ? randomContent.translationRu : randomContent.translationEn)!);
     }
 
     // Convert the set to a list and shuffle it to randomize the options
@@ -128,9 +140,13 @@ class _TestScreenState extends State<TestScreen> {
     // Shuffle the list of content to get random options
     List<Content> randomOptions = List.of(bloc.state.list)..shuffle();
     // Remove the correct answer if it exists in the list to avoid duplication
-    randomOptions.removeWhere((content) => (languageCode == 'ru' ? content.translationRu : content.translationEn) == correctAnswer);
+    randomOptions.removeWhere(
+        (content) => (languageCode == 'ru' ? content.translationRu : content.translationEn) == correctAnswer);
     // Take the first three items as wrong answers
-    List<String> wrongAnswers = randomOptions.take(3).map((content) => (languageCode == 'ru' ? content.translationRu : content.translationEn)!).toList();
+    List<String> wrongAnswers = randomOptions
+        .take(3)
+        .map((content) => (languageCode == 'ru' ? content.translationRu : content.translationEn)!)
+        .toList();
 
     // Now, add the correct answer and shuffle the options
     List<String> allOptions = [...wrongAnswers, correctAnswer]..shuffle();
@@ -182,11 +198,16 @@ class _TestScreenState extends State<TestScreen> {
       timerCount.value = 60;
     } else {
       // If there are no more tests, navigate to the results page or finish the test.
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TestResultPage(inCorrectAnswer: incorrectAnswers,)));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => TestResultPage(
+                    inCorrectAnswer: incorrectAnswers,
+                  )));
     }
   }
 
-  void selectOption(int index) {
+  Future<void> selectOption(int index) async {
     if (isDisable.value) return; // If already disabled, ignore the taps
 
     bool isCorrect = index == correctOptionIndex.value;
@@ -196,10 +217,24 @@ class _TestScreenState extends State<TestScreen> {
       selectedOptionIndex.value = index;
       isDisable.value = true; // Disable further selections
     });
-
+  await audioPlayer.stop();
     if (!isCorrect) {
+      try {
+        await audioPlayer.play(AssetSource('not_correct.mp3'));
+      } catch (e) {
+        await audioPlayer.stop();
+        // await audioPlayer.play(AssetSource('not_correct.mp3'));
+        print(e);
+      }
       // If the answer is incorrect, add to the incorrectAnswers list
       incorrectAnswers.add(current.value); // Add the index of the current question
+    } else {
+      try {
+        await audioPlayer.play(AssetSource('correct.mp3'));
+      } catch (e) {
+        await audioPlayer.stop();
+        // await audioPlayer.play(AssetSource('correct.mp3'));
+      }
     }
 
     // Load the next question after a short delay
@@ -212,12 +247,9 @@ class _TestScreenState extends State<TestScreen> {
     if (selectedOptionIndex.value == null) return Colors.grey;
 
     if (index == selectedOptionIndex.value) {
-      if(StorageRepository.getBool(StoreKeys.appSound)){
-        if(index == correctOptionIndex.value){
-          audioPlayer.play(AssetSource('correct.mp3'));
-        }else{
-          audioPlayer.play(AssetSource('not_correct.mp3'));
-        }
+      if (StorageRepository.getBool(StoreKeys.appSound)) {
+        if (index == correctOptionIndex.value) {
+        } else {}
       }
       return index == correctOptionIndex.value ? Colors.green : Colors.red;
     } else if (index == correctOptionIndex.value) {
@@ -240,7 +272,7 @@ class _TestScreenState extends State<TestScreen> {
       child: Row(
         children: [
           Text('${String.fromCharCode('A'.codeUnitAt(0) + index)})'),
-          const SizedBox(width: 10,),
+          const Gap(10),
           ValueListenableBuilder(
             valueListenable: options,
             builder: (context, List<String> values, _) {
@@ -257,7 +289,7 @@ class _TestScreenState extends State<TestScreen> {
     _timer?.cancel(); // Cancel any existing timer
     _timer = Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
         if (timerCount.value == 0) {
           timer.cancel(); // Stop the timer as it has reached zero
           // Here you can handle what happens when the timer runs out
@@ -275,21 +307,21 @@ class _TestScreenState extends State<TestScreen> {
     Locale currentLocale = context.locale;
     languageCode = currentLocale.languageCode;
     return BlocProvider(
-      create: (context) => bloc..add(NextTestEvent(
-          success: (content) {
-            Locale currentLocale = context.locale;
-            languageCode = currentLocale.languageCode;
-            isDisable.value = false;
-            timerCount.value = 60;
-            size.value = bloc.state.list.length;
-            current.value = bloc.state.list[testIndex.value];
-            setupQuestion(content[0]);
-          },
-          failure: (error) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-          },
-        movieId: widget.movieId
-      )),
+      create: (context) => bloc
+        ..add(NextTestEvent(
+            success: (content) {
+              Locale currentLocale = context.locale;
+              languageCode = currentLocale.languageCode;
+              isDisable.value = false;
+              timerCount.value = 60;
+              size.value = bloc.state.list.length;
+              current.value = bloc.state.list[testIndex.value];
+              setupQuestion(content[0]);
+            },
+            failure: (error) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+            },
+            movieId: widget.movieId)),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Tests'),
@@ -300,7 +332,7 @@ class _TestScreenState extends State<TestScreen> {
         body: BlocConsumer<TestBloc, TestState>(
           listener: (context, state) {},
           builder: (context, state) {
-            if(state.status.isSuccess){
+            if (state.status.isSuccess) {
               return ListView(
                 children: [
                   Padding(
@@ -310,9 +342,7 @@ class _TestScreenState extends State<TestScreen> {
                       children: [
                         const Text('Book test 1'),
                         ValueListenableBuilder(
-                            valueListenable: timerCount,
-                            builder: (context, value, _) => Text('$value s')
-                        ),
+                            valueListenable: timerCount, builder: (context, value, _) => Text('$value s')),
                       ],
                     ),
                   ),
@@ -324,8 +354,7 @@ class _TestScreenState extends State<TestScreen> {
                           borderRadius: BorderRadius.circular(15),
                           borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.primary,
-                          )
-                      ),
+                          )),
                       child: SizedBox(
                         width: double.maxFinite,
                         height: 150,
@@ -338,8 +367,7 @@ class _TestScreenState extends State<TestScreen> {
                                 valueListenable: testIndex,
                                 builder: (context, indexValue, _) => ValueListenableBuilder(
                                     valueListenable: size,
-                                    builder: (context, sizeValue, _) => Text('$indexValue/$sizeValue')
-                                ),
+                                    builder: (context, sizeValue, _) => Text('$indexValue/$sizeValue')),
                               ),
                             ),
                             Center(
@@ -370,14 +398,11 @@ class _TestScreenState extends State<TestScreen> {
                       child: ElevatedButton(
                           style: ButtonStyle(
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))
-                              )
-                          ),
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: const Text('Leave test')
-                      ),
+                          child: const Text('Leave test')),
                     ),
                   ),
                 ],
@@ -421,10 +446,9 @@ class _TestScreenState extends State<TestScreen> {
               elevation: 0,
               shape: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.white,
-                  )
-              ),
+                  )),
               child: SizedBox(
                 width: double.maxFinite,
                 height: 150,
@@ -436,7 +460,7 @@ class _TestScreenState extends State<TestScreen> {
                       height: 20,
                       color: Colors.white,
                     ),
-                    SizedBox(height: 8),
+                    const Gap(8),
                     Container(
                       width: double.infinity,
                       height: 20,
@@ -483,5 +507,4 @@ class _TestScreenState extends State<TestScreen> {
       ),
     );
   }
-
 }

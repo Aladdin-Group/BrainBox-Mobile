@@ -11,7 +11,7 @@ class ContentHiveAdapter extends TypeAdapter<Content> {
     };
 
     return Content(
-      id: fields[0] as String?,
+      id: fields[0] as String,
       value: fields[1] as String?,
       count: fields[2] as int?,
       pronunciation: fields[3] as String?,

@@ -13,6 +13,15 @@ abstract class Either<L, R> {
     }
   }
 
+  fold (Callback<L> fnL, Callback<R> fnR) {
+    if (isLeft) {
+      fnL(left);
+    }
+    if (isRight) {
+      fnR(right);
+    }
+  }
+
   /// Represents the left side of [Either] class which by convention is a "Failure".
   bool get isLeft => this is Left<L, R>;
 

@@ -6,9 +6,17 @@ class AppThemeState extends Equatable {
 
   const AppThemeState({required this.switchValue});
 
+
   @override
   List<Object?> get props => [switchValue];
 
+  AppThemeState copyWith({
+    bool? switchValue,
+  }) {
+    return AppThemeState(
+      switchValue: switchValue ?? this.switchValue,
+    );
+  }
 }
 
 class AppThemeInitial extends AppThemeState {

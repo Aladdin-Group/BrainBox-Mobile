@@ -1,10 +1,10 @@
 class BookModel {
-
-  String  image;
+  String image;
   String name;
   Essential essential;
 
-  BookModel({required this.essential,required this.image,required this.name});
+  BookModel({required this.essential, required this.image, required this.name});
+
 
 }
 

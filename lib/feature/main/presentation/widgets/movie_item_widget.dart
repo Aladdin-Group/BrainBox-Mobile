@@ -1,10 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
 import 'package:brain_box/feature/main/presentation/pages/movie_info_page.dart';
+import 'package:brain_box/feature/words/presentation/manager/words_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../words/presentation/words_screen.dart';
 import '../manager/main/main_bloc.dart';
 
@@ -24,6 +25,7 @@ class _MovieItemWidgetState extends State<MovieItemWidget> {
     return GestureDetector(
       onTap: (){
         if(widget.movie.isBought??false){
+          context.read<WordsBloc>().add(GetMovieInfoEvent(id: widget.movie.id!));
           Navigator.push(context, MaterialPageRoute(builder: (builder)=> WordsScreen(movieId: widget.movie.id,title: widget.movie.name,)));
         }else{
           Navigator.push(context, CupertinoPageRoute(builder: (builder)=> MovieInfoPage(movie: widget.movie, bloc: widget.bloc),));
@@ -49,6 +51,8 @@ class _MovieItemWidgetState extends State<MovieItemWidget> {
                           fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(
                             widget.movie.avatarUrl??'',
+                            maxWidth: 300,
+                            maxHeight: 300,
                           ),
                         )
                     ),

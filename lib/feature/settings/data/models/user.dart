@@ -17,6 +17,7 @@
 /// accountNonExpired : true
 /// credentialsNonExpired : true
 /// accountNonLocked : true
+library;
 
 class User {
   User({

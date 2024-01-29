@@ -1,5 +1,4 @@
-class StoreKeys{
-
+class StoreKeys {
   static const String isAuth = 'isAuth';
 
   static const String isSkip = 'isSkip';
@@ -33,4 +32,7 @@ class StoreKeys{
   static const String userData = 'userData';
 
   static const String user = 'user';
+
+  static const String getWordsFromSavedList = 'getWordsFromSavedList';
+  static const String notification = 'notification';
 }

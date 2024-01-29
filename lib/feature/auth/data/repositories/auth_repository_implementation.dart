@@ -8,12 +8,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/exceptions/exception.dart';
 import '../../../../core/utils/either.dart';
 
-class AuthRepositoryImplementation extends AuthRepository{
-
+class AuthRepositoryImplementation extends AuthRepository {
   final AuthDataSource datasource = AuthDatasourceImplementation();
 
   @override
-  Future<Either<Failure,AuthModel>> auth(GoogleSignInAccount? googleSignInAccount) async{
+  Future<Either<Failure, AuthModel>> auth(GoogleSignInAccount? googleSignInAccount) async {
     try {
       final result = await datasource.auth(googleSignInAccount);
       return Right(result);
@@ -21,13 +20,13 @@ class AuthRepositoryImplementation extends AuthRepository{
       return Left(ServerFailure(errorMessage: e.errorMessage, statusCode: e.statusCode));
     } on DioException {
       return Left(DioFailure());
-    }on ParsingException catch (e) {
+    } on ParsingException catch (e) {
       return Left(ParsingFailure(errorMessage: e.errorMessage));
     }
   }
 
   @override
-  Future<Either<Failure, DevTestModel>> isDevTesting() async{
+  Future<Either<Failure, DevTestModel>> isDevTesting() async {
     try {
       final result = await datasource.isDevTesting();
       return Right(result);
@@ -35,9 +34,8 @@ class AuthRepositoryImplementation extends AuthRepository{
       return Left(ServerFailure(errorMessage: e.errorMessage, statusCode: e.statusCode));
     } on DioException {
       return Left(DioFailure());
-    }on ParsingException catch (e) {
+    } on ParsingException catch (e) {
       return Left(ParsingFailure(errorMessage: e.errorMessage));
     }
   }
-
 }

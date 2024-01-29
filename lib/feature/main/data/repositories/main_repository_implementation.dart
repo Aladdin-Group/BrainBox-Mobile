@@ -4,6 +4,7 @@ import 'package:brain_box/core/utils/either.dart';
 import 'package:brain_box/core/utils/generic_pagination.dart';
 import 'package:brain_box/feature/main/data/datasource/main_datasource.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
+import 'package:brain_box/feature/main/data/models/request_movie_model.dart';
 
 import '../../../../core/exceptions/exception.dart';
 import '../../domain/repository/main_repository.dart';
@@ -14,9 +15,9 @@ class MoviesRepositoryImplementation extends MainRepository{
   final MainDatasource datasource = MainDatasourceImplementation();
 
   @override
-  Future<Either<Failure, GenericPagination<Content>>> getMovies(Map<String,int> map) async{
+  Future<Either<Failure, GenericPagination<Content>>> getMovies(RequestMovieModel requestMovieModel) async{
     try {
-      final result = await datasource.getAllMovies(map);
+      final result = await datasource.getAllMovies( requestMovieModel);
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(errorMessage: e.errorMessage, statusCode: e.statusCode));

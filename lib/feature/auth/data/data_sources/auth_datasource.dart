@@ -11,16 +11,17 @@ import '../models/dev_test_model.dart';
 
 abstract class AuthDataSource {
   Future<GoogleSignInAccount?> authWithGoogle();
+
   Future auth(GoogleSignInAccount? googleUser);
+
   Future<DevTestModel> isDevTesting();
 }
 
-class AuthDatasourceImplementation extends AuthDataSource{
-
+class AuthDatasourceImplementation extends AuthDataSource {
   final dio = serviceLocator<DioSettings>().dio;
 
   @override
-  Future auth(GoogleSignInAccount? googleUser) async{
+  Future auth(GoogleSignInAccount? googleUser) async {
     final token = StorageRepository.getString(StoreKeys.token);
 
     try {
@@ -34,10 +35,12 @@ class AuthDatasourceImplementation extends AuthDataSource{
           "imageUrl": googleUser?.photoUrl
         },
       );
+      print(response.statusCode);
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return AuthModel.fromJson(response.data);
       }
-      throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
+      throw ServerException(
+          statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
     } on ServerException {
       rethrow;
     } on Exception catch (e) {
@@ -46,12 +49,12 @@ class AuthDatasourceImplementation extends AuthDataSource{
   }
 
   @override
-  Future<GoogleSignInAccount?> authWithGoogle() async{
-     return await GoogleSignIn().signIn();
+  Future<GoogleSignInAccount?> authWithGoogle() async {
+    return await GoogleSignIn().signIn();
   }
 
   @override
-  Future<DevTestModel> isDevTesting() async{
+  Future<DevTestModel> isDevTesting() async {
     final token = StorageRepository.getString(StoreKeys.token);
 
     try {
@@ -59,18 +62,21 @@ class AuthDatasourceImplementation extends AuthDataSource{
         '/api/v1/auth/isDebug',
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        try{
+        print('-------------------------------------------------------------------');
+        print(response.data);
+        print('-------------------------------------------------------------------');
+        try {
           return DevTestModel.fromJson(response.data);
-        }catch(e){
+        } catch (e) {
           throw ParsingException(errorMessage: e.toString());
         }
       }
-      throw ServerException(statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
+      throw ServerException(
+          statusCode: response.statusCode ?? 0, errorMessage: response.statusMessage ?? '');
     } on ServerException {
       rethrow;
     } on Exception catch (e) {
       throw ParsingException(errorMessage: e.toString());
     }
   }
-
 }
