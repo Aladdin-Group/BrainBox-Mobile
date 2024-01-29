@@ -28,9 +28,6 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
 
 
   void _getMoreWordsEvent(GetMoreWordsEvent event, Emitter<WordsState> emit) async {
-    var hiveList = SavedController.getListFromHive();
-    List<Content> listWords = [];
-    var index = 0;
 
     final result = await getWordsByCountUseCase.call([state.wordsPage, event.movieId]);
 
@@ -51,14 +48,12 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
   void _getWordsEvent(GetWordsEvent event, Emitter<WordsState> emit) async {
     var hiveList = SavedController.getListFromHive();
     List<Content> listWords = [];
-    var index = 0;
 
     final result = await getWordsByCountUseCase.call([0, event.movieId]);
 
     if (result.isRight) {
       for (var e in result.right.results) {
         if (hiveList.contains(e)) {
-          print(e.value);
           listWords.add(e.copyWith(isSaved: true));
         } else {
           listWords.add(e.copyWith(isSaved: false));
@@ -109,7 +104,6 @@ class WordsBloc extends Bloc<WordsEvent, WordsState> {
         ),
       );
     }
-    print('emit');
 
     // final listWords = SavedController.getListFromHive();
     // emit(state.copyWith(status: FormzSubmissionStatus.success, `))

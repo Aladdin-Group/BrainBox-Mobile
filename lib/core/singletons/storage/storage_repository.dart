@@ -31,7 +31,6 @@ class StorageRepository {
 
   static String getString(String key, {String defValue = ''}) {
     if (_preferences == null) {
-      print('=======_preferences null');
       return defValue;
     }
 

@@ -1,4 +1,5 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:brain_box/core/assets/constants/app_images.dart';
 import 'package:brain_box/feature/notification/data/models/notification_model.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -19,7 +20,15 @@ class NotificationDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (notification.imageUrl != null) Image.network(notification.imageUrl!, width: double.infinity),
+            Image.network(
+              notification.imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 200,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(AppImages.notFound,width: double.infinity,height: 200,fit: BoxFit.cover,);
+              },
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(notification.title,style: context.titleLarge),

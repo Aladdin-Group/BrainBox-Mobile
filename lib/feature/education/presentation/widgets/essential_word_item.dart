@@ -3,7 +3,6 @@ import 'package:brain_box/feature/education/presentation/manager/education_bloc.
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 class EssentialWordItem extends StatelessWidget {

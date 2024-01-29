@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 class WordsResponse {
   WordsResponse({
@@ -266,15 +265,15 @@ class Sort {
 }
 
 class Content extends Equatable {
-  String id;
-  String? value;
-  int? count;
-  String? pronunciation;
-  String? translationEn;
-  String? translationRu;
-  bool? isSaved;
+  final String id;
+  final String? value;
+  final int? count;
+  final String? pronunciation;
+  final String? translationEn;
+  final String? translationRu;
+  final bool? isSaved;
 
-  Content(
+  const Content(
       {required this.id,
       this.value,
       this.count,
@@ -283,7 +282,7 @@ class Content extends Equatable {
       this.translationRu,
       this.isSaved});
 
-  Content.empty() : id = '';
+  const Content.empty() : id = '', value = '', count = 0, pronunciation = '', translationEn = '', translationRu = '', isSaved = false;
 
   // Content.fromJson(Map<String, dynamic> json) {
   //   id = json['id'] ?? "";
@@ -306,8 +305,7 @@ class Content extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [id, value, count, pronunciation, translationEn, translationRu];
+  List<Object?> get props => [id, value, count, pronunciation, translationEn, translationRu];
 
   // Map<String, dynamic> toMap() {
   //   return {
@@ -322,18 +320,15 @@ class Content extends Equatable {
   // }
 
   factory Content.fromJson(Map<String, dynamic> map) {
-
     return Content(
       id: map['id'] as String? ?? "",
-      value: map['value'] ,
-      count: map['count'] ,
-      pronunciation: map['pronunciation'] ,
-      translationEn: map['translation_en'] ,
-      translationRu: map['translation_ru'] ,
+      value: map['value'],
+      count: map['count'],
+      pronunciation: map['pronunciation'],
+      translationEn: map['translation_en'],
+      translationRu: map['translation_ru'],
       isSaved: map['isSaved'] as bool?,
     );
-
-
   }
 
   @override

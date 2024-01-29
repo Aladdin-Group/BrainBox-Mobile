@@ -5,8 +5,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/models/book_model.dart';
-import '../manager/education_bloc.dart';
-import '../widgets/unit_item.dart';
 
 class SelectUnitPage extends StatefulWidget {
   final Essential book;

@@ -83,7 +83,7 @@ class _EducationScreenState extends State<EducationScreen> {
                       height: 200,
 
                       decoration: BoxDecoration(
-                          color: Colors.black,
+
                           image: DecorationImage(image: AssetImage(list[index].image), fit: BoxFit.cover),
                           borderRadius: BorderRadius.circular(15)),
                     ),

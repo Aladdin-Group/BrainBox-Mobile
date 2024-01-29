@@ -6,11 +6,9 @@ import 'package:brain_box/feature/settings/data/repositories/language_repo.dart'
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:gap/gap.dart';
 
 import '../../../../core/exceptions/failure.dart';
 import '../../data/models/essential_model.dart';
@@ -140,7 +138,25 @@ class _EssentialWordsPageState extends State<EssentialWordsPage> {
         ],
       ),
       body: isLoading
-          ? const Center(child: CupertinoActivityIndicator())
+          ? ListView.builder(
+        itemCount: 10,
+        itemBuilder: (context, index) {
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: ListTile(
+              title: Container(
+                height: 20,
+                color: Colors.white,
+              ),
+              subtitle: Container(
+                height: 20,
+                color: Colors.white,
+              ),
+            ),
+          );
+        },
+      )
           : ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {

@@ -1,6 +1,5 @@
 import 'package:brain_box/core/utils/generic_pagination.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
-import 'package:brain_box/feature/main/data/models/movie_level.dart';
 
 class RequestMovieModel {
   String level;

@@ -1,9 +1,6 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/exceptions/failure.dart';
-import 'package:brain_box/core/singletons/storage/hive_controller.dart';
-import 'package:brain_box/core/singletons/storage/saved_controller.dart';
 import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
-import 'package:brain_box/feature/reminder/data/models/local_word.dart';
 import 'package:brain_box/feature/settings/data/repositories/language_repo.dart';
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:brain_box/feature/test/presentation/test_screen.dart';
@@ -43,8 +40,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   double rate = 0.5;
   bool isCurrentLanguageInstalled = false;
 
-  String? _newVoiceText;
-  int? _inputLength;
 
   TtsState ttsState = TtsState.stopped;
   ValueNotifier<bool> switcher = ValueNotifier(false);
@@ -107,7 +102,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
 
     flutterTts.setStartHandler(() {
       setState(() {
-        print("Playing");
         ttsState = TtsState.playing;
       });
     });
@@ -115,42 +109,36 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
     if (isAndroid) {
       flutterTts.setInitHandler(() {
         setState(() {
-          print("TTS Initialized");
         });
       });
     }
 
     flutterTts.setCompletionHandler(() {
       setState(() {
-        print("Complete");
         ttsState = TtsState.stopped;
       });
     });
 
     flutterTts.setCancelHandler(() {
       setState(() {
-        print("Cancel");
         ttsState = TtsState.stopped;
       });
     });
 
     flutterTts.setPauseHandler(() {
       setState(() {
-        print("Paused");
         ttsState = TtsState.paused;
       });
     });
 
     flutterTts.setContinueHandler(() {
       setState(() {
-        print("Continued");
         ttsState = TtsState.continued;
       });
     });
 
     flutterTts.setErrorHandler((msg) {
       setState(() {
-        print("error: $msg");
         ttsState = TtsState.stopped;
       });
     });
@@ -163,19 +151,16 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   Future _getDefaultEngine() async {
     var engine = await flutterTts.getDefaultEngine;
     if (engine != null) {
-      print(engine);
     }
   }
 
   Future _getDefaultVoice() async {
     var voice = await flutterTts.getDefaultVoice;
     if (voice != null) {
-      print(voice);
     }
   }
 
   Future _speak(String text) async {
-    print('object');
 
     await flutterTts.setVolume(volume);
     await flutterTts.setSpeechRate(rate);
@@ -190,15 +175,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
     await flutterTts.awaitSpeakCompletion(true);
   }
 
-  Future _stop() async {
-    var result = await flutterTts.stop();
-    if (result == 1) setState(() => ttsState = TtsState.stopped);
-  }
 
-  Future _pause() async {
-    var result = await flutterTts.pause();
-    if (result == 1) setState(() => ttsState = TtsState.paused);
-  }
 
   @override
   void initState() {
@@ -292,7 +269,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
       ),
       body: BlocConsumer<WordsBloc, WordsState>(
         builder: (context, state) {
-          print('update');
           if (state.status.isInProgress || state.status.isInitial) {
             return ListView.builder(
               itemCount: 10,

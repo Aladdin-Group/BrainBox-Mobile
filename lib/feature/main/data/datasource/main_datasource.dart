@@ -24,6 +24,8 @@ abstract class MainDatasource {
 class MainDatasourceImplementation extends MainDatasource {
   final dio = serviceLocator<DioSettings>().dio;
 
+  static CancelToken cancelToken = CancelToken();
+
   @override
   Future<GenericPagination<Content>> getAllMovies(RequestMovieModel requestMovieModel) async {
     final token = StorageRepository.getString(StoreKeys.token);
@@ -71,9 +73,12 @@ class MainDatasourceImplementation extends MainDatasource {
   Future<List<SearchModel>> searchMovie(String keyWord) async {
     final token = StorageRepository.getString(StoreKeys.token);
     try {
+      final queryParameters = {'keyWord': keyWord};
       final response = await dio.get(
-        '/api/v1/movie/search-movie?keyWord=$keyWord',
+        '/api/v1/movie/search-movie',
+        queryParameters: queryParameters,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
+        cancelToken: cancelToken,
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return SearchModel.fromList(response.data);
@@ -94,7 +99,6 @@ class MainDatasourceImplementation extends MainDatasource {
         '/api/v1/movie/addRequestMovie?request=$movieName',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-      print('object');
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return response.data;
       }

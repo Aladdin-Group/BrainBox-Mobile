@@ -1,6 +1,5 @@
 part of 'education_bloc.dart';
 
-@immutable
 class EducationState extends Equatable {
   final FormzSubmissionStatus status;
   final List<EduModel> list;

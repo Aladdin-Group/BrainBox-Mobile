@@ -97,7 +97,7 @@ class _AboutPageState extends State<AboutPage> {
             const Gap(16),
              Text(
               LocaleKeys.joinOurCommunityTitle.tr(),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Text(
               LocaleKeys.joinOurCommunity

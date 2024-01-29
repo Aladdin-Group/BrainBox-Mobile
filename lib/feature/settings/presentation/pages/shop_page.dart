@@ -11,15 +11,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:gap/gap.dart';
-import 'package:gap/gap.dart';
-import 'package:gap/gap.dart';
-import 'package:gap/gap.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../data/models/user.dart';
 
 InAppPurchase _inAppPurchase = InAppPurchase.instance;
 late StreamSubscription<dynamic> _streamSubscription;
@@ -46,7 +41,6 @@ void _createRewardedAd() {
         _rewardedAd = ad;
       },
       onAdFailedToLoad: (LoadAdError error) {
-        print('RewardedAd failed to load: $error');
       },
     ),
   );
@@ -292,7 +286,6 @@ Widget _buildOptionCard(String title, String buttonText, String imagePath, doubl
                       ElevatedButton(
                         onPressed: () async {
                           var botUrl = 'https://t.me/brainboxxbot';
-                          print(_products.length);
                           if (isTelegram) {
                             if (await canLaunchUrl(Uri.parse(botUrl))) {
                               await launchUrl(Uri.parse(botUrl));

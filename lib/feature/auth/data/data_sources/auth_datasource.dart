@@ -5,8 +5,6 @@ import '../../../../core/exceptions/exception.dart';
 import '../../../../core/exceptions/failure.dart';
 import '../../../../core/singletons/dio_settings.dart';
 import '../../../../core/singletons/service_locator.dart';
-import '../../../../core/singletons/storage/storage_repository.dart';
-import '../../../../core/singletons/storage/store_keys.dart';
 import '../models/dev_test_model.dart';
 
 abstract class AuthDataSource {
@@ -22,7 +20,6 @@ class AuthDatasourceImplementation extends AuthDataSource {
 
   @override
   Future auth(GoogleSignInAccount? googleUser) async {
-    final token = StorageRepository.getString(StoreKeys.token);
 
     try {
       final response = await dio.post(
@@ -35,7 +32,6 @@ class AuthDatasourceImplementation extends AuthDataSource {
           "imageUrl": googleUser?.photoUrl
         },
       );
-      print(response.statusCode);
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         return AuthModel.fromJson(response.data);
       }
@@ -55,16 +51,12 @@ class AuthDatasourceImplementation extends AuthDataSource {
 
   @override
   Future<DevTestModel> isDevTesting() async {
-    final token = StorageRepository.getString(StoreKeys.token);
 
     try {
       final response = await dio.post(
         '/api/v1/auth/isDebug',
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        print('-------------------------------------------------------------------');
-        print(response.data);
-        print('-------------------------------------------------------------------');
         try {
           return DevTestModel.fromJson(response.data);
         } catch (e) {

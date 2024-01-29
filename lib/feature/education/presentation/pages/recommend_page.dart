@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:gap/gap.dart';
 class RecommendPage extends StatefulWidget {
   const RecommendPage({
     super.key,
@@ -29,11 +29,10 @@ class _RecommendPageState extends State<RecommendPage> {
     return Scaffold(
       appBar: AppBar(title: Text(LocaleKeys.movies.tr())),
       body: BlocBuilder<EducationBloc, EducationState>(builder: (context, state) {
-        print(state.list);
         if (state.status.isSuccess) {
           return state.list.isEmpty
               ? Center(child: Text(LocaleKeys.noFoundMovies.tr()))
-              : ListView.builder(
+              : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: state.list.length,
                   itemBuilder: (itemBuilder, index) {
@@ -43,7 +42,6 @@ class _RecommendPageState extends State<RecommendPage> {
                     //   }
                     // }
                     final eduModel = state.list[index];
-                    print(eduModel.imageLink);
                     return GestureDetector(
                       onTap: () async {
                         if (eduModel.link != null && await canLaunchUrl(Uri.parse(eduModel.link!))) {
@@ -65,14 +63,18 @@ class _RecommendPageState extends State<RecommendPage> {
                             borderRadius: BorderRadius.circular(15),
                             border: Border.all(),
                             image: DecorationImage(
+                              fit: BoxFit.cover,
                                 image: CachedNetworkImageProvider(
 
                               eduModel.imageLink ?? '',
+
                               maxWidth: 300,
                             ))),
                       ),
                     );
-                  });
+                  }, separatorBuilder: (BuildContext context, int index) {
+                    return const Gap(12);
+          },);
         }
         if (state.status.isFailure) {
           return const Center(child: Text('Something went wrong !'));

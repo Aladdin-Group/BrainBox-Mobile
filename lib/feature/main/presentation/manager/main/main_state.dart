@@ -1,7 +1,9 @@
 part of 'main_bloc.dart';
 
 class MainState extends Equatable {
-   final Map<String, RequestMovieModel> movies;
+  final List<SearchModel> listSearch;
+
+  final Map<String, RequestMovieModel> movies;
   final FormzSubmissionStatus status;
   final FormzSubmissionStatus getUserInfoStatus;
   final FormzSubmissionStatus getAllMoviesStatus;
@@ -11,20 +13,21 @@ class MainState extends Equatable {
   final List<Map<String, int>> page;
 
   const MainState({
+    this.listSearch = const [],
     this.movies = const {},
     this.count = const [],
     this.page = const [],
     this.user,
-    this.genericPagination ,
+    this.genericPagination,
     this.getUserInfoStatus = FormzSubmissionStatus.initial,
     this.getAllMoviesStatus = FormzSubmissionStatus.initial,
     this.status = FormzSubmissionStatus.initial,
   });
 
 
-
   @override
-  List<Object?> get props => [
+  List<Object?> get props =>
+      [
         movies,
         status,
         user,
@@ -32,10 +35,12 @@ class MainState extends Equatable {
         getAllMoviesStatus,
         genericPagination,
         count,
+        listSearch,
         page,
       ];
 
   MainState copyWith({
+    List<SearchModel>? listSearch,
     Map<String, RequestMovieModel>? movies,
     FormzSubmissionStatus? status,
     FormzSubmissionStatus? getUserInfoStatus,
@@ -45,8 +50,8 @@ class MainState extends Equatable {
     List<Map<String, int>>? count,
     List<Map<String, int>>? page,
   }) {
-
     return MainState(
+      listSearch: listSearch ?? this.listSearch,
       movies: movies ?? this.movies,
       status: status ?? this.status,
       getUserInfoStatus: getUserInfoStatus ?? this.getUserInfoStatus,

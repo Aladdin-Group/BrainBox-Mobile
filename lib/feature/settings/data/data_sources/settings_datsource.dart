@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/exceptions/exception.dart';
 import '../../../../core/exceptions/failure.dart';

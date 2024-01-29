@@ -4,9 +4,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:brain_box/feature/education/data/models/essential_model.dart';
-import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
@@ -58,10 +56,6 @@ class _ByWordTestPageState extends State<ByWordTestPage> {
 
   void onVariantSelected(String selectedVariant) {
     // Check if the selected variant is correct
-    bool isCorrect = selectedVariant ==
-        (context.read<SettingsBloc>().state.languageModel.shortName == 'ru'
-            ? current.value.translationRu
-            : current.value.translationEn);
 
     // Provide visual feedback
     // You might need to store the selected index and use setState to trigger a rebuild for visual feedback
@@ -237,7 +231,6 @@ class _ByWordTestPageState extends State<ByWordTestPage> {
       } catch (e) {
         await audioPlayer.stop();
         // await audioPlayer.play(AssetSource('not_correct.mp3'));
-        print(e);
       }
       // If the answer is incorrect, add to the incorrectAnswers list
       incorrectAnswers.add(current.value); // Add the index of the current question

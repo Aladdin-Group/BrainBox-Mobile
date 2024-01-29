@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:brain_box/core/assets/constants/app_constants.dart';
 import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/usecase/usecase.dart';
 import 'package:brain_box/feature/notification/data/models/notification_model.dart';
@@ -8,7 +7,6 @@ import 'package:brain_box/feature/notification/data/repositories/notification_bo
 import 'package:brain_box/feature/notification/domain/usecase/get_last_notification_id.dart';
 import 'package:brain_box/feature/notification/domain/usecase/get_notification_usecase.dart';
 
-// import 'package:brain_box/feature/notification/domain/usecase/get_notification_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
@@ -43,10 +41,8 @@ class LocalNotificationBloc extends Bloc<LocalNotificationEvent, LocalNotificati
   }
 
   void _onGetNotifications(GetNotifications event, Emitter<LocalNotificationState> emit) async {
-    print('fetching notifications');
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     final result = await getNotificationsUseCase.call(0);
-    print(result.isRight);
     if (result.isRight) {
       StorageRepository.putList("notifications", result.right.results.map((e) => e.id.toString()).toList());
       emit(state.copyWith(status: FormzSubmissionStatus.success, notifications: result.right.results));

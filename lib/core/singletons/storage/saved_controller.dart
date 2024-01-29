@@ -52,7 +52,6 @@ class SavedController {
     try {
       await box.put(object.id, object);
     } catch (e) {
-      print('Error saving object to Hive: $e');
     }
   }
 
@@ -65,7 +64,6 @@ class SavedController {
       // var index = box.values.toList().indexOf(objectToDelete);
       // box.deleteAt(index);
     } catch (e) {
-      print('Error removing object from Hive: $e');
     }
   }
 

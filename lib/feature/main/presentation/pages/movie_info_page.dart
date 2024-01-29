@@ -56,11 +56,11 @@ class _MovieInfoPageState extends State<MovieInfoPage> {
               children: [
                 Expanded(child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(onPressed: (){ Navigator.pop(context); }, child:  Text(LocaleKeys.cancel.tr())),
+                  child: OutlinedButton(onPressed: ()=> Navigator.pop(context), child:  Text(LocaleKeys.cancel.tr())),
                 )),
                 Expanded(child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(onPressed: (){
+                  child: FilledButton(onPressed: (){
                     widget.bloc.add(BuyMovieEvent(success: (success){
                       widget.movie.isBought = true;
 

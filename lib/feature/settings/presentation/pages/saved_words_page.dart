@@ -1,5 +1,4 @@
 import 'package:brain_box/core/assets/constants/app_images.dart';
-import 'package:brain_box/core/singletons/storage/saved_controller.dart';
 import 'package:brain_box/feature/settings/presentation/manager/save_words/save_words_bloc.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -10,9 +9,6 @@ import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../core/singletons/storage/hive_controller.dart';
-import '../../../reminder/data/models/local_word.dart';
-import '../../../words/data/models/words_response.dart';
 
 class SavedWordsPage extends StatefulWidget {
   const SavedWordsPage({super.key});
@@ -46,7 +42,6 @@ class _SavedWordsPageState extends State<SavedWordsPage> {
       body: BlocBuilder<SaveWordsBloc, SaveWordsState>(
         bloc: context.read<SaveWordsBloc>()..add(GetSavedWords()),
         builder: (context, state) {
-          print('update');
           if (state.status.isInProgress) {
             return const Center(child: CircularProgressIndicator());
           } else if (state.status.isFailure) {
@@ -83,7 +78,6 @@ class _SavedWordsPageState extends State<SavedWordsPage> {
                         ),
                         trailing: IconButton(
                             onPressed: () {
-                              print(saveWord);
 
                               context.read<SaveWordsBloc>().add(DeleteSavedWord(saveWord.id));
                               // if (savedWords[index].isSaved != null) {

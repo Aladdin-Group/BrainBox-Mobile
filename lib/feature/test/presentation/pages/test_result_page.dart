@@ -1,4 +1,3 @@
-
 import 'package:brain_box/feature/words/data/models/words_response.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -6,20 +5,19 @@ import 'package:flutter/material.dart';
 import '../../../../core/assets/constants/icons.dart';
 
 class TestResultPage extends StatefulWidget {
-  List<Content> inCorrectAnswer;
-  TestResultPage({super.key,required this.inCorrectAnswer});
+  final List<Content> inCorrectAnswer;
+
+  const TestResultPage({super.key, required this.inCorrectAnswer});
 
   @override
   State<TestResultPage> createState() => _TestResultPageState();
 }
 
 class _TestResultPageState extends State<TestResultPage> {
-
   String languageCode = '';
 
   @override
   Widget build(BuildContext context) {
-
     Locale currentLocale = context.locale;
     languageCode = currentLocale.languageCode;
     return Scaffold(
@@ -33,9 +31,9 @@ class _TestResultPageState extends State<TestResultPage> {
                   children: [
                     Center(
                       child: SizedBox(
-                          height: 150,
-                          width: 150,
-                          child: Image.asset(AppIcons.correct),
+                        height: 150,
+                        width: 150,
+                        child: Image.asset(AppIcons.correct),
                       ),
                     )
                   ],
@@ -45,16 +43,18 @@ class _TestResultPageState extends State<TestResultPage> {
                 IconButton(
                   icon: const Icon(Icons.add_circle),
                   tooltip: 'Add new entry',
-                  onPressed: () { /* ... */ },
+                  onPressed: () {
+                    /* ... */
+                  },
                 ),
-              ]
-          ),
+              ]),
           SliverList(
               delegate: SliverChildBuilderDelegate(
-                  childCount: widget.inCorrectAnswer.length,(context, index) => ListTile(
-                      title: Text('${widget.inCorrectAnswer[index].value} - ${languageCode == 'ru' ? widget.inCorrectAnswer[index].translationRu : widget.inCorrectAnswer[index].translationEn}'),
-              ))
-          )
+                  childCount: widget.inCorrectAnswer.length,
+                  (context, index) => ListTile(
+                        title: Text(
+                            '${widget.inCorrectAnswer[index].value} - ${languageCode == 'ru' ? widget.inCorrectAnswer[index].translationRu : widget.inCorrectAnswer[index].translationEn}'),
+                      )))
         ],
       ),
     );

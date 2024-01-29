@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:brain_box/core/exceptions/failure.dart';
+import 'package:brain_box/core/utils/cache.dart';
 import 'package:brain_box/core/utils/generic_pagination.dart';
 import 'package:brain_box/feature/auth/presentation/auth_screen.dart';
 import 'package:brain_box/feature/main/data/models/Movie.dart';
@@ -22,12 +22,14 @@ import '../../../domain/usecases/buy_movie_usecase.dart';
 import '../../../domain/usecases/get_movies_usecase.dart';
 import '../../../domain/usecases/search_movie_usecase.dart';
 import '../../../domain/usecases/submit_movie_usecase.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 part 'main_event.dart';
 
 part 'main_state.dart';
 
 class MainBloc extends Bloc<MainEvent, MainState> {
+
   List<String> levels = [
     MovieLevel.ELEMENTARY,
     MovieLevel.INTERMEDIATE,
@@ -40,9 +42,13 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   final SearchMovieUseCase searchMovieUseCase = SearchMovieUseCase();
   final SubmitMovieUseCase submitMovieUseCase = SubmitMovieUseCase();
 
+
+
   // Variables
   final hive = Hive.box(StoreKeys.userData);
   SearchController searchController = SearchController();
+
+  final CacheManager cacheManager = CacheManager();
 
   MainBloc() : super(const MainState()) {
     on<InitialMainEvent>(_initialMain);
@@ -50,7 +56,10 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     on<GetMoreMovieEvent>(_getMoreMovies);
     on<BuyMovieEvent>(_buymovie);
     on<GetUserInfoEvent>(_getUserInfo);
-    on<SearchMovieEvent>(_searchMovie);
+    on<SearchMovieEvent>(_searchMovie, transformer:(events, mapper) {
+    //   wait 300 ml second and get last event
+    return events.debounce(const Duration(milliseconds: 300)).switchMap(mapper);
+    },);
     on<SubmitMovieEvent>(_submitMovie);
   }
 
@@ -62,13 +71,14 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   void _submitMovie(SubmitMovieEvent event, Emitter<MainState> emit) async {
-    print('SubmitMovieEvent');
     submitMovieUseCase.call(event.movieName);
   }
 
   void _searchMovie(SearchMovieEvent event, Emitter<MainState> emit) async {
+
     final result = await searchMovieUseCase.call(event.keyWord);
     if (result.isRight) {
+      emit(state.copyWith(listSearch: result.right));
       event.success(result.right);
     } else {
       event.failure();
@@ -107,28 +117,23 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   void _getMoreMovies(GetMoreMovieEvent event, Emitter<MainState> emit) async {
-    print('GetMoreMovieEvent');
 
     RequestMovieModel? request = state.movies[event.movieLevel];
     if (request == null) {
       return;
     }
-    print('GetMoreMovieEvent1');
-print(request.page);
-print(request.data!.page);
     if (request.page >= request.data!.page) {
       return;
     }
-    print('GetMoreMovieEvent2');
     request.page = request.page + 1;
     final result = await getMoviesUseCase.call(request);
     if (result.isRight) {
       request.listData.addAll(result.right.results);
-      print(request.listData.length);
       event.onSuccess();
       emit(state.copyWith(
-          status: FormzSubmissionStatus.success,
-          movies:Map<String,RequestMovieModel>.from(state.movies)..update(event.movieLevel, (value) => request,ifAbsent: () => request),
+        status: FormzSubmissionStatus.success,
+        movies: Map<String, RequestMovieModel>.from(state.movies)
+          ..update(event.movieLevel, (value) => request, ifAbsent: () => request),
       ));
     } else {
       if (result.left is ServerException) {
@@ -210,8 +215,6 @@ print(request.data!.page);
 
       final result = await getMoviesUseCase.call(request);
       if (result.isRight) {
-        print('success movie');
-        print(result.right.results.length);
         // request.copyWith(listData: result.right.results, data: result.right);
         request.listData = result.right.results;
         request.data = result.right;

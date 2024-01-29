@@ -29,7 +29,6 @@ class DioSettings {
     }else{
       // Handle the case where baseUrl is not a valid URL.
       // You can throw an exception, provide a default URL, or take appropriate action.
-      print('Invalid baseUrl: $baseUrl');
       _dioBaseOptions = BaseOptions(
         baseUrl: 'http://137.184.14.168:8080/',
         connectTimeout: const Duration(milliseconds: 35000),
