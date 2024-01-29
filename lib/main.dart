@@ -237,6 +237,7 @@ Future<void> initializeService() async {
   );
 }
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -279,7 +280,7 @@ void main() async {
   await Hive.openBox<Content>(StoreKeys.savedWordsList);
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
   await Hive.openBox(StoreKeys.userData);
-  await initializeService();
+  // await initializeService();
   await MobileAds.instance.initialize();
   FlutterNativeSplash.remove();
   setupLocator();
