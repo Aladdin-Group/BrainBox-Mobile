@@ -70,7 +70,7 @@ class _MovieItemWidgetState extends State<MovieItemWidget> {
                                   borderRadius: BorderRadius.circular(100)
                               ),
                               alignment: Alignment.center,
-                              child: Text(widget.movie.belongAge.toString()??''),
+                              child: Text(widget.movie.belongAge.toString()),
                             ),
                           ),
                         )

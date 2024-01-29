@@ -66,6 +66,8 @@ dependencies:
   intl: ^0.18.1
   logger: ^2.0.2+1
   dartz: ^0.10.1
+  bloc_concurrency: ^0.2.3
+  stream_transform: ^2.1.0
 
 
 dev_dependencies:

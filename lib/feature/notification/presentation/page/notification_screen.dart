@@ -26,8 +26,6 @@ class NotificationScreen extends StatelessWidget {
         onRefresh: () async => context.read<LocalNotificationBloc>().add(GetNotifications()),
         child: BlocBuilder<LocalNotificationBloc, LocalNotificationState>(
           builder: (context, state) {
-            print('local notifications');
-            print(state.status);
             if (state.status.isInProgress) {
               return SingleChildScrollView(
                   child: SizedBox(height: context.height, child: const Center(child: CircularProgressIndicator())));
@@ -68,7 +66,15 @@ class NotificationScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (notification.imageUrl != null) Image.network(notification.imageUrl!),
+                        Image.network(
+                          notification.imageUrl,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 200,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(AppImages.notFound,width: double.infinity,height: 200,fit: BoxFit.cover,);
+                          },
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
@@ -90,7 +96,7 @@ class NotificationScreen extends StatelessWidget {
                   ),
                 );
               },
-              separatorBuilder: (context, index) => const Divider(),
+              separatorBuilder: (context, index) => const Gap(12),
             );
           },
         ),

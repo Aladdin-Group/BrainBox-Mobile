@@ -72,7 +72,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   navigatorKey.currentContext?.read<LocalNotificationBloc>().add(FetchNotifications());
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  print('Handling a background message ${message.messageId}');
 }
 
 @pragma('vm:entry-point')
@@ -114,7 +113,6 @@ void onStart(ServiceInstance service) async {
   }
 
   service.on('stopService').listen((event) {
-    print('stopService');
     service.stopSelf();
   });
 
@@ -155,7 +153,6 @@ void onStart(ServiceInstance service) async {
                           ),
                         ));
             } catch (e) {
-              print(e);
             }
           }
         }
@@ -174,19 +171,7 @@ void onStart(ServiceInstance service) async {
 }
 
 Future<void> onNotificationClick(String payload) async {
-  print(payload);
   if (payload == 'accept') {
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
-    print('Accept');
   }
 }
 

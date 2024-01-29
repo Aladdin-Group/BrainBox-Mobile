@@ -7,9 +7,7 @@ import 'package:brain_box/feature/settings/data/repositories/language_repo.dart'
 import 'package:brain_box/feature/settings/domain/use_cases/userDataUsecase.dart';
 import 'package:brain_box/main.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:formz/formz.dart';
-import 'package:meta/meta.dart';
 
 import '../../../data/models/user.dart';
 import '../../../domain/use_cases/subscribe_premium_usecase.dart';

@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
           // context.pushAndRemoveUntil(const LanguageScreen());
           context.pushAndRemoveUntil(const LanguageScreen());
         } else {
-          context.pushAndRemoveUntil( LadingPage());
+          context.pushAndRemoveUntil( const LadingPage());
         }
       },
     );

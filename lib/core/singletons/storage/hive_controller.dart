@@ -39,10 +39,8 @@ class HiveController{
 
   static Future<void> saveObject(LocalWord object) async {
     try {
-      print(object.toString());
       await box.add(object);
     } catch (e) {
-      print('Error saving object to Hive: $e');
     }
   }
 
@@ -54,7 +52,6 @@ class HiveController{
       var index = box.values.toList().indexOf(objectToDelete);
       box.deleteAt(index);
     } catch (e) {
-      print('Error removing object from Hive: $e');
     }
   }
 

@@ -3,8 +3,6 @@ import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/assets/constants/app_images.dart';
 import 'package:brain_box/core/assets/constants/colors.dart';
 import 'package:brain_box/core/assets/constants/text_styles.dart';
-import 'package:brain_box/core/singletons/storage/storage_repository.dart';
-import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/core/utils/custom_styles.dart';
 import 'package:brain_box/core/utils/dialogs.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';

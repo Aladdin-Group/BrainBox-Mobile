@@ -30,7 +30,7 @@ class _TestScreenState extends State<TestScreen> {
   late TestBloc bloc;
   List<String> vars = ['Large', 'Fresh', 'Small', 'Orange'];
   List<Content> incorrectAnswers = [];
-  ValueNotifier<Content> current = ValueNotifier(Content.empty());
+  ValueNotifier<Content> current = ValueNotifier(const Content.empty());
   ValueNotifier<int> size = ValueNotifier(0);
   ValueNotifier<int> testIndex = ValueNotifier(1);
   ValueNotifier<int> timerCount = ValueNotifier(60);
@@ -59,8 +59,6 @@ class _TestScreenState extends State<TestScreen> {
 
   void onVariantSelected(String selectedVariant) {
     // Check if the selected variant is correct
-    bool isCorrect =
-        selectedVariant == (languageCode == 'ru' ? current.value.translationRu : current.value.translationEn);
 
     // Provide visual feedback
     // You might need to store the selected index and use setState to trigger a rebuild for visual feedback
@@ -224,7 +222,6 @@ class _TestScreenState extends State<TestScreen> {
       } catch (e) {
         await audioPlayer.stop();
         // await audioPlayer.play(AssetSource('not_correct.mp3'));
-        print(e);
       }
       // If the answer is incorrect, add to the incorrectAnswers list
       incorrectAnswers.add(current.value); // Add the index of the current question

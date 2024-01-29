@@ -1,5 +1,4 @@
 import 'package:brain_box/feature/education/data/models/book_model.dart';
-import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
 import 'package:brain_box/feature/education/presentation/pages/essential_words_page.dart';
 import 'package:brain_box/feature/education/presentation/pages/select_units_page.dart';
 import 'package:brain_box/feature/education/presentation/widgets/unit_item.dart';

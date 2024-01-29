@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
@@ -11,7 +12,6 @@ import 'package:brain_box/feature/settings/presentation/manager/theme/app_theme_
 import 'package:brain_box/feature/settings/presentation/pages/about_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/help_page.dart';
 import 'package:brain_box/feature/settings/presentation/pages/saved_words_page.dart';
-import 'package:brain_box/feature/settings/presentation/pages/shop_page.dart';
 import 'package:brain_box/feature/settings/presentation/widgets/settings_item.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,8 +28,6 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/assets/constants/icons.dart';
-import '../../../core/utils/background_controller.dart';
-import '../data/models/user.dart';
 import 'manager/settings/settings_bloc.dart';
 import 'package:in_app_review/in_app_review.dart';
 
@@ -140,7 +138,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 IconButton(
                   icon: const Icon(Icons.add_circle),
                   onPressed: () async {
-                    print('pressed');
                     if (context.read<SettingsBloc>().state.user != null) {
                       context.pushNamed(RouteNames.shopPage);
                       // bool isPaymentAvailable =
@@ -162,17 +159,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
+          final controller = context.watch<SettingsBloc>().state;
           if (state.status.isSuccess) {
             return SafeArea(
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
-                    child: CircleAvatar(
+                    child: AvatarImage(
                       radius: 50,
-                      foregroundImage: context.read<SettingsBloc>().state.user?.imageUrl == null
-                          ? null
-                          : CachedNetworkImageProvider(context.read<SettingsBloc>().state.user?.imageUrl ?? ''),
+                      // backround color random dark color
+                      backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade800,
+                      backgroundImage: controller.user?.imageUrl != null
+                          ? CachedNetworkImageProvider(context.read<SettingsBloc>().state.user?.imageUrl ?? '')
+                          : null,
+                      // get string from state user name first letters
+                      child: Text(
+                        context
+                                .watch<SettingsBloc>()
+                                .state
+                                .user
+                                ?.name
+                                ?.split(' ')
+                                .map((e) => e.substring(0, 1))
+                                .join(" ") ??
+                            "B",
+                        style: context.titleLarge!.copyWith(color: Colors.white),
+                      ),
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -244,7 +257,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           action: Switch(
                               value: context.watch<AppThemeBloc>().state.switchValue,
                               onChanged: (value) {
-                                print(value);
                                 context.read<AppThemeBloc>().add(value ? SwitchOnThemeEven() : SwitchOffThemeEven());
                               })),
                       ValueListenableBuilder(

@@ -18,7 +18,7 @@ class WordsRepositoryImplementation extends WordsRepository{
       return Right(result);
     } on ServerException catch (e){
       return Left(ServerFailure(statusCode: e.statusCode,errorMessage: e.errorMessage));
-    } on DioException catch (e) {
+    } on DioException {
       return Left(DioFailure());
     } on ParsingException catch (e){
       return Left(ParsingFailure(errorMessage: e.errorMessage));
@@ -32,7 +32,7 @@ class WordsRepositoryImplementation extends WordsRepository{
       return Right(result);
     } on ServerException catch (e){
       return Left(ServerFailure(statusCode: e.statusCode,errorMessage: e.errorMessage));
-    } on DioException catch (e) {
+    } on DioException {
       return Left(DioFailure());
     } on ParsingException catch (e){
       return Left(ParsingFailure(errorMessage: e.errorMessage));

@@ -1,9 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/assets/constants/app_constants.dart';
-import 'package:brain_box/core/exceptions/exception.dart';
 import 'package:brain_box/core/route/ruotes.dart';
-import 'package:brain_box/feature/main/data/models/request_movie_model.dart';
 import 'package:brain_box/feature/main/presentation/pages/search_page.dart';
 import 'package:brain_box/feature/main/presentation/widgets/movie_item_widget.dart';
 import 'package:brain_box/feature/notification/presentation/manager/local_notification_bloc.dart';
@@ -16,17 +14,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hive/hive.dart';
 import 'package:in_app_update/in_app_update.dart';
-// import 'package:shimmer/shimmer.dart';
 
 import '../../../core/assets/constants/icons.dart';
 import '../../../core/singletons/storage/storage_repository.dart';
-import '../../../core/singletons/storage/store_keys.dart';
 import '../../auth/presentation/auth_screen.dart';
-import '../../settings/data/models/user.dart';
-import '../data/models/Movie.dart';
 import 'manager/main/main_bloc.dart';
 
 class MainScreen extends StatefulWidget {
@@ -111,9 +103,7 @@ class _MainScreenState extends State<MainScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
                 child: Text(LocaleKeys.updateNow.tr(), style: const TextStyle(fontSize: 20, color: Colors.white)),
-                onPressed: () {
-                  InAppUpdate.performImmediateUpdate().catchError((e) => print(e.toString()));
-                },
+                onPressed: () => InAppUpdate.performImmediateUpdate(),
               ),
             ],
           ),
@@ -125,6 +115,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> checkForUpdates(BuildContext context) async {
     final updateInfo = await InAppUpdate.checkForUpdate();
     if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
+      if (!context.mounted) return;
       showUpdateBottomSheet(context);
     }
   }
@@ -134,12 +125,10 @@ class _MainScreenState extends State<MainScreen> {
     return BlocListener<LocalNotificationBloc, LocalNotificationState>(
       listener: (context, state) async {
         final String lastNotificationId = StorageRepository.getString(AppConstants.LAST_NOTIFICATION_ID);
-        print('Notification');
-        print(state.lastNotificationId != null && state.lastNotificationId?.id.toString() != lastNotificationId);
 
         if (state.lastNotificationId != null && state.lastNotificationId?.id.toString() != lastNotificationId) {
           await StorageRepository.putString(AppConstants.LAST_NOTIFICATION_ID, state.lastNotificationId!.id.toString());
-
+          if (!context.mounted) return;
           showDialog(
             context: context,
             builder: (context) {
@@ -154,7 +143,6 @@ class _MainScreenState extends State<MainScreen> {
                     const Gap(12),
                     FilledButton(
                         onPressed: () {
-                          print('close');
                           context.pop();
                           context.pushNamed(RouteNames.notifications);
                         },
@@ -231,7 +219,6 @@ class _MainScreenState extends State<MainScreen> {
               if (state.getAllMoviesStatus.isFailure) {}
             },
             builder: (context, state) {
-              print("update");
               var movie = state.movies;
               if (state.status.isInProgress) {
                 return ListView.separated(
@@ -315,8 +302,6 @@ class _MainScreenState extends State<MainScreen> {
                         itemCount: movie.length,
                         itemBuilder: (context, index) {
                           String key = state.movies.keys.elementAt(index);
-                          RequestMovieModel? movie = state.movies[key];
-                          print(state.movies[key]?.listData.length);
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

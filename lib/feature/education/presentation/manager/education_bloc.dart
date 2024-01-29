@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:brain_box/core/exceptions/failure.dart';
@@ -7,7 +6,6 @@ import 'package:brain_box/feature/education/data/models/essential_model.dart';
 import 'package:brain_box/feature/education/data/models/params.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
-import 'package:meta/meta.dart';
 
 import '../../data/models/edu_model.dart';
 import '../../domain/use_cases/get_edu_items_use_case.dart';

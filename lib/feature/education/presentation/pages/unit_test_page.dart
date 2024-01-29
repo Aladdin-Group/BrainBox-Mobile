@@ -69,10 +69,6 @@ class _UnitTestPageState extends State<UnitTestPage> {
 
   void onVariantSelected(String selectedVariant) {
     // Check if the selected variant is correct
-    bool isCorrect = selectedVariant ==
-        (context.read<SettingsBloc>().state.languageModel.shortName == 'ru'
-            ? current.value.translationRu
-            : current.value.translationEn);
 
     // Provide visual feedback
     // You might need to store the selected index and use setState to trigger a rebuild for visual feedback
@@ -247,7 +243,6 @@ class _UnitTestPageState extends State<UnitTestPage> {
       } catch (e) {
         await audioPlayer.stop();
         // await audioPlayer.play(AssetSource('not_correct.mp3'));
-        print(e);
       }
       // If the answer is incorrect, add to the incorrectAnswers list
       incorrectAnswers.add(current.value); // Add the index of the current question

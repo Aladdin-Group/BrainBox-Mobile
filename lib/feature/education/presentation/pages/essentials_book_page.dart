@@ -1,5 +1,4 @@
 import 'package:brain_box/core/assets/constants/app_images.dart';
-import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
 import 'package:brain_box/feature/education/presentation/pages/units_page.dart';
 import 'package:brain_box/feature/education/presentation/widgets/book_item.dart';
 import 'package:flutter/material.dart';

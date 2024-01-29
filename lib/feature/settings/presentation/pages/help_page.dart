@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:gap/gap.dart';
-import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class HelpPage extends StatefulWidget {
