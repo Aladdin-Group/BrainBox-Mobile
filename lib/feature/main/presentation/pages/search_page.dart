@@ -1,8 +1,10 @@
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/assets/constants/app_images.dart';
 import 'package:brain_box/core/route/ruotes.dart';
+import 'package:brain_box/feature/main/data/models/Movie.dart';
 import 'package:brain_box/feature/main/data/models/movie_availbility.dart';
 import 'package:brain_box/feature/main/presentation/manager/main/main_bloc.dart';
+import 'package:brain_box/feature/main/presentation/pages/movie_info_page.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -38,6 +40,7 @@ class _SearchPageState extends State<SearchPage> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 autofocus: true,
+
                 controller: searchController,
                 onChanged: (value) {
                   context.read<MainBloc>().add(SearchMovieEvent(
@@ -54,6 +57,7 @@ class _SearchPageState extends State<SearchPage> {
                       keyWord: value));
                 },
                 decoration: InputDecoration(
+                  isDense: true,
                   hintText: LocaleKeys.search.tr(),
                   prefixIcon: const Icon(Icons.search),
                   border: const OutlineInputBorder(
@@ -130,10 +134,13 @@ class _SearchPageState extends State<SearchPage> {
                                                   MaterialPageRoute(
                                                     builder: (context) => WordsScreen(
                                                       movieId: state.listSearch[index].id!.toInt(),
+                                                      title: state.listSearch[index].name,
                                                     ),
                                                   ));
                                             } else {
-                                              context.read<MainBloc>().add(GetUserInfoEvent(
+                                              final movie = state.listSearch[index];
+                                              context.push(MovieInfoPage(movie: Content(id:state.listSearch[index].id?.toInt(), name: movie.name, description: movie.description, price: movie.price?.toInt(), isBought: movie.isBought, avatarUrl: movie.avatarUrl,belongAge: movie.belongAge?.toInt(),genre: movie.genre,level: movie.level,serial: movie.serial)));
+                                              // context.read<MainBloc>().add(GetUserInfoEvent(
                                                   // Navigator.pop(context);
                                                   // showModalBottomSheet(
                                                   // context: context,
@@ -309,7 +316,7 @@ class _SearchPageState extends State<SearchPage> {
                                                   //   ),
                                                   // ));
 
-                                                  ));
+                                                  // ));
                                             }
                                           },
                                           title: Text(state.listSearch[index].name ?? 'NULL'), // Replace with your data
@@ -362,6 +369,14 @@ class _SearchPageState extends State<SearchPage> {
                                                               context.read<MainBloc>().add(SubmitMovieEvent(
                                                                   movieName: movieNameController.text));
                                                               context.pop();
+                                                              movieNameController.clear();
+                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                 SnackBar(
+                                                                  content: Text(LocaleKeys.sentYourOrder.tr()),
+                                                                  backgroundColor: Colors.green,
+                                                                  behavior: SnackBarBehavior.floating,
+                                                                )
+                                                              );
                                                             },
                                                             child: Text(LocaleKeys.submit.tr()))
                                                       ],

@@ -28,7 +28,7 @@ class _MovieItemWidgetState extends State<MovieItemWidget> {
           context.read<WordsBloc>().add(GetMovieInfoEvent(id: widget.movie.id!));
           Navigator.push(context, MaterialPageRoute(builder: (builder)=> WordsScreen(movieId: widget.movie.id,title: widget.movie.name,)));
         }else{
-          Navigator.push(context, CupertinoPageRoute(builder: (builder)=> MovieInfoPage(movie: widget.movie, bloc: widget.bloc),));
+          Navigator.push(context, CupertinoPageRoute(builder: (builder)=> MovieInfoPage(movie: widget.movie),));
         }
       },
       child: Padding(

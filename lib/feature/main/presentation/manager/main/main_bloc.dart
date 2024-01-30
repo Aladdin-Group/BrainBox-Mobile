@@ -66,7 +66,11 @@ class MainBloc extends Bloc<MainEvent, MainState> {
 
   void _initialMain(InitialMainEvent event, Emitter<MainState> emit) async {
     final user = hive.get(StoreKeys.user);
+    print('get user from hive');
+    print(user != null);
     if (user != null) {
+
+
       emit(state.copyWith(user: user));
     }
   }
@@ -92,7 +96,9 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     final result = await getUserInfoEvent.call(-1);
 
     if (result.isRight) {
-      hive.put(StoreKeys.user, result.right);
+      print('get user info success');
+
+      // hive.put(StoreKeys.user, result.right);
       emit(state.copyWith(getUserInfoStatus: FormzSubmissionStatus.success, user: result.right));
     } else {
       // event.failure(result.left);

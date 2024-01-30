@@ -2,9 +2,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/core/utils/custom_styles.dart';
+import 'package:brain_box/feature/settings/data/models/language_model.dart';
+import 'package:brain_box/feature/settings/data/repositories/language_repo.dart';
+import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,8 +28,9 @@ class LanguageScreen extends StatelessWidget {
   /// The [languageCode] parameter represents the language code (e.g., 'en').
   /// The [countryCode] parameter represents the country code (e.g., 'US').
   /// The [context] parameter is the [BuildContext] used for navigation.
-  void _chooseAndAuth(String la, String ng, BuildContext context) async {
-    context.setLocale(Locale(la, ng));
+  void _chooseAndAuth(LanguageModel languageModel, BuildContext context) async {
+    context.setLocale(languageModel.locale);
+    context.read<SettingsBloc>().add(ChangeLanguageEvent(languageModel: languageModel));
     context.pushNamed(RouteNames.auth);
   }
 
@@ -59,11 +64,11 @@ class LanguageScreen extends StatelessWidget {
 
               /// Language Selection Buttons
               const Gap(30),
-              _buildLanguageButton('English', 'en', 'US', context),
+              _buildLanguageButton(LanguageRepository.en, context),
               const Gap(15),
-              _buildLanguageButton('Русский', 'ru', 'RU', context),
+              _buildLanguageButton(LanguageRepository.ru, context),
               const Gap(15),
-              _buildLanguageButton('O\'zbekcha', 'uz', 'UZ', context),
+              _buildLanguageButton(LanguageRepository.uz, context),
             ],
           ),
         ),
@@ -76,15 +81,13 @@ class LanguageScreen extends StatelessWidget {
   /// The [label] parameter is the display text on the button.
   /// The [languageCode] and [countryCode] parameters represent the selected language.
   /// The [context] parameter is the [BuildContext] used for navigation.
-  Widget _buildLanguageButton(
-      String label, String languageCode, String countryCode, BuildContext context) {
+  Widget _buildLanguageButton(LanguageModel languageModel,  BuildContext context) {
     return SizedBox(
       height: 50,
-      /// Filled button todo
       child: FilledButton(
-        onPressed: () => _chooseAndAuth(languageCode, countryCode, context),
+        onPressed: () => _chooseAndAuth(languageModel, context),
         style: CustomStyles.buttonStyle,
-        child: Text(label, style: const TextStyle(fontSize: 20)),
+        child: Text(languageModel.name, style: const TextStyle(fontSize: 20)),
       ),
     );
   }
