@@ -29,6 +29,7 @@ class _EssentialWordsPageState extends State<EssentialWordsPage> {
   List<EssentialModel> list = [];
   bool isFail = false;
   bool isLoading = true;
+
   // String languageCode = 'uz';
 
   @override
@@ -36,20 +37,20 @@ class _EssentialWordsPageState extends State<EssentialWordsPage> {
     super.initState();
     flutterTts = FlutterTts();
     context.read<EducationBloc>().add(GetWordsEvent(
-      essential: widget.essential,
-      unit: widget.unit,
-      onFail: (Failure fail) {
-        setState(() {
-          isFail = true;
-        });
-      },
-      onSuccess: (List<EssentialModel> result) {
-        setState(() {
-          isLoading = false;
-          list.addAll(result);
-        });
-      },
-    ));
+          essential: widget.essential,
+          unit: widget.unit,
+          onFail: (Failure fail) {
+            setState(() {
+              isFail = true;
+            });
+          },
+          onSuccess: (List<EssentialModel> result) {
+            setState(() {
+              isLoading = false;
+              list.addAll(result);
+            });
+          },
+        ));
   }
 
   Future _speak(String text) async {
@@ -86,52 +87,42 @@ class _EssentialWordsPageState extends State<EssentialWordsPage> {
                               IconButton(onPressed: () => context.pop(), icon: const Icon(Icons.close))
                             ],
                           ),
-                          content: Column(mainAxisSize: MainAxisSize.min,
+                          content: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                            DropdownButton(
-
-                              value: context
-                                  .watch<SettingsBloc>()
-                                  .state
-                                  .languageModel,
-                              onChanged: (language) {
-                                context.read<SettingsBloc>().add(ChangeLanguageEvent(languageModel: language!));
-
-                              },
-                              isExpanded: true,
-                              items: LanguageRepository.languages.map((language) {
-                                return DropdownMenuItem(
-                                  value: language,
-                                  child: Text(language.name),
-                                );
-                              }).toList(),
-                            ),
-                            SwitchListTile(
-                                title:  Text(LocaleKeys.showTranslations.tr()),
-                                value: context
-                                    .watch<EducationBloc>()
-                                    .state
-                                    .showTranslation,
-                                onChanged: (value) => context.read<EducationBloc>().add(ShowTranslationsEvent())),
-                            Row(
-                              children: [
-                                const Text('A', style: TextStyle(fontSize: 14)),
-                                Slider(
-                                  min: 12,
-                                  max: 20,
-                                  divisions: 10,
-                                  value: context
-                                      .watch<EducationBloc>()
-                                      .state
-                                      .fontSize,
-                                  onChanged: (fontSize) =>
-                                      context.read<EducationBloc>().add(ChangeWordFontSize(fontSize)),
+                                DropdownButton(
+                                  value: context.watch<SettingsBloc>().state.languageModel,
+                                  onChanged: (language) {
+                                    context.read<SettingsBloc>().add(ChangeLanguageEvent(languageModel: language!));
+                                  },
+                                  isExpanded: true,
+                                  items: LanguageRepository.languages.map((language) {
+                                    return DropdownMenuItem(
+                                      value: language,
+                                      child: Text(language.name),
+                                    );
+                                  }).toList(),
                                 ),
-                                const Text('A', style: TextStyle(fontSize: 24)),
-                              ],
-                            )
-                          ]));
+                                SwitchListTile(
+                                    title: Text(LocaleKeys.showTranslations.tr()),
+                                    value: context.watch<EducationBloc>().state.showTranslation,
+                                    onChanged: (value) => context.read<EducationBloc>().add(ShowTranslationsEvent())),
+                                Row(
+                                  children: [
+                                    const Text('A', style: TextStyle(fontSize: 14)),
+                                    Slider(
+                                      min: 12,
+                                      max: 20,
+                                      divisions: 10,
+                                      value: context.watch<EducationBloc>().state.fontSize,
+                                      onChanged: (fontSize) =>
+                                          context.read<EducationBloc>().add(ChangeWordFontSize(fontSize)),
+                                    ),
+                                    const Text('A', style: TextStyle(fontSize: 24)),
+                                  ],
+                                )
+                              ]));
                     });
               },
               icon: const Icon(Icons.settings)),
@@ -139,52 +130,88 @@ class _EssentialWordsPageState extends State<EssentialWordsPage> {
       ),
       body: isLoading
           ? ListView.builder(
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: ListTile(
-              title: Container(
-                height: 20,
-                color: Colors.white,
-              ),
-              subtitle: Container(
-                height: 20,
-                color: Colors.white,
-              ),
-            ),
-          );
-        },
-      )
+              itemCount: 20,
+              itemBuilder: (context, index) {
+                return Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!, // You can customize base and highlight colors
+                  highlightColor: Colors.grey[100]!,
+                  child: ListTile(
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: Colors.white, // Background color of the shimmer effect
+                            ),
+                            height: 25, // Adjust the height as needed
+                          ),
+                        ),
+                      ],
+                    ),
+                    leading: CircleAvatar(
+
+
+                      child: Container(
+                        decoration: ShapeDecoration(shape: CircleBorder(), color: Colors.white),
+                        height: 40, // Adjust the height as needed
+                        width: 40, // Adjust the width as needed
+
+                      ),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 24, // Adjust the height as needed
+                          width: 24, // Adjust the width as needed
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: Colors.white, // Background color of the shimmer effect
+                          ),
+                        ),
+                        SizedBox(width: 8), // Adjust spacing as needed
+                        Container(
+                          height: 24, // Adjust the height as needed
+                          width: 24, // Adjust the width as needed
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: Colors.white, // Background color of the shimmer effect
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            )
           : ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            return EssentialWordItem(
-                model: list[index],
-                // languageCode: languageCode,
-                index: index + 1,
-                onClick: () async {
-                  await _speak(list[index].word ?? 'NULL_WORD');
-                });
-          }),
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                return EssentialWordItem(
+                    model: list[index],
+                    // languageCode: languageCode,
+                    index: index + 1,
+                    onClick: () async {
+                      await _speak(list[index].word ?? 'NULL_WORD');
+                    });
+              }),
       bottomNavigationBar: isLoading
           ? const SizedBox.shrink()
           : Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (builder) =>
-                          ByWordTestPage(
-                            list: list,
-                            // languageCode: languageCode,
-                          )));
-            },
-            child: const Text('Start test')),
-      ),
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (builder) => ByWordTestPage(
+                                  list: list,
+                                  // languageCode: languageCode,
+                                )));
+                  },
+                  child: const Text('Start test')),
+            ),
     );
   }
 }

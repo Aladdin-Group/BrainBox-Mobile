@@ -125,16 +125,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: isPremium
             ? []
             : [
-                ValueListenableBuilder(
-                    valueListenable: isInit,
-                    builder: (p1, p2, p3) {
-                      return p2
-                          ? Text(
-                              context.read<SettingsBloc>().state.user!.coins.toString(),
-                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                            )
-                          : const SizedBox();
-                    }),
+                Text(
+                  context.read<SettingsBloc>().state.user?.coins.toString() ?? '',
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 IconButton(
                   icon: const Icon(Icons.add_circle),
                   onPressed: () async {
@@ -168,24 +162,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SliverToBoxAdapter(
                     child: AvatarImage(
                       radius: 50,
-                      // backround color random dark color
                       backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade800,
                       backgroundImage: controller.user?.imageUrl != null
                           ? CachedNetworkImageProvider(context.read<SettingsBloc>().state.user?.imageUrl ?? '')
                           : null,
                       // get string from state user name first letters
-                      child: Text(
-                        context
-                                .watch<SettingsBloc>()
-                                .state
-                                .user
-                                ?.name
-                                ?.split(' ')
-                                .map((e) => e.substring(0, 1))
-                                .join(" ") ??
-                            "B",
-                        style: context.titleLarge!.copyWith(color: Colors.white),
-                      ),
+                      child: controller.user?.imageUrl != null
+                          ? null
+                          : Text(
+                              context
+                                      .watch<SettingsBloc>()
+                                      .state
+                                      .user
+                                      ?.name
+                                      ?.split(' ')
+                                      .map((e) => e.substring(0, 1))
+                                      .join(" ") ??
+                                  "B",
+                              style: context.titleLarge!.copyWith(color: Colors.white),
+                            ),
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -230,8 +225,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   useMagnifier: true,
                                   itemExtent: _kItemExtent,
                                   scrollController: FixedExtentScrollController(
-                                    initialItem: LanguageRepository.languages
-                                        .indexOf(context.read<SettingsBloc>().state.languageModel),
+                                    initialItem: LanguageRepository.languages.indexOf(
+                                      context.read<SettingsBloc>().state.languageModel,
+                                    ),
                                   ),
                                   onSelectedItemChanged: (int selectedItem) => context.read<SettingsBloc>().add(
                                       ChangeLanguageEvent(languageModel: LanguageRepository.languages[selectedItem])),

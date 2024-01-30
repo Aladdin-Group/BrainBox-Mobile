@@ -15,6 +15,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 // import 'package:shimmer/shimmer.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -39,7 +40,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   double pitch = 1.0;
   double rate = 0.5;
   bool isCurrentLanguageInstalled = false;
-
 
   TtsState ttsState = TtsState.stopped;
   ValueNotifier<bool> switcher = ValueNotifier(false);
@@ -108,8 +108,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
 
     if (isAndroid) {
       flutterTts.setInitHandler(() {
-        setState(() {
-        });
+        setState(() {});
       });
     }
 
@@ -150,18 +149,15 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
 
   Future _getDefaultEngine() async {
     var engine = await flutterTts.getDefaultEngine;
-    if (engine != null) {
-    }
+    if (engine != null) {}
   }
 
   Future _getDefaultVoice() async {
     var voice = await flutterTts.getDefaultVoice;
-    if (voice != null) {
-    }
+    if (voice != null) {}
   }
 
   Future _speak(String text) async {
-
     await flutterTts.setVolume(volume);
     await flutterTts.setSpeechRate(rate);
     await flutterTts.setPitch(pitch);
@@ -174,8 +170,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   Future _setAwaitOptions() async {
     await flutterTts.awaitSpeakCompletion(true);
   }
-
-
 
   @override
   void initState() {
@@ -215,45 +209,65 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                               IconButton(onPressed: () => context.pop(), icon: const Icon(Icons.close))
                             ],
                           ),
-                          content: Column(mainAxisSize: MainAxisSize.min,
+                          content: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                DropdownButton(
-
-                                  value: context
-                                      .watch<SettingsBloc>()
-                                      .state
-                                      .languageModel,
-                                  onChanged: (language) {
-                                    context.read<SettingsBloc>().add(ChangeLanguageEvent(languageModel: language!));
-
+                                PopupMenuButton(
+                                  onSelected: (language) {
+                                    context
+                                        .read<SettingsBloc>()
+                                        .add(ChangeLanguageEvent(languageModel: language!));
                                   },
-                                  isExpanded: true,
-                                  items: LanguageRepository.languages.map((language) {
-                                    return DropdownMenuItem(
-                                      value: language,
-                                      child: Text(language.name),
-                                    );
-                                  }).toList(),
+                                  itemBuilder: (BuildContext context) {
+                                    return LanguageRepository.languages
+                                        .where((language) => language != context.read<SettingsBloc>().state.languageModel)
+                                        .map((language) {
+                                      return PopupMenuItem(
+                                        value: language,
+                                        child: Text(language.name),
+
+                                      );
+                                    }).toList();
+                                  },
+                                  child: ListTile(
+                                    title: Text(LocaleKeys.language.tr(), style: context.titleMedium),
+                                    trailing: Text(
+                                        context.watch<SettingsBloc>().state.languageModel.locale.countryCode ?? "",
+                                        style: context.titleMedium),
+                                  ),
                                 ),
+                                // DropdownButton(
+                                //   value: context
+                                //       .watch<SettingsBloc>()
+                                //       .state
+                                //       .languageModel,
+                                //   onChanged: (language) {
+                                //     context.read<SettingsBloc>().add(ChangeLanguageEvent(languageModel: language!));
+                                //
+                                //   },
+                                //   isExpanded: true,
+                                //   items: LanguageRepository.languages.map((language) {
+                                //     return DropdownMenuItem(
+                                //       value: language,
+                                //       child: Text(language.name),
+                                //     );
+                                //   }).toList(),
+                                //   isDense: false,
+                                // ),
                                 SwitchListTile(
-                                    title:  Text(LocaleKeys.showTranslations.tr()),
-                                    value: context
-                                        .watch<EducationBloc>()
-                                        .state
-                                        .showTranslation,
+                                    title: Text(LocaleKeys.showTranslations.tr()),
+                                    value: context.watch<EducationBloc>().state.showTranslation,
                                     onChanged: (value) => context.read<EducationBloc>().add(ShowTranslationsEvent())),
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text('A', style: TextStyle(fontSize: 14)),
                                     Slider(
                                       min: 12,
                                       max: 20,
                                       divisions: 10,
-                                      value: context
-                                          .watch<EducationBloc>()
-                                          .state
-                                          .fontSize,
+                                      value: context.watch<EducationBloc>().state.fontSize,
                                       onChanged: (fontSize) =>
                                           context.read<EducationBloc>().add(ChangeWordFontSize(fontSize)),
                                     ),
@@ -265,25 +279,51 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
               },
               icon: const Icon(Icons.settings)),
         ],
-
       ),
       body: BlocConsumer<WordsBloc, WordsState>(
         builder: (context, state) {
           if (state.status.isInProgress || state.status.isInitial) {
             return ListView.builder(
+              padding: EdgeInsets.all(8),
               itemCount: 10,
               itemBuilder: (context, index) {
                 return Shimmer.fromColors(
                   baseColor: Colors.grey[300]!,
                   highlightColor: Colors.grey[100]!,
-                  child: ListTile(
-                    title: Container(
-                      height: 20,
-                      color: Colors.white,
-                    ),
-                    subtitle: Container(
-                      height: 20,
-                      color: Colors.white,
+                  child: Card(
+                    child: ListTile(
+                      title: Container(
+                        height: 16,
+                        color: Colors.white,
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            height: 24,
+                            width: 24,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 8),
+                          Container(
+                            height: 24,
+                            width: 24,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                      subtitle: Container(
+                        height: 12,
+                        color: Colors.white,
+                      ),
+                      leading: CircleAvatar(
+                        radius: 25,
+                        child: Container(
+                          height: 40,
+                          width: 40,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 );
@@ -339,19 +379,10 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                     padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 5),
                     child: Card(
                       child: ListTile(
-                        title: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                '${wordsList[index].value.toString().toUpperCase()}${context
-                                    .watch<EducationBloc>()
-                                    .state
-                                    .showTranslation? " - ${languageCode == 'ru' ? wordsList[index].translationRu : wordsList[index].translationEn}":''}',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            // Container(width: wordsList[index].secondLanguageValue!.length.toDouble()+30, height: 20,color: Colors.black,)
-                          ],
+                        title: Text(
+                          '${wordsList[index].value.toString().toUpperCase()}${context.watch<EducationBloc>().state.showTranslation ? " - ${languageCode == 'ru' ? wordsList[index].translationRu : wordsList[index].translationEn}" : ''}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: context.watch<EducationBloc>().state.fontSize),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -409,14 +440,13 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                           ],
                         ),
                         subtitle: Text(wordsList[index].pronunciation.toString()),
-                        leading: GestureDetector(
-                            child: CircleAvatar(
-                                radius: 25,
-                                child: FittedBox(
-                                    child: Text(
-                                      '${index + 1}',
-                                      style: const TextStyle(fontSize: 20),
-                                    )))),
+                        leading: CircleAvatar(
+                            radius: 25,
+                            child: FittedBox(
+                                child: Text(
+                              '${index + 1}',
+                              style: const TextStyle(fontSize: 20),
+                            ))),
                       ),
                     ),
                   );
@@ -455,32 +485,31 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    TestScreen(
-                                      movieId: widget.movieId ?? -1,
-                                    ),
+                                builder: (context) => TestScreen(
+                                  movieId: widget.movieId ?? -1,
+                                ),
                               ));
                         },
                         child: const Text('Start Test')),
                     const Gap(10),
                     _bannerAd != null
                         ? SizedBox(
-                      width: _bannerAd!.size.width.toDouble(),
-                      height: _bannerAd!.size.height.toDouble(),
-                      child: AdWidget(
-                        ad: _bannerAd!,
-                      ),
-                    )
+                            width: _bannerAd!.size.width.toDouble(),
+                            height: _bannerAd!.size.height.toDouble(),
+                            child: AdWidget(
+                              ad: _bannerAd!,
+                            ),
+                          )
                         : SizedBox(
-                      height: 50,
-                      child: Shimmer.fromColors(
-                          baseColor: Colors.black26,
-                          highlightColor: Colors.grey,
-                          child: const SizedBox(
-                            width: 300,
                             height: 50,
-                          )),
-                    ),
+                            child: Shimmer.fromColors(
+                                baseColor: Colors.black26,
+                                highlightColor: Colors.grey,
+                                child: const SizedBox(
+                                  width: 300,
+                                  height: 50,
+                                )),
+                          ),
                   ],
                 ),
               ),

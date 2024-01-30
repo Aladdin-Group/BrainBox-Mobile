@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/assets/constants/app_constants.dart';
+import 'package:brain_box/core/assets/constants/app_images.dart';
 import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/feature/main/presentation/pages/search_page.dart';
 import 'package:brain_box/feature/main/presentation/widgets/movie_item_widget.dart';
@@ -30,7 +31,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
 
   @override
   void initState() {
@@ -137,7 +137,20 @@ class _MainScreenState extends State<MainScreen> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.network(state.lastNotificationId!.imageUrl),
+                    Image.network(
+                      state.lastNotificationId?.imageUrl ?? '',
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 200,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          AppImages.notFound,
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                     const Gap(12),
                     Text(state.lastNotificationId!.body),
                     const Gap(12),
@@ -154,7 +167,6 @@ class _MainScreenState extends State<MainScreen> {
           );
         }
       },
-
       child: Scaffold(
           // floatingActionButton: FloatingActionButton(
           //   onPressed: () {

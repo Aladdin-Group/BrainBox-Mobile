@@ -67,7 +67,7 @@ class NotificationScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Image.network(
-                          notification.imageUrl,
+                          state.lastNotificationId?.imageUrl ?? '',
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: 200,
