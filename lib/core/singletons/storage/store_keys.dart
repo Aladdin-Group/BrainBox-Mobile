@@ -35,4 +35,8 @@ class StoreKeys {
 
   static const String getWordsFromSavedList = 'getWordsFromSavedList';
   static const String notification = 'notification';
+
+  static const String iosName = 'iosName';
+
+  static const String iosMail = 'iosMail';
 }

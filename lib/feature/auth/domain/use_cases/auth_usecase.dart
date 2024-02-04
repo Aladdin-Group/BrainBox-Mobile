@@ -6,13 +6,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/exceptions/failure.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../../../../core/utils/either.dart';
+import '../../data/models/AuthParams.dart';
 
-class AuthUseCase extends UseCase<AuthModel,GoogleSignInAccount?>{
+class AuthUseCase extends UseCase<AuthModel,AuthParams?>{
 
   final AuthRepository _repository = AuthRepositoryImplementation();
 
   @override
-  Future<Either<Failure, AuthModel>> call(GoogleSignInAccount? params) {
+  Future<Either<Failure, AuthModel>> call(AuthParams? params) {
     return _repository.auth(params);
   }
 

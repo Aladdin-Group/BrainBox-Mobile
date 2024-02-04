@@ -109,4 +109,6 @@ abstract class  LocaleKeys {
   static const movieName = 'movieName';
   static const learnMore = 'learnMore';
 
+  static const eula = 'eula';
+
 }
