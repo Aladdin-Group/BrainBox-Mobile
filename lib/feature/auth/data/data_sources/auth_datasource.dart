@@ -5,12 +5,13 @@ import '../../../../core/exceptions/exception.dart';
 import '../../../../core/exceptions/failure.dart';
 import '../../../../core/singletons/dio_settings.dart';
 import '../../../../core/singletons/service_locator.dart';
+import '../models/AuthParams.dart';
 import '../models/dev_test_model.dart';
 
 abstract class AuthDataSource {
   Future<GoogleSignInAccount?> authWithGoogle();
 
-  Future auth(GoogleSignInAccount? googleUser);
+  Future auth(AuthParams? authParams);
 
   Future<DevTestModel> isDevTesting();
 }
@@ -19,17 +20,17 @@ class AuthDatasourceImplementation extends AuthDataSource {
   final dio = serviceLocator<DioSettings>().dio;
 
   @override
-  Future auth(GoogleSignInAccount? googleUser) async {
+  Future auth(AuthParams? authParams) async {
 
     try {
       final response = await dio.post(
         '/api/v1/auth/regLog',
         data: {
-          "name": googleUser?.displayName,
+          "name": authParams?.fullName,
           "surname": "some",
-          "uniqueId": googleUser?.id,
-          "email": googleUser?.email,
-          "imageUrl": googleUser?.photoUrl
+          "uniqueId": authParams?.uid,
+          "email": authParams?.email,
+          "imageUrl": authParams?.photoUrl
         },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

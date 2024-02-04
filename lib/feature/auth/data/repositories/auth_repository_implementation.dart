@@ -7,14 +7,15 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/exceptions/exception.dart';
 import '../../../../core/utils/either.dart';
+import '../models/AuthParams.dart';
 
 class AuthRepositoryImplementation extends AuthRepository {
   final AuthDataSource datasource = AuthDatasourceImplementation();
 
   @override
-  Future<Either<Failure, AuthModel>> auth(GoogleSignInAccount? googleSignInAccount) async {
+  Future<Either<Failure, AuthModel>> auth(AuthParams? authParams) async {
     try {
-      final result = await datasource.auth(googleSignInAccount);
+      final result = await datasource.auth(authParams);
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(errorMessage: e.errorMessage, statusCode: e.statusCode));

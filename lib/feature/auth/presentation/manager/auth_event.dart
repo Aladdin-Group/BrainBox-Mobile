@@ -9,3 +9,5 @@ class GoogleAuthEvent extends AuthEvent {
 }
 
 class IsDevModeEvent extends AuthEvent {}
+
+class AppleSignInEvent extends AuthEvent{}

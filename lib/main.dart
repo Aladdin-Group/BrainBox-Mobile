@@ -272,6 +272,7 @@ void main() async {
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en', 'US'), Locale('uz', 'UZ'), Locale('ru', 'RU')],
       path: 'assets/translations',
+      startLocale: const Locale('en', 'US'),
       child: const MyApp()));
 }
 

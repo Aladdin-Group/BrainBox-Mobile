@@ -121,7 +121,8 @@ class CodegenLoader extends AssetLoader{
   "weCouldnTFind": "We couldn’t find movie :(\nBut you can help us, submit movie name that you want to find subtitle for and we’ll add it asap",
   "submit": "Submit",
   "movieName": "Movie Name",
-  "learnMore": "Learn More"
+  "learnMore": "Learn More",
+    "eula":"By clicking login or register, you accept the “BrainBox EULA rules”."
 };
 static const Map<String,dynamic> ru_RU = {
   "welcomeBack": "Добро пожаловать",
@@ -231,7 +232,8 @@ static const Map<String,dynamic> ru_RU = {
   "weCouldnTFind": "Не удалось найти фильм :(\nНо вы можете нам помочь, отправьте название фильма, для которого вы хотите найти субтитры, и мы добавим его как можно скорее.",
   "submit": "Отправить",
   "movieName": "Название фильма",
-  "learnMore": "Узнать больше"
+  "learnMore": "Узнать больше",
+  "eula":"Нажимая кнопку «Войти» или «Зарегистрироваться», вы принимаете «правила лицензионного соглашения BrainBox»."
 };
 static const Map<String,dynamic> uz_UZ = {
   "welcomeBack": "Xush kelibsiz",
@@ -340,7 +342,8 @@ static const Map<String,dynamic> uz_UZ = {
   "weCouldnTFind": "Filmni topa olmadik :(\nLekin siz bizga yordam bera olasiz, subtitr topmoqchi bo'lgan film nomini yuboring va biz uni tezroq qo'shamiz",
   "submit": "Yuborish",
   "movieName": "Film nomi",
-  "learnMore": "Ko'proq ma'lumot"
+  "learnMore": "Ko'proq ma'lumot",
+  "eula":"Kirish yoki roʻyxatdan oʻtish tugmasini bosish orqali siz “BrainBox EULA qoidalari”ni qabul qilasiz."
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en_US": en_US, "ru_RU": ru_RU, "uz_UZ": uz_UZ};
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/assets/constants/app_images.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
 import 'package:brain_box/feature/navigation/presentation/pages/lading_page.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -56,6 +59,7 @@ class AuthScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     const Gap(40),
+                    Platform.isAndroid ?
                     SizedBox(
                       height: 50,
                       child: FilledButton.tonal(
@@ -66,6 +70,23 @@ class AuthScreen extends StatelessWidget {
                         child: Text(LocaleKeys.signWithGoogle.tr(), style: AppTextStyles.titleLarge),
                       ),
                     )
+                        : SignInWithAppleButton(
+                        onPressed: () async {
+                            context.read<AuthBloc>().add(IsDevModeEvent());
+                        // Now send the credential (especially `credential.authorizationCode`) to your server to create a session
+                        // after they have been validated with Apple (see `Integration` section for more information on how to do this)
+                      },
+                    ),
+                    const Expanded(child: SizedBox.shrink(),),
+                    Text(
+                        LocaleKeys.eula.tr(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    Gap(10)
                   ],
                 ),
               ),

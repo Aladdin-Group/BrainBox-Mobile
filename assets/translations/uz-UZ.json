@@ -105,5 +105,6 @@
   "weCouldnTFind": "Filmni topa olmadik :(\nLekin siz bizga yordam bera olasiz, subtitr topmoqchi bo'lgan film nomini yuboring va biz uni tezroq qo'shamiz",
   "submit": "Yuborish",
   "movieName": "Film nomi",
-  "learnMore" : "Ko'proq ma'lumot"
+  "learnMore" : "Ko'proq ma'lumot",
+  "eula": "Kirish yoki roʻyxatdan oʻtish tugmasini bosish orqali siz “BrainBox EULA qoidalari”ni qabul qilasiz."
 }

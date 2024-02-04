@@ -68,6 +68,7 @@ dependencies:
   dartz: ^0.10.1
   bloc_concurrency: ^0.2.3
   stream_transform: ^2.1.0
+  sign_in_with_apple: ^5.0.0
 
 
 dev_dependencies:
@@ -83,7 +84,7 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: "launcher_icon"
-  ios: false
+  ios: true
   image_path: "assets/icons/icon.png"
 
 flutter:
