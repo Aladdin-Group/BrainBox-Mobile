@@ -126,9 +126,8 @@ print('hello123');
   });
 
   // bring to foreground
-  // TODO fix this
-  // Timer.periodic(Duration(minutes: reminderDate.everyTime), (timer) async {
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
+  Timer.periodic(Duration(minutes: reminderDate.everyTime), (timer) async {
+
 
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {

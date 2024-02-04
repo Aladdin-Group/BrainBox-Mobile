@@ -18,8 +18,8 @@ class BackgroundController {
     print('hello1');
     service.invoke("setAsForeground");
     // service.invoke("setAsBackground");
-    // todo uncomment this
-    Future.delayed(const Duration(seconds: 5), () {
+
+    Future.delayed(const Duration(seconds: 1), () {
       FlutterBackgroundService().startService();
     });
   }
