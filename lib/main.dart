@@ -35,6 +35,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import 'core/adapters/storage/content_adpater.dart';
 import 'core/adapters/storage/user_adapter.dart';
@@ -76,14 +77,22 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+
+  print('onStart');
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(WordHiveAdapter());
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
+  await StorageRepository.getInstance();
   List<LocalWord?>? localWords = await HiveController.getListFromHive();
+
   bool getFromSavedList = StorageRepository.getBool(StoreKeys.getWordsFromSavedList);
+  await SavedController.init();
+  final savedList = SavedController.getListFromHive();
+
   if (getFromSavedList) {
-    final savedList = SavedController.getListFromHive();
+print('hello123');
+
     for (final element in savedList) {
       final local = LocalWord(
         id: element.id,
@@ -117,7 +126,10 @@ void onStart(ServiceInstance service) async {
   });
 
   // bring to foreground
-  Timer.periodic(Duration(minutes: reminderDate.everyTime), (timer) async {
+  // TODO fix this
+  // Timer.periodic(Duration(minutes: reminderDate.everyTime), (timer) async {
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
+
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         /// OPTIONAL for use custom notification
@@ -156,7 +168,9 @@ void onStart(ServiceInstance service) async {
             }
           }
         }
-        if (position == localWords.length) {
+        print(position);
+        if (position == localWords.length-1) {
+
           position = 0;
           return;
         }
@@ -205,9 +219,12 @@ Future<void> initializeService() async {
     androidConfiguration: AndroidConfiguration(
       // this will be executed when app is in foreground or background in separated isolate
       onStart: onStart,
-      // auto start service
-      autoStart: false,
+
       isForegroundMode: true,
+      notificationChannelId: 'my_foreground',
+      initialNotificationTitle: 'AWESOME SERVICE',
+      initialNotificationContent: 'Initializing',
+      foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
       // auto start service
@@ -225,11 +242,13 @@ Future<void> initializeService() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeService();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await registerForFCMNotifications();
+  // Pass all uncaught errors to Crashlytics
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
@@ -265,7 +284,7 @@ void main() async {
   await Hive.openBox<Content>(StoreKeys.savedWordsList);
   await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
   await Hive.openBox(StoreKeys.userData);
-  // await initializeService();
+
   await MobileAds.instance.initialize();
   FlutterNativeSplash.remove();
   setupLocator();

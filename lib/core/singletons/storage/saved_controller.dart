@@ -18,7 +18,7 @@ class SavedController {
     final appDocumentDirectory = await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDirectory.path);
     Hive.registerAdapter(ContentHiveAdapter());
-    await Hive.openBox<LocalWord>(StoreKeys.savedWordsList);
+    await Hive.openBox<Content>(StoreKeys.savedWordsList);
   }
 
   static Future<void> closeHiveBox() async {

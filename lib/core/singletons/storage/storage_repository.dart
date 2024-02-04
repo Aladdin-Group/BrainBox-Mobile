@@ -1,21 +1,29 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageRepository {
-  static StorageRepository? _storageUtil;
+  static StorageRepository? _storageRepository;
   static SharedPreferences? _preferences;
-
-  static Future<StorageRepository> getInstance() async {
-    if (_storageUtil == null) {
-      final secureStorage = StorageRepository._();
-      await secureStorage._init();
-      _storageUtil = secureStorage;
-    }
-    return _storageUtil!;
-  }
 
   StorageRepository._();
 
-  Future _init() async {
+  static init() {
+    if (_storageRepository == null) {
+      _storageRepository = StorageRepository._();
+      _storageRepository!._init();
+    }
+
+  }
+
+  static Future<StorageRepository> getInstance() async {
+    if (_storageRepository == null) {
+      var st = StorageRepository._();
+      _storageRepository = st;
+      await _storageRepository!._init();
+    }
+    return _storageRepository!;
+  }
+
+  _init() async {
     _preferences = await SharedPreferences.getInstance();
   }
 
@@ -63,11 +71,14 @@ class StorageRepository {
   }
 
   static bool getBool(String key, {bool defValue = false}) {
+
+
     if (_preferences == null) return defValue;
     return _preferences!.getBool(key) ?? defValue;
   }
 
   static Future<bool>? putBool({required String key, required bool value}) {
+    print('${_preferences == null} hello');
     if (_preferences == null) return null;
     return _preferences!.setBool(key, value);
   }

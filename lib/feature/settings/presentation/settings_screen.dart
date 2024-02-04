@@ -126,7 +126,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ? []
             : [
                 Text(
-                  context.read<SettingsBloc>().state.user?.coins.toString() ?? '',
+
+                  context.read<SettingsBloc>().state.user?.coins.toString() ?? '' ,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
@@ -160,27 +161,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
-                    child: AvatarImage(
-                      radius: 50,
-                      backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade800,
-                      backgroundImage: controller.user?.imageUrl != null
-                          ? CachedNetworkImageProvider(context.read<SettingsBloc>().state.user?.imageUrl ?? '')
-                          : null,
-                      // get string from state user name first letters
-                      child: controller.user?.imageUrl != null
-                          ? null
-                          : Text(
-                              context
-                                      .watch<SettingsBloc>()
-                                      .state
-                                      .user
-                                      ?.name
-                                      ?.split(' ')
-                                      .map((e) => e.substring(0, 1))
-                                      .join(" ") ??
-                                  "B",
-                              style: context.titleLarge!.copyWith(color: Colors.white),
-                            ),
+                    child: Center(
+                      child: AvatarImage(
+                        radius: 80,
+                        backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade800,
+                        backgroundImage: controller.user?.imageUrl != null
+                            ? CachedNetworkImageProvider(context.read<SettingsBloc>().state.user?.imageUrl ?? '')
+                            : null,
+                        // get string from state user name first letters
+                        child: controller.user?.imageUrl != null
+                            ? null
+                            : Text(
+                                context
+                                        .watch<SettingsBloc>()
+                                        .state
+                                        .user
+                                        ?.name
+                                        ?.split(' ')
+                                        .map((e) => e.substring(0, 1))
+                                        .join(" ") ??
+                                    "B",
+                                style: context.titleLarge!.copyWith(color: Colors.white),
+                              ),
+                      ),
                     ),
                   ),
                   SliverToBoxAdapter(

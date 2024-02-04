@@ -127,7 +127,7 @@ class _MainScreenState extends State<MainScreen> {
         final String lastNotificationId = StorageRepository.getString(AppConstants.LAST_NOTIFICATION_ID);
 
         if (state.lastNotificationId != null && state.lastNotificationId?.id.toString() != lastNotificationId) {
-          await StorageRepository.putString(AppConstants.LAST_NOTIFICATION_ID, state.lastNotificationId!.id.toString());
+
           if (!context.mounted) return;
           showDialog(
             context: context,
@@ -155,7 +155,8 @@ class _MainScreenState extends State<MainScreen> {
                     Text(state.lastNotificationId!.body),
                     const Gap(12),
                     FilledButton(
-                        onPressed: () {
+                        onPressed: () async{
+                          await StorageRepository.putString(AppConstants.LAST_NOTIFICATION_ID, state.lastNotificationId!.id.toString());
                           context.pop();
                           context.pushNamed(RouteNames.notifications);
                         },

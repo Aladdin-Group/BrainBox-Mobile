@@ -5,6 +5,7 @@ import 'package:brain_box/feature/settings/data/data_sources/settings_datsource.
 import 'package:brain_box/feature/settings/data/models/update_user.dart';
 
 import 'package:brain_box/feature/settings/data/models/user.dart';
+import 'package:logger/logger.dart';
 
 import '../../../../core/exceptions/exception.dart';
 import '../../domain/repositories/settings_repository.dart';
@@ -17,6 +18,7 @@ class SettingsRepositoryImplementation extends SettingsRepository{
   Future<Either<Failure, User>> getUserData() async{
     try {
       final result = await datasource.getUserData();
+      Logger().d(result);
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(errorMessage: e.errorMessage, statusCode: e.statusCode));

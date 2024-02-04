@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/singletons/storage/hive_controller.dart';
@@ -57,6 +58,11 @@ class _ReminderScreenState extends State<ReminderScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     BackgroundController.startService();
+        //   }
+        // ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ValueListenableBuilder(
@@ -193,9 +199,11 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                             builder: (p1, p2, p3) {
                                               return Switch(
                                                   value: p2,
-                                                  onChanged: (value) {
-                                                    StorageRepository.putBool(
-                                                        key: StoreKeys.getWordsFromSavedList, value: value);
+                                                  onChanged: (value) async {
+                                                    print(value);
+                                                    print(await StorageRepository.putBool(
+                                                        key: StoreKeys.getWordsFromSavedList, value: value));
+                                                    print(StorageRepository.getBool(StoreKeys.getWordsFromSavedList));
                                                     getReminderSaved.value = value;
                                                   });
                                             })
