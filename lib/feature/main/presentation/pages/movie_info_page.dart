@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/route/ruotes.dart';
@@ -32,11 +34,11 @@ class _MovieInfoPageState extends State<MovieInfoPage> {
             fontSize: 20
         ),),
         actions: [
-          Text(
+          Platform.isAndroid ? Text(
             context.read<SettingsBloc>().state.user?.coins.toString() ?? '',
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          IconButton(
+          ) : const SizedBox.shrink(),
+          Platform.isAndroid ? IconButton(
             icon: const Icon(Icons.add_circle),
             onPressed: () async {
               if (context.read<SettingsBloc>().state.user != null) {
@@ -54,7 +56,7 @@ class _MovieInfoPageState extends State<MovieInfoPage> {
                 // }
               }
             },
-          ),
+          ) : SizedBox.shrink(),
 
         ],
       ),

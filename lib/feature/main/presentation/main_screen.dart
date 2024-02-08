@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
 import 'package:brain_box/core/assets/constants/app_constants.dart';
@@ -8,6 +10,7 @@ import 'package:brain_box/feature/main/presentation/widgets/movie_item_widget.da
 import 'package:brain_box/feature/notification/presentation/manager/local_notification_bloc.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:feedback/feedback.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +19,7 @@ import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:feedback_sentry/feedback_sentry.dart';
 
 import '../../../core/assets/constants/icons.dart';
 import '../../../core/singletons/storage/storage_repository.dart';
@@ -41,9 +45,20 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> initializeLocalNotifications() async {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+      onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {
+
+      },
+    );
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            iOS: initializationSettingsDarwin,
+            android: initializationSettingsAndroid
+        );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
@@ -221,7 +236,9 @@ class _MainScreenState extends State<MainScreen> {
               if (state.status.isFailure) {}
               if (state.getUserInfoStatus.isInProgress) {}
               if (state.getUserInfoStatus.isSuccess) {
-                checkForUpdates(context);
+                if(Platform.isAndroid){
+                  checkForUpdates(context);
+                }
               }
               if (state.getUserInfoStatus.isFailure) {
                 context.pushAndRemoveUntil(const AuthScreen());
@@ -235,7 +252,6 @@ class _MainScreenState extends State<MainScreen> {
               if (state.status.isInProgress) {
                 return ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
-
                   itemCount: 10, // Number of shimmer category items
                   itemBuilder: (context, index) {
                     return Column(
@@ -321,11 +337,13 @@ class _MainScreenState extends State<MainScreen> {
                                 padding: const EdgeInsets.only(left: 25.0, top: 10, bottom: 10),
                                 child: Text(
                                   key,
-                                  style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                      fontSize: 20,
+                                  ),
                                 ),
                               ),
                               SizedBox(
-                                height: 270,
+                                height: 315,
                                 width: double.maxFinite,
                                 child: ListView.builder(
                                     itemCount: state.movies[key]?.listData.length,

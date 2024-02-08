@@ -4,6 +4,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:brain_box/core/adapters/storage/word_adapter.dart';
+import 'package:brain_box/core/assets/theme/dark_theme.dart';
+import 'package:brain_box/core/assets/theme/light_theme.dart';
 import 'package:brain_box/core/fcm_service/fcm_service.dart';
 import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/core/singletons/storage/saved_controller.dart';
@@ -20,6 +22,7 @@ import 'package:brain_box/feature/reminder/presentation/manager/remainder_bloc.d
 import 'package:brain_box/feature/settings/presentation/manager/save_words/save_words_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
 import 'package:brain_box/feature/words/data/models/words_response.dart';
+import 'package:feedback/feedback.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -313,16 +316,8 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           navigatorKey: navigatorKey,
           theme: context.watch<AppThemeBloc>().state.switchValue
-              ? ThemeData(
-                  useMaterial3: true,
-                  colorScheme: darkColorScheme,
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                )
-              : ThemeData(
-                  useMaterial3: true,
-                  colorScheme: lightColorScheme,
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                ),
+              ? DarkTheme.theme()
+              : LightTheme.theme(),
           // home: const SplashScreen(),
           onGenerateRoute: AppRoutes.generateRoute,
         );

@@ -50,7 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   _onGoogleAuth(GoogleAuthEvent event, Emitter<AuthState> emit) async {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
-    final authParams = AuthParams(email: event.googleSignInAccount?.email??'null email', fullName: event.googleSignInAccount?.displayName??'Null Name', uid: event.googleSignInAccount?.id??'null_uid', photoUrl: event.googleSignInAccount?.photoUrl);
+    final authParams = AuthParams(email: event.googleSignInAccount?.email??'null email', fullName: event.googleSignInAccount?.displayName??'Null Name', uid: event.googleSignInAccount?.id??'null_uid', photoUrl: event.googleSignInAccount?.photoUrl??'');
 
     final result = await authUseCase.call(authParams);
 
@@ -73,29 +73,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         AppleIDAuthorizationScopes.fullName,
       ],
     );
-
-    print('credential');
+    String uid = credential.identityToken.toString().substring(0, 15);
     print(credential);
-    print(credential.email);
-    print(credential.givenName);
-    print(credential.authorizationCode);
-    print(credential.identityToken);
-    print(credential.userIdentifier);
-    print(credential.state);
-    print('credential');
-
     if(credential.email!=null){
       StorageRepository.putString(StoreKeys.iosName, credential.givenName??'Null_name');
       StorageRepository.putString(StoreKeys.iosMail, credential.email??'Null_email');
-      final authParams = AuthParams(email: credential.email??'null_email', fullName: credential.givenName??'Null_name', uid: credential.identityToken??'Null_name', photoUrl: '');
+
+      final authParams = AuthParams(email: credential.email??'null_email', fullName: credential.givenName??'Null_name', uid: uid??'Null_name', photoUrl: '');
 
 
       final result = await authUseCase.call(authParams);
 
       if (result.isRight) {
-        emit(state.copyWith(status: FormzSubmissionStatus.success));
         StorageRepository.putBool(key: StoreKeys.isAuth, value: true);
         StorageRepository.putString(StoreKeys.token, result.right.object.toString());
+        emit(state.copyWith(status: FormzSubmissionStatus.success));
       } else {
         // context.read<AuthBloc>().add(GoogleAuthEvent(googleSignInAccount: account));
 
@@ -106,7 +98,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       var name = StorageRepository.getString(StoreKeys.iosName,);
       var mail = StorageRepository.getString(StoreKeys.iosMail,);
 
-      final authParams = AuthParams(email: mail, fullName: name, uid: credential.identityToken??'Null_name', photoUrl: '');
+      final authParams = AuthParams(email: mail, fullName: name, uid: uid??'Null_name', photoUrl: '');
 
       final result = await authUseCase.call(authParams);
 

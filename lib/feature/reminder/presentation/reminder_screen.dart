@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:brain_box/core/assets/constants/colors.dart';
 import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/core/utils/background_controller.dart';
@@ -8,6 +9,7 @@ import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
 import 'package:brain_box/feature/reminder/presentation/manager/remainder_bloc.dart';
 import 'package:brain_box/generated/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -17,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/singletons/storage/hive_controller.dart';
 import '../data/models/local_word.dart';
+import 'feature_widget.dart';
 
 class ReminderScreen extends StatefulWidget {
   const ReminderScreen({super.key});
@@ -25,7 +28,7 @@ class ReminderScreen extends StatefulWidget {
   State<ReminderScreen> createState() => _ReminderScreenState();
 }
 
-class _ReminderScreenState extends State<ReminderScreen> {
+class _ReminderScreenState extends State<ReminderScreen> with WidgetsBindingObserver {
   final TextEditingController customDateController = TextEditingController();
   final TextEditingController word = TextEditingController();
   final TextEditingController wordTranslate = TextEditingController();
@@ -42,9 +45,24 @@ class _ReminderScreenState extends State<ReminderScreen> {
     reminderDate = ReminderDate.getValue(StorageRepository.getDouble(StoreKeys.reminderDate).toInt());
     getReminderSaved.value = StorageRepository.getBool(StoreKeys.service);
     customDateController.text = 10.toString();
-    initWords();
-    setState(() {});
+    setState(() {
+      initWords();
+    });
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    if (state == AppLifecycleState.resumed) {
+      notificationPermissionStatus.value = await Permission.notification.request();
+    }
   }
 
   Future initWords() async {
@@ -377,33 +395,45 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     : SizedBox(
                         width: double.maxFinite,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            // const Icon(CupertinoIcons.bell_circle_fill,color: AppColors.main,size: 130,),
+                            const Gap(30),
                             Padding(
                               padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                               child: AutoSizeText(
-                                LocaleKeys.notificationIsNotAllowed.tr(),
-                                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                                'Not work, Should allow notifications !',
+                                style: Theme.of(context).textTheme.displayMedium,
                                 textAlign: TextAlign.center,
                               ),
                             ),
+                            const FeatureItem(
+                              icon: CupertinoIcons.bookmark_fill,
+                              title: 'Saved words',
+                              about: 'When you allow notifications, you can get reminders from saved words!',
+                            ),
+                            const FeatureItem(
+                              icon: CupertinoIcons.book_solid,
+                              title: 'App news ',
+                              about: 'Stay informed with our latest news updates! Allow notifications to receive important news directly to your device !',
+                            ),
+                            const Expanded(child: SizedBox.shrink()),
                             Padding(
-                              padding: const EdgeInsets.only(
-                                right: 10.0,
-                                left: 10,
-                                bottom: 15,
-                              ),
-                              child: AutoSizeText(
-                                LocaleKeys.pressAllowNotificationButtonAndSelectNotificationsAndSwtichAllow.tr(),
-                                style: const TextStyle(color: Colors.grey),
-                                textAlign: TextAlign.center,
-                              ),
+                              padding: const EdgeInsets.only(left: 10,right: 10),
+                              child: CupertinoButton(
+                                color: AppColors.main,
+                                  onPressed: () async{
+                                    openAppSettings().then((value) => {
+                                      if(value){
+                                        Permission.notification.request().then((status) => {
+                                          notificationPermissionStatus.value = status,
+                                        })
+                                      }
+                                    });
+                                  },
+                                  child: Text(LocaleKeys.allowNotification.tr())),
                             ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  openAppSettings();
-                                },
-                                child: Text(LocaleKeys.allowNotification.tr()))
+                            Gap(10)
                           ],
                         ),
                       );

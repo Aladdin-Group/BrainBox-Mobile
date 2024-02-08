@@ -33,7 +33,7 @@ dependencies:
   get_it: ^7.6.6
   dio: ^5.4.0
   formz: ^0.6.1
-  permission_handler: ^11.1.0
+  permission_handler: ^11.2.0
   flutter_rating_bar: ^4.0.1
   device_info_plus: ^9.1.1
   hive: ^2.2.3
@@ -69,6 +69,8 @@ dependencies:
   bloc_concurrency: ^0.2.3
   stream_transform: ^2.1.0
   sign_in_with_apple: ^5.0.0
+  feedback: ^3.0.0
+  feedback_sentry: ^3.0.0
 
 
 dev_dependencies:
@@ -96,3 +98,21 @@ flutter:
     - assets/
     - assets/images/
     - assets/translations/
+    - assets/fonts/
+
+  fonts:
+    - family: VKBold
+      fonts:
+        - asset: assets/fonts/VKSansDisplay-Bold.ttf
+    - family: VKRegular
+      fonts:
+        - asset: assets/fonts/VKSansDisplay-Regular.ttf
+    - family: VKMedium
+      fonts:
+        - asset: assets/fonts/VKSansDisplay-Medium.ttf
+    - family: VKDemiBold
+      fonts:
+        - asset: assets/fonts/VKSansDisplay-DemiBold.ttf
+#        - asset: assets/fonts/VKSansDisplay-Regular.ttf
+#        - asset: assets/fonts/VKSansDisplay-Medium.ttf
+#        - asset: assets/fonts/VKSansDisplay-DemiBold.ttf

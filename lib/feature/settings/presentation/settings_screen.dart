@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:brain_box/core/assets/constants/colors.dart';
 import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/core/singletons/storage/storage_repository.dart';
 import 'package:brain_box/core/singletons/storage/store_keys.dart';
@@ -125,11 +126,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: isPremium
             ? []
             : [
-                Text(
+                Platform.isAndroid ? Text(
                   context.read<SettingsBloc>().state.user?.coins.toString() ?? '',
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                IconButton(
+                ) : const SizedBox.shrink(),
+                Platform.isAndroid ? IconButton(
                   icon: const Icon(Icons.add_circle),
                   onPressed: () async {
                     if (context.read<SettingsBloc>().state.user != null) {
@@ -147,7 +148,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // }
                     }
                   },
-                ),
+                ) : const SizedBox.shrink(),
                 const Gap(12),
               ],
       ),
@@ -160,40 +161,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
-                    child: AvatarImage(
-                      radius: 50,
-                      backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade800,
-                      backgroundImage: controller.user?.imageUrl != null
-                          ? CachedNetworkImageProvider(context.read<SettingsBloc>().state.user?.imageUrl ?? '')
-                          : null,
-                      // get string from state user name first letters
-                      child: controller.user?.imageUrl != null
-                          ? null
-                          : Text(
-                              context
-                                      .watch<SettingsBloc>()
-                                      .state
-                                      .user
-                                      ?.name
-                                      ?.split(' ')
-                                      .map((e) => e.substring(0, 1))
-                                      .join(" ") ??
-                                  "B",
-                              style: context.titleLarge!.copyWith(color: Colors.white),
-                            ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: AvatarImage(
+                        radius: 85,
+                        backgroundColor: Color.fromARGB(255, 44, 44, 44),
+                        backgroundImage: (controller.user?.imageUrl != null && controller.user?.imageUrl!='')
+                            ? CachedNetworkImageProvider(context.read<SettingsBloc>().state.user?.imageUrl ?? '')
+                            : null,
+                        // get string from state user name first letters
+                        child: (controller.user?.imageUrl != null && controller.user?.imageUrl!='')
+                            ? null
+                            : Text(
+                                context
+                                        .watch<SettingsBloc>()
+                                        .state
+                                        .user
+                                        ?.name
+                                        ?.split(' ')
+                                        .map((e) => e.substring(0, 1))
+                                        .join(" ") ??
+                                    "B",
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white,fontSize: 40),
+                              ),
+                      ),
                     ),
                   ),
                   SliverToBoxAdapter(
                     child: Text(
                       context.watch<SettingsBloc>().state.user?.name ?? 'Abullajon',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SliverToBoxAdapter(
                     child: Text(
-                      context.watch<SettingsBloc>().state.user?.email ?? 'adbullajon@gmail.com',
+                       context.watch<SettingsBloc>().state.user?.email!.toLowerCase()!='null_email' ? context.watch<SettingsBloc>().state.user?.email ?? 'adbullajon@gmail.com' : 'Your email is hidden by you.',
                       textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontSize: 15
+                      ),
                     ),
                   ),
                   const SliverToBoxAdapter(
@@ -204,6 +211,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SliverList.list(
                     children: [
                       SettingsItem(
+                        icon: CupertinoIcons.globe,
+                        isFirst: true,
                         click: () {
                           showCupertinoModalPopup<void>(
                             context: context,
@@ -249,6 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         //     }),
                       ),
                       SettingsItem(
+                          icon: CupertinoIcons.moon_circle,
                           title: LocaleKeys.nightMode.tr(),
                           action: Switch(
                               value: context.watch<AppThemeBloc>().state.switchValue,
@@ -260,6 +270,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           builder: (p1, p2, p3) {
                             return p2 == PermissionStatus.granted
                                 ? SettingsItem(
+                                    icon: CupertinoIcons.bell,
                                     title: LocaleKeys.appSound.tr(),
                                     action: ValueListenableBuilder(
                                       valueListenable: appSound,
@@ -274,6 +285,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ))
                                 : p2 == PermissionStatus.permanentlyDenied || p2 == PermissionStatus.denied
                                     ? SettingsItem(
+                                        icon: CupertinoIcons.exclamationmark_circle,
                                         title: LocaleKeys.permissionIsDenied.tr(),
                                         action: ElevatedButton(
                                           onPressed: () {
@@ -282,21 +294,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           child: Text(LocaleKeys.goSettings.tr()),
                                         ),
                                       )
-                                    : SettingsItem(title: LocaleKeys.somethingWentWrong.tr());
+                                    : SettingsItem(icon: CupertinoIcons.exclamationmark_triangle,title: LocaleKeys.somethingWentWrong.tr());
                           }),
                       SettingsItem(
                         title: LocaleKeys.savedWords.tr(),
                         screen: const SavedWordsPage(),
+                        icon: CupertinoIcons.bookmark,
                       ),
                       SettingsItem(
                         title: LocaleKeys.help.tr(),
                         screen: const HelpPage(),
+                        icon: CupertinoIcons.question_circle,
                       ),
                       SettingsItem(
                         title: LocaleKeys.about.tr(),
                         screen: const AboutPage(),
+                        icon: CupertinoIcons.info,
                       ),
                       SettingsItem(
+                        icon: CupertinoIcons.square_arrow_right,
+                        isLast: true,
                         title: LocaleKeys.logout.tr(),
                         click: () {
                           showAdaptiveDialog(
@@ -327,12 +344,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ],
                   ),
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.only(top: 25,bottom: 30),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(CupertinoIcons.trash_fill,color: AppColors.main),
+                          const Gap(3),
+                          GestureDetector(
+                            onTap: (){
+                              showDialog(context: context, builder: (builder)=>AlertDialog(title: Text('Delete account'),content: Text('🥲Dou you want delete your account ?'),actions: [
+                                CupertinoButton(child: const Text('No'), onPressed: (){
+                                  Navigator.pop(context);
+                                }),
+                                CupertinoButton(child: const Text('Yes'), onPressed: (){
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const AuthScreen()),
+                                          (route) => false);
+                                }),
+                              ],));
+                            },
+                            child: Text('Delete account',style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              color: AppColors.main
+                            ),),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top:25.0,bottom: 10),
                       child: Text(
                         'Rate the app',
-                        style: TextStyle(fontSize: 23),
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          color: Theme.of(context).dividerColor,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -346,7 +396,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                         itemBuilder: (context, _) => const Icon(
                           Icons.star,
-                          color: Colors.amber,
+                          color: AppColors.main,
                         ),
                         onRatingUpdate: (rating) {
                           showRateDialog();
@@ -486,17 +536,3 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
-//.then((value) => {
-//                                 if (_selectedFruit == 0)
-//                                   {
-//                                     context.setLocale(const Locale('ru', 'RU')),
-//                                   }
-//                                 else if (_selectedFruit == 1)
-//                                   {
-//                                     context.setLocale(const Locale('en', 'US')),
-//                                   }
-//                                 else
-//                                   {
-//                                     context.setLocale(const Locale('uz', 'UZ')),
-//                                   }
-//                               })

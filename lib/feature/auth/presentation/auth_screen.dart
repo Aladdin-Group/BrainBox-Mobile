@@ -16,6 +16,7 @@ import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
 import 'package:brain_box/feature/navigation/presentation/pages/lading_page.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -78,13 +79,22 @@ class AuthScreen extends StatelessWidget {
                       },
                     ),
                     const Expanded(child: SizedBox.shrink(),),
-                    Text(
-                        LocaleKeys.eula.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white
+                    Text('By clicking login or register, you accept the',style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontSize: 14,
+                      color: Colors.white
+                    ),textAlign: TextAlign.center,),
+                    GestureDetector(
+                      onTap: (){
+                        launchUrlString('http://litimo.uz/pravicy/brainBox_eula.html');
+                      },
+                      child: Text(
+                          '“BrainBox EULA rules”.',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     Gap(10)
                   ],

@@ -34,7 +34,7 @@
   "save": "Save",
   "addSomeWordsForMemorize": "\uD83D\uDCDC Add some words for memorize!",
   "whenYouAddSomeWordAppWillSendReminderYou": "When you add some word, app will send reminder you!",
-  "notificationIsNotAllowed": "\uD83D\uDE14 Notification is not allowed !",
+  "notificationIsNotAllowed": "Allow to Notifications.",
   "pressAllowNotificationButtonAndSelectNotificationsAndSwtichAllow": "Press \\\"Allow notification\\\" button and select Notifications and swtich allow.",
   "allowNotification": "Allow notification",
   "language": "Language",
@@ -106,5 +106,5 @@
   "submit": "Submit",
   "movieName": "Movie Name",
   "learnMore": "Learn More",
-  "eula": "By clicking login or register, you accept the “BrainBox EULA rules”."
+  "eula": "By clicking login or register, you accept the "
 }

@@ -1,7 +1,7 @@
 class AppImages {
-  static const String essentialBanner = 'assets/images/essential_banner.png';
+  static const String essentialBanner = 'https://i.pinimg.com/564x/cc/85/bd/cc85bd815df8dbf1bccfa69d9601db06.jpg';
 
-  static const String cinemaBanner = 'assets/images/cinema_banner.png';
+  static const String cinemaBanner = 'https://i.pinimg.com/originals/80/7e/f0/807ef06fd67648e7cc38070d6e311f70.gif';
 
   static const String essential_1 =
       'https://www.essentialenglish.review/ContentStudio/Images/4000-Essential-English-Words-1.jpg';
