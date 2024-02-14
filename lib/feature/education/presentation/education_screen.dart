@@ -56,10 +56,10 @@ class _EducationScreenState extends State<EducationScreen> {
                         'Brainbox',
                         style: GoogleFonts.kronaOne(),
                       ),
-                      AutoSizeText(
-                        LocaleKeys.premium.tr(),
-                        style: GoogleFonts.kronaOne(),
-                      ),
+                      //  AutoSizeText(
+                      //   LocaleKeys.premium.tr(),
+                      //   style: GoogleFonts.kronaOne(),
+                      // ),
                     ],
                   ),
                 )
@@ -184,7 +184,8 @@ class _EducationScreenState extends State<EducationScreen> {
                         color: Colors.blueAccent
                       ),
                     ),
-                  )
+                  ),
+                  Gap(20),
                 ],
               ),
             ),

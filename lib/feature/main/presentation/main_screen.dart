@@ -203,10 +203,10 @@ class _MainScreenState extends State<MainScreen> {
                               'Brainbox',
                               style: GoogleFonts.kronaOne(),
                             ),
-                            AutoSizeText(
-                              LocaleKeys.premium.tr(),
-                              style: GoogleFonts.kronaOne(),
-                            ),
+                            // AutoSizeText(
+                            //   LocaleKeys.premium.tr(),
+                            //   style: GoogleFonts.kronaOne(),
+                            // ),
                           ],
                         ),
                       )
@@ -343,7 +343,7 @@ class _MainScreenState extends State<MainScreen> {
                                 ),
                               ),
                               SizedBox(
-                                height: 315,
+                                height: 320,
                                 width: double.maxFinite,
                                 child: ListView.builder(
                                     itemCount: state.movies[key]?.listData.length,

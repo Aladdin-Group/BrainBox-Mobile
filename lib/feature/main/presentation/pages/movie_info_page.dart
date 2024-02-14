@@ -67,9 +67,9 @@ class _MovieInfoPageState extends State<MovieInfoPage> {
             child: Align(
               child: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: Text(LocaleKeys.forcoins.tr(args: ['${widget.movie.price}',]),textAlign: TextAlign.center,style: const TextStyle(
+                child: Platform.isAndroid ? Text(LocaleKeys.forcoins.tr(args: ['${widget.movie.price}',]) ,textAlign: TextAlign.center,style: const TextStyle(
                     fontWeight: FontWeight.bold
-                ),),
+                ),) : const SizedBox.shrink(),
               ),
             ),
           ),
@@ -103,7 +103,7 @@ context.read<MainBloc>().add(BuyMovieEvent(success: (success){
                       showDialog(context: context, builder: (builder)=>const AlertDialog(title: CupertinoActivityIndicator(),));
                     }, movieId: widget.movie.id??-1));
 
-                  }, child: Text(LocaleKeys.purchase.tr())),
+                  }, child: const Text('Memorize')),
                 )),
               ],
             ),
