@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/xoliq0v/xoliq0v/blob/main/Untitled%20design-6.png?raw=true" alt="Brain Box Logo" width="800"/>
+  <img src="https://github.com/xoliq0v/xoliq0v/blob/main/image.png?raw=true" alt="Brain Box Logo" width="800"/>
 </p>
 
 ## 🧠📦 Brain Box
