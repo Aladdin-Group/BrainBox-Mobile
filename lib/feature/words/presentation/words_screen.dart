@@ -14,7 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 // import 'package:shimmer/shimmer.dart';
 import 'dart:io' show Platform;
@@ -47,7 +47,7 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   static const String _adUnitId = 'ca-app-pub-3129231972481781/1815921222';
   late TabController tabController;
   late PageController pageController;
-  BannerAd? _bannerAd;
+  // BannerAd? _bannerAd;
   ValueNotifier<bool> isSuccess = ValueNotifier(false);
   ValueNotifier<String> nameOfMovie = ValueNotifier('NON');
   final GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
@@ -68,27 +68,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
   bool get isWindows => !kIsWeb && Platform.isWindows;
 
   bool get isWeb => kIsWeb;
-
-  void loadAd() {
-    BannerAd(
-      adUnitId: _adUnitId,
-      request: const AdRequest(),
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _bannerAd = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (ad, err) {
-          ad.dispose();
-        },
-        onAdOpened: (Ad ad) {},
-        onAdClosed: (Ad ad) {},
-        onAdImpression: (Ad ad) {},
-      ),
-    ).load();
-  }
 
   initTts() {
     flutterTts = FlutterTts();
@@ -178,7 +157,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
     // AppFunctions.safeScreen();
     tabController = TabController(length: 4, vsync: this);
     pageController = PageController();
-    loadAd();
     initTts();
     super.initState();
   }
@@ -491,25 +469,6 @@ class _WordsScreenState extends State<WordsScreen> with TickerProviderStateMixin
                               ));
                         },
                         child: const Text('Start Test')),
-                    const Gap(10),
-                    _bannerAd != null
-                        ? SizedBox(
-                            width: _bannerAd!.size.width.toDouble(),
-                            height: _bannerAd!.size.height.toDouble(),
-                            child: AdWidget(
-                              ad: _bannerAd!,
-                            ),
-                          )
-                        : SizedBox(
-                            height: 50,
-                            child: Shimmer.fromColors(
-                                baseColor: Colors.black26,
-                                highlightColor: Colors.grey,
-                                child: const SizedBox(
-                                  width: 300,
-                                  height: 50,
-                                )),
-                          ),
                   ],
                 ),
               ),

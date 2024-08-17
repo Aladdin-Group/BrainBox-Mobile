@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AppFunctions{
   AppFunctions._();
@@ -9,24 +9,24 @@ class AppFunctions{
   // Admob unitId
   static const String _adUnitId = 'ca-app-pub-3129231972481781/4248828666';
 
-  static Future<void> loadAd(BannerAd? bannerAd) async {
-    BannerAd(
-      adUnitId: _adUnitId,
-      request: const AdRequest(),
-      size: AdSize.banner,
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          bannerAd = ad as BannerAd;
-        },
-        onAdFailedToLoad: (ad, err) {
-          ad.dispose();
-        },
-        onAdOpened: (Ad ad) {},
-        onAdClosed: (Ad ad) {},
-        onAdImpression: (Ad ad) {},
-      ),
-    ).load();
-  }
+  // static Future<void> loadAd(BannerAd? bannerAd) async {
+  //   BannerAd(
+  //     adUnitId: _adUnitId,
+  //     request: const AdRequest(),
+  //     size: AdSize.banner,
+  //     listener: BannerAdListener(
+  //       onAdLoaded: (ad) {
+  //         bannerAd = ad as BannerAd;
+  //       },
+  //       onAdFailedToLoad: (ad, err) {
+  //         ad.dispose();
+  //       },
+  //       onAdOpened: (Ad ad) {},
+  //       onAdClosed: (Ad ad) {},
+  //       onAdImpression: (Ad ad) {},
+  //     ),
+  //   ).load();
+  // }
 
   static Future safeScreen()async{
     await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);

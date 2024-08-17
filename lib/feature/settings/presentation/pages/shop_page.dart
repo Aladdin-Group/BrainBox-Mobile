@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -30,26 +30,26 @@ class ShopPage extends StatefulWidget {
   State<ShopPage> createState() => _ShopPageState();
 }
 
-RewardedAd? _rewardedAd;
+// RewardedAd? _rewardedAd;
 
-void _createRewardedAd() {
-  RewardedAd.load(
-    adUnitId: 'ca-app-pub-3129231972481781/1874947156', // Use AdMob test ad unit ID for testing
-    request: const AdRequest(),
-    rewardedAdLoadCallback: RewardedAdLoadCallback(
-      onAdLoaded: (RewardedAd ad) {
-        _rewardedAd = ad;
-      },
-      onAdFailedToLoad: (LoadAdError error) {
-      },
-    ),
-  );
-}
+// void _createRewardedAd() {
+//   RewardedAd.load(
+//     adUnitId: 'ca-app-pub-3129231972481781/1874947156', // Use AdMob test ad unit ID for testing
+//     request: const AdRequest(),
+//     rewardedAdLoadCallback: RewardedAdLoadCallback(
+//       onAdLoaded: (RewardedAd ad) {
+//         _rewardedAd = ad;
+//       },
+//       onAdFailedToLoad: (LoadAdError error) {
+//       },
+//     ),
+//   );
+// }
 
 class _ShopPageState extends State<ShopPage> {
   @override
   void initState() {
-    _createRewardedAd();
+    // _createRewardedAd();
     Stream purchaseUpdated = InAppPurchase.instance.purchaseStream;
     _streamSubscription = purchaseUpdated.listen((purchaseList) {
       _listenToPurchase(purchaseList, context);
@@ -283,84 +283,84 @@ Widget _buildOptionCard(String title, String buttonText, String imagePath, doubl
                         overflow: TextOverflow.ellipsis,
                       ),
                       const Gap(8),
-                      ElevatedButton(
-                        onPressed: () async {
-                          var botUrl = 'https://t.me/brainboxxbot';
-                          if (isTelegram) {
-                            if (await canLaunchUrl(Uri.parse(botUrl))) {
-                              await launchUrl(Uri.parse(botUrl));
-                            } else {
-                              throw 'Could not launch $botUrl';
-                            }
-                          } else {
-                            if (isSub) {
-                              if (_rewardedAd != null) {
-                                _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-                                  onAdShowedFullScreenContent: (RewardedAd ad) => {},
-                                  onAdDismissedFullScreenContent: (RewardedAd ad) {
-                                    ad.dispose();
-                                    _createRewardedAd(); // Load a new ad for the next button click
-                                  },
-                                  onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('onAdFailedToShowFullScreenContent: $error')));
-                                    ad.dispose();
-                                    _createRewardedAd(); // Load a new ad for the next button click
-                                  },
-                                );
-
-                                _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(LocaleKeys.youEarned.tr(args: ['${reward.amount}']))));
-                                  context.read<SettingsBloc>().add(UpdateUseDataEven(
-                                    user: UpdateUser(addCoin: reward.amount.toInt(), userId: context.read<SettingsBloc>().state.user?.id ?? -1),
-                                    success: () {
-                                      Navigator.pop(context, true);
-                                      Navigator.pop(context, true);
-                                    },
-                                    failure: () {
-                                      Navigator.pop(context);
-                                      showDialog(
-                                          context: context,
-                                          builder: (builder) => const AlertDialog(
-                                                title: Text('Failure'),
-                                              ));
-                                    },
-                                    progress: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) => const AlertDialog(
-                                                content: CupertinoActivityIndicator(),
-                                              ),
-                                          barrierDismissible: false);
-                                    },
-                                  ));
-                                  // Handle the reward
-                                });
-                              } else {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(content: Text(LocaleKeys.rewardedAdNotLoaded.tr())));
-                              }
-                            } else {
-                              BackgroundController.stopService().then((value) => {
-                                    _buy(posPay, isSub: true),
-                                  });
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.yellow,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                        ),
-                        child: Text(
-                          buttonText,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () async {
+                      //     var botUrl = 'https://t.me/brainboxxbot';
+                      //     if (isTelegram) {
+                      //       if (await canLaunchUrl(Uri.parse(botUrl))) {
+                      //         await launchUrl(Uri.parse(botUrl));
+                      //       } else {
+                      //         throw 'Could not launch $botUrl';
+                      //       }
+                      //     } else {
+                      //       if (isSub) {
+                      //         if (_rewardedAd != null) {
+                      //           _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+                      //             onAdShowedFullScreenContent: (RewardedAd ad) => {},
+                      //             onAdDismissedFullScreenContent: (RewardedAd ad) {
+                      //               // ad.dispose();
+                      //               // _createRewardedAd(); // Load a new ad for the next button click
+                      //             },
+                      //             onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+                      //               ScaffoldMessenger.of(context).showSnackBar(
+                      //                   SnackBar(content: Text('onAdFailedToShowFullScreenContent: $error')));
+                      //               // ad.dispose();
+                      //               // _createRewardedAd(); // Load a new ad for the next button click
+                      //             },
+                      //           );
+                      //
+                      //           _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+                      //             ScaffoldMessenger.of(context).showSnackBar(
+                      //                 SnackBar(content: Text(LocaleKeys.youEarned.tr(args: ['${reward.amount}']))));
+                      //             context.read<SettingsBloc>().add(UpdateUseDataEven(
+                      //               user: UpdateUser(addCoin: reward.amount.toInt(), userId: context.read<SettingsBloc>().state.user?.id ?? -1),
+                      //               success: () {
+                      //                 Navigator.pop(context, true);
+                      //                 Navigator.pop(context, true);
+                      //               },
+                      //               failure: () {
+                      //                 Navigator.pop(context);
+                      //                 showDialog(
+                      //                     context: context,
+                      //                     builder: (builder) => const AlertDialog(
+                      //                           title: Text('Failure'),
+                      //                         ));
+                      //               },
+                      //               progress: () {
+                      //                 showDialog(
+                      //                     context: context,
+                      //                     builder: (context) => const AlertDialog(
+                      //                           content: CupertinoActivityIndicator(),
+                      //                         ),
+                      //                     barrierDismissible: false);
+                      //               },
+                      //             ));
+                      //             // Handle the reward
+                      //           });
+                      //         } else {
+                      //           ScaffoldMessenger.of(context)
+                      //               .showSnackBar(SnackBar(content: Text(LocaleKeys.rewardedAdNotLoaded.tr())));
+                      //         }
+                      //       } else {
+                      //         BackgroundController.stopService().then((value) => {
+                      //               _buy(posPay, isSub: true),
+                      //             });
+                      //       }
+                      //     }
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //     foregroundColor: Colors.black,
+                      //     backgroundColor: Colors.yellow,
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(30.0),
+                      //     ),
+                      //     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      //   ),
+                      //   child: Text(
+                      //     buttonText,
+                      //     overflow: TextOverflow.ellipsis,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ],

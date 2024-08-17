@@ -50,19 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDAJvoQ1IBhtV6ixYHHfh6rRCfnAAvf08k',
-    appId: '1:519103600258:android:36643015179e2dc0e7469b',
-    messagingSenderId: '519103600258',
-    projectId: 'brain-box-434f7',
-    storageBucket: 'brain-box-434f7.appspot.com',
+    apiKey: 'AIzaSyB0NCq4XiUCkesiNLZ5S-gnW2L6zHzlPMM',
+    appId: '1:606760851741:android:0e0e5dd832bef9f5d929f4',
+    messagingSenderId: '606760851741',
+    projectId: 'brain-box-9de76',
+    storageBucket: 'brain-box-9de76.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyATHQneLEUMWTr3Y1SMfpXMEuhaMWEtcis',
-    appId: '1:519103600258:ios:518bdd86bf9501f1e7469b',
-    messagingSenderId: '519103600258',
-    projectId: 'brain-box-434f7',
-    storageBucket: 'brain-box-434f7.appspot.com',
+    apiKey: 'AIzaSyA-HUn2CXJvlHbqM_bUVvXL3U-fGm_J4SU',
+    appId: '1:606760851741:ios:aca524f24888f9c9d929f4',
+    messagingSenderId: '606760851741',
+    projectId: 'brain-box-9de76',
+    storageBucket: 'brain-box-9de76.appspot.com',
     iosBundleId: 'com.aladdin.brainBox',
   );
+
 }
