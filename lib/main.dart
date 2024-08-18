@@ -2,11 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:brain_box/core/adapters/storage/word_adapter.dart';
 import 'package:brain_box/core/fcm_service/fcm_service.dart';
 import 'package:brain_box/core/route/ruotes.dart';
-import 'package:brain_box/core/singletons/storage/saved_controller.dart';
-import 'package:brain_box/core/singletons/storage/store_keys.dart';
 import 'package:brain_box/feature/auth/presentation/manager/auth_bloc.dart';
 import 'package:brain_box/feature/education/presentation/manager/education_bloc.dart';
 import 'package:brain_box/feature/navigation/presentation/cubit/navigation_cubit.dart';
@@ -14,34 +11,23 @@ import 'package:brain_box/feature/notification/data/models/notification_model.da
 import 'package:brain_box/feature/notification/data/models/push_notification_model.dart';
 import 'package:brain_box/feature/notification/data/repositories/notification_box.dart';
 import 'package:brain_box/feature/notification/presentation/manager/local_notification_bloc.dart';
-import 'package:brain_box/feature/reminder/data/models/rimnder_date.dart';
 import 'package:brain_box/feature/reminder/presentation/manager/remainder_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/manager/save_words/save_words_bloc.dart';
 import 'package:brain_box/feature/settings/presentation/manager/settings/settings_bloc.dart';
-import 'package:brain_box/feature/words/data/models/words_response.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:freerasp/freerasp.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'core/adapters/storage/content_adpater.dart';
-import 'core/adapters/storage/user_adapter.dart';
 import 'core/assets/theme/color_schemes.g.dart';
-import 'core/singletons/service_locator.dart';
-import 'core/singletons/storage/hive_controller.dart';
-import 'core/singletons/storage/storage_repository.dart';
 import 'feature/main/presentation/manager/main/main_bloc.dart';
-import 'feature/reminder/data/models/local_word.dart';
 import 'feature/settings/presentation/manager/theme/app_theme_bloc.dart';
+import 'feature/splash/presentation/splash_screen.dart';
 import 'feature/words/presentation/manager/words_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -222,54 +208,12 @@ Future<void> initializeService() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await registerForFCMNotifications();
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
-  // 1:519103600258:android:36643015179e2dc0e7469b
-  final callback = ThreatCallback(
-    onAppIntegrity: () => exit(0),
-    onObfuscationIssues: () => exit(0),
-    onDebug: () => exit(0),
-    onDeviceBinding: () => exit(0),
-    onHooks: () => exit(0),
-    onPrivilegedAccess: () => exit(0),
-    onSecureHardwareNotAvailable: () => exit(0),
-    onSimulator: () => exit(0),
-    onUnofficialStore: () => exit(0),
-  );
-
-  // Attaching listener
-  Talsec.instance.attachListener(callback);
-
-  await EasyLocalization.ensureInitialized();
-
-  final appDocumentDirectory = await getApplicationDocumentsDirectory();
-  Hive.init(appDocumentDirectory.path);
-  Hive.registerAdapter(WordHiveAdapter());
-  Hive.registerAdapter(UserHiveAdapter());
-  Hive.registerAdapter(ContentHiveAdapter());
-  Hive.registerAdapter(NotificationModelAdapter());
-  await Hive.openBox<Content>(StoreKeys.savedWordsList);
-  await Hive.openBox<LocalWord>(StoreKeys.localWordsList);
-  await Hive.openBox(StoreKeys.userData);
-  // await initializeService();
-  FlutterNativeSplash.remove();
-  setupLocator();
   runApp(EasyLocalization(
       supportedLocales: const [Locale('en', 'US'), Locale('uz', 'UZ'), Locale('ru', 'RU')],
       path: 'assets/translations',
       startLocale: const Locale('en', 'US'),
       child: const MyApp()));
+  FlutterNativeSplash.remove();
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -319,7 +263,6 @@ class MyApp extends StatelessWidget {
                   colorScheme: lightColorScheme,
                   visualDensity: VisualDensity.adaptivePlatformDensity,
                 ),
-          // home: const SplashScreen(),
           onGenerateRoute: AppRoutes.generateRoute,
         );
       }),

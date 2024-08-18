@@ -9,6 +9,7 @@ import '../../data/models/auth_model.dart';
 abstract class AuthRepository{
 
   Future<Either<Failure, AuthModel>> auth(AuthParams? authParams);
+  Future<Either<Failure, bool>> handleError(String? message);
   Future<Either<Failure, DevTestModel>> isDevTesting();
 
 }

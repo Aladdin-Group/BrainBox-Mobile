@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:brain_box/core/assets/constants/app_constants.dart';
 import 'package:brain_box/feature/auth/data/models/auth_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -14,6 +17,8 @@ abstract class AuthDataSource {
   Future auth(AuthParams? authParams);
 
   Future<DevTestModel> isDevTesting();
+
+  Future<bool> handleError(String? message);
 }
 
 class AuthDatasourceImplementation extends AuthDataSource {
@@ -71,5 +76,28 @@ class AuthDatasourceImplementation extends AuthDataSource {
     } on Exception catch (e) {
       throw ParsingException(errorMessage: e.toString());
     }
+  }
+
+  @override
+  Future<bool> handleError(String? message) async{
+    try{
+      const url = 'https://api.telegram.org/bot${AppConstants.BOT_TOKEN}/sendMessage';
+      final response = await dio.post(
+        url,
+        data: jsonEncode({
+          'chat_id': '-1002188884730',
+          'text': message,
+        }),
+      );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(response.statusMessage);
+      }
+    }catch(e){
+      throw Exception(e);
+    }
+
+
   }
 }

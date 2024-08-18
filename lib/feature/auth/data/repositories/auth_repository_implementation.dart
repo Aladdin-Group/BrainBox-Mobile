@@ -39,4 +39,18 @@ class AuthRepositoryImplementation extends AuthRepository {
       return Left(ParsingFailure(errorMessage: e.errorMessage));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> handleError(String? message) async{
+    try {
+      final result = await datasource.handleError(message);
+      return Right(result);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(errorMessage: e.errorMessage, statusCode: e.statusCode));
+    } on DioException {
+      return Left(DioFailure());
+    } on ParsingException catch (e) {
+      return Left(ParsingFailure(errorMessage: e.errorMessage));
+    }
+  }
 }

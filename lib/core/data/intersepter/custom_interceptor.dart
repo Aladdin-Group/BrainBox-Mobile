@@ -12,7 +12,6 @@ class CustomInterceptor implements Interceptor {
   @override
   Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.type == DioExceptionType.badResponse && (err.response?.statusCode == 403 || err.response?.statusCode == 401)) {
-      StorageRepository.deleteString(StoreKeys.isAuth);
       StorageRepository.deleteString(StoreKeys.token);
       await _refreshToken(err.requestOptions.baseUrl);
       if (StorageRepository.getString(StoreKeys.token).replaceAll('Bearer', '').trim().isNotEmpty) {

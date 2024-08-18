@@ -37,7 +37,7 @@ class AppRoutes {
       case RouteNames.language:
         return MaterialPageRoute(builder: (context) => const LanguageScreen());
       case RouteNames.auth:
-        return MaterialPageRoute(builder: (context) => const AuthScreen());
+        return MaterialPageRoute(builder: (context) => AuthScreen());
       case RouteNames.words:
         return MaterialPageRoute(builder: (context) =>  WordsScreen(movieId: settings.arguments as int,));
       case RouteNames.shopPage:

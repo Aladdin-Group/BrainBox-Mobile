@@ -103,7 +103,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     } else {
       // event.failure(result.left);
       if (result.left is UserTokenExpire) {
-        StorageRepository.deleteBool(StoreKeys.isAuth);
         StorageRepository.deleteString(StoreKeys.token);
         await GoogleSignIn().signOut();
       }
@@ -144,11 +143,10 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       ));
     } else {
       if (result.left is ServerException) {
-        StorageRepository.deleteBool(StoreKeys.isAuth);
         StorageRepository.deleteString(StoreKeys.token);
         GoogleSignIn().signOut();
         Navigator.pushAndRemoveUntil(navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => const AuthScreen()), (route) => false);
+            MaterialPageRoute(builder: (context) => AuthScreen()), (route) => false);
       }
       emit(state.copyWith(status: FormzSubmissionStatus.failure));
     }
@@ -237,7 +235,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
         //         : emit(state.copyWith(movies: movie, count: counts, page: page,));
       } else {
         if (result.left is UserTokenExpire) {
-          StorageRepository.deleteBool(StoreKeys.isAuth);
           StorageRepository.deleteString(StoreKeys.token);
           GoogleSignIn().signOut();
         }

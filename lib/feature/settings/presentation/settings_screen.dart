@@ -310,12 +310,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       onPressed: () => Navigator.pop(context), child: Text(LocaleKeys.cancel.tr())),
                                   TextButton(
                                       onPressed: () {
-                                        StorageRepository.deleteBool(StoreKeys.isAuth);
                                         StorageRepository.deleteString(StoreKeys.token);
                                         GoogleSignIn().signOut();
                                         Navigator.pushAndRemoveUntil(
                                             context,
-                                            MaterialPageRoute(builder: (context) => const AuthScreen()),
+                                            MaterialPageRoute(builder: (context) => AuthScreen()),
                                             (route) => false);
                                       },
                                       child: Text(LocaleKeys.logout.tr())),

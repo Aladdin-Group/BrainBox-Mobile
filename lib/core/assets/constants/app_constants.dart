@@ -4,6 +4,7 @@ class AppConstants {
   AppConstants._();
   static const BASE_URL_PROD = 'https://api.brainbox.uz/';
   static const SOCKET_URL = 'ws://chat.brainbox.uz:1234';
+  static const BOT_TOKEN = '7180241818:AAGrd82usi-yBEiLH1lhkHtqTizORpBeEEI';
   static const TOKEN = 'token';
   static const THEME_MODE = 'theme_mode';
   static const LANGUAGE = 'language';

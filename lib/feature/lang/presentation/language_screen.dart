@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_extensions/awesome_extensions.dart';
+import 'package:brain_box/core/materials/custom_button.dart';
 import 'package:brain_box/core/route/ruotes.dart';
 import 'package:brain_box/core/utils/custom_styles.dart';
 import 'package:brain_box/feature/settings/data/models/language_model.dart';
@@ -82,13 +83,11 @@ class LanguageScreen extends StatelessWidget {
   /// The [languageCode] and [countryCode] parameters represent the selected language.
   /// The [context] parameter is the [BuildContext] used for navigation.
   Widget _buildLanguageButton(LanguageModel languageModel,  BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: FilledButton(
-        onPressed: () => _chooseAndAuth(languageModel, context),
-        style: CustomStyles.buttonStyle,
-        child: Text(languageModel.name, style: const TextStyle(fontSize: 20)),
-      ),
+    return CustomButton(
+      onPressed: () => _chooseAndAuth(languageModel, context),
+      // style: CustomStyles.buttonStyle,
+      // color: CustomStyles.buttonStyle,
+      child: Text(languageModel.name, style: const TextStyle(fontSize: 20)),
     );
   }
 }

@@ -224,7 +224,7 @@ class _MainScreenState extends State<MainScreen> {
                 checkForUpdates(context);
               }
               if (state.getUserInfoStatus.isFailure) {
-                context.pushAndRemoveUntil(const AuthScreen());
+                context.pushAndRemoveUntil(AuthScreen());
               }
               if (state.getAllMoviesStatus.isInProgress) {}
               if (state.getAllMoviesStatus.isSuccess) {}

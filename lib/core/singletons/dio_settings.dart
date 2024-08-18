@@ -8,7 +8,7 @@ typedef ConverterFunctionType<T> = T Function(dynamic response);
 
 class DioSettings {
   BaseOptions _dioBaseOptions = BaseOptions(
-    baseUrl: 'http://137.184.14.168:8080/',
+    baseUrl: 'http://204.48.28.153:8888/',
     connectTimeout: const Duration(milliseconds: 35000),
     receiveTimeout: const Duration(milliseconds: 35000),
     followRedirects: false,
